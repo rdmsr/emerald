@@ -12,7 +12,7 @@ Screenshots:
 
 <img src="https://media.discordapp.net/attachments/739138167277486141/758674552032722964/unknown.png">
 
-##How to build:
+###How to build:
 
 install x86_64-elf-gcc. 
 For arch users:
