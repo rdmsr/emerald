@@ -1,7 +1,7 @@
 ASMFILES  := $(shell find src/ -type f -name '*.asm')
 CFILES    := $(shell find src/ -type f -name '*.c')
-CC         = gcc
-LD         = ld
+CC         = x86_64-elf-gcc
+LD         = x86_64-elf-ld
 OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
 KERNEL_HDD = build/disk.hdd
 KERNEL_ELF = kernel.elf

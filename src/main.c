@@ -42,17 +42,39 @@ struct stivale_header header = {
     .entry_point = 0
 };
 
-struct IDT_entry {
-	unsigned short int offset_lowerbits;
-	unsigned short int selector;
-	unsigned char zero;
-	unsigned char type_attr;
-	unsigned short int offset_higherbits;
-};
+struct idt_descriptor {
+    uint16_t offset_lo;
+    uint16_t cs; // Code segment selector of the ISR
+    uint8_t ist; // Interrupt stack offset
+    uint8_t attrib;
+    uint16_t offset_mid;
+    uint32_t offset_hi;
+    uint32_t ignored; // Set to zero
+} __attribute__((packed));
+
+// The pointer to the IDT structure; it's officially known as the IDTR
+struct idt_pointer {
+    uint16_t size;  // size - 1
+    uint64_t addr;
+} __attribute__((packed));
+
+static struct idt_descriptor idt[256];
+static struct idt_pointer idtr = {.size = sizeof(idt) - 1, .addr = (uint64_t)idt};
+
+void idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t attrib) {
+    uint64_t ptr = (uint64_t)handler;
+    // each gdt entry is 8 bytes, so transform array index into byte index
+    idt[idx] = (struct idt_descriptor){
+        .offset_lo = ptr, .cs = 8 * cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
+}
 
 
-struct IDT_entry IDT[IDT_SIZE];
-
+void idt_load() {
+    asm volatile("lidt %0" : : "m"(idtr));
+}
+void sti() {
+    asm volatile("sti");
+}
 
 void idt_init(void)
 {
@@ -60,13 +82,7 @@ void idt_init(void)
 	unsigned long idt_address;
 	unsigned long idt_ptr[2];
 
-	keyboard_address = (unsigned long)keyboard_handler;
-	IDT[0x21].offset_lowerbits = keyboard_address & 0xffff;
-	IDT[0x21].selector = KERNEL_CODE_SEGMENT_OFFSET;
-	IDT[0x21].zero = 0;
-	IDT[0x21].type_attr = INTERRUPT_GATE;
-	IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
-
+	idt_register(0x21, keyboard_handler, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
 
 	write_port(0x20 , 0x11);
 	write_port(0xA0 , 0x11);
@@ -84,17 +100,12 @@ void idt_init(void)
 
 	write_port(0x21 , 0xff);
 	write_port(0xA1 , 0xff);
-
-	idt_address = (unsigned long)IDT ;
-	idt_ptr[0] = (sizeof (struct IDT_entry) * IDT_SIZE) + ((idt_address & 0xffff) << 16);
-	idt_ptr[1] = idt_address >> 16 ;
-
-	load_idt(idt_ptr);
+	idt_load();
 }
 
 
 
-void memory_manager(){}
+void memory_manager(){/*TODO*/}
 void kmain(struct stivale_struct *bootloader_data)
 {
 	const char *str = "Welcome to abb1xOS!";
