@@ -115,6 +115,6 @@ void kmain(struct stivale_struct *bootloader_data)
 	kprint_newline();
 	idt_init();
 	kb_init();
-
+	sti();
 	while(1);
 }

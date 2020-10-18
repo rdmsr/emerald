@@ -1,6 +1,6 @@
 # Abb1xOS
 
-### This is a basic OS kernel written in C with input support!
+### This is a basic OS 64 bits kernel written in C with input support!
 
 Build Requirements : 
 
@@ -17,6 +17,8 @@ For other distros:
 use the make_toolchain script using:
 `sh make_toolchain.sh`
 
+### Prebuilt images
+You can use prebuilt .hdd images in the build/ directory I suggest you run them using qemu
 ### Screenshots:
 
 <img src="https://media.discordapp.net/attachments/739138167277486141/758674552032722964/unknown.png">
