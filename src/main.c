@@ -65,7 +65,7 @@ void idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t 
     uint64_t ptr = (uint64_t)handler;
     // each gdt entry is 8 bytes, so transform array index into byte index
     idt[idx] = (struct idt_descriptor){
-        .offset_lo = ptr, .cs = 8 * cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
+        .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
 }
 
 
@@ -132,6 +132,7 @@ void gdt_init(){
 void memory_manager(){/*TODO*/}
 void kmain(struct stivale_struct *bootloader_data)
 {
+	gdt_init();
 	const char *str = "Welcome to abb1xOS!";
 	clear_screen();
 	kprint(str);
@@ -139,6 +140,6 @@ void kmain(struct stivale_struct *bootloader_data)
 	kprint_newline();
 	idt_init();
 	kb_init();
-	gdt_init();
+
 	while(1);
 }
