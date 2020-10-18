@@ -98,9 +98,10 @@ void idt_init(void)
 
 
 
-	write_port(0x21 , 0xff);
-	write_port(0xA1 , 0xff);
+	write_port(0x21 , 0xFD);
+	write_port(0xA1 , 0xFF);
 	idt_load();
+	sti();
 }
 
 
@@ -115,6 +116,6 @@ void kmain(struct stivale_struct *bootloader_data)
 	kprint_newline();
 	idt_init();
 	kb_init();
-	sti();
+
 	while(1);
 }
