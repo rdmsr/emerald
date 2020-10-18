@@ -20,7 +20,7 @@
 #define VGA_LIGHT_PURPLE 13
 #define VGA_YELLOW       14
 #define VGA_WHITE        15
-
+#define GDTBASE    0x00000800
 
 
 #define IDT_SIZE 256
@@ -41,7 +41,7 @@ struct stivale_header header = {
     .flags = 0,
     .entry_point = 0
 };
-
+//idt
 struct idt_descriptor {
     uint16_t offset_lo;
     uint16_t cs; // Code segment selector of the ISR
@@ -51,7 +51,6 @@ struct idt_descriptor {
     uint32_t offset_hi;
     uint32_t ignored; // Set to zero
 } __attribute__((packed));
-
 // The pointer to the IDT structure; it's officially known as the IDTR
 struct idt_pointer {
     uint16_t size;  // size - 1
@@ -59,6 +58,7 @@ struct idt_pointer {
 } __attribute__((packed));
 
 static struct idt_descriptor idt[256];
+
 static struct idt_pointer idtr = {.size = sizeof(idt) - 1, .addr = (uint64_t)idt};
 
 void idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t attrib) {
@@ -72,10 +72,10 @@ void idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t 
 void idt_load() {
     asm volatile("lidt %0" : : "m"(idtr));
 }
+
 void sti() {
     asm volatile("sti");
 }
-
 void idt_init(void)
 {
 	unsigned long keyboard_address;
@@ -84,28 +84,51 @@ void idt_init(void)
 
 	idt_register(0x21, keyboard_handler, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
 
-	write_port(0x20 , 0x11);
-	write_port(0xA0 , 0x11);
+	outb(0x20 , 0x11);
+	outb(0xA0 , 0x11);
 
-	write_port(0x21 , 0x20);
-	write_port(0xA1 , 0x28);
+	outb(0x21 , 0x20);
+	outb(0xA1 , 0x28);
 
-    write_port(0x21 , 0x04);
-    write_port(0xA1 , 0x02);
+    outb(0x21 , 0x04);
+    outb(0xA1 , 0x02);
 
-	write_port(0x21 , 0x01);
-	write_port(0xA1 , 0x01);
+	outb(0x21 , 0x01);
+	outb(0xA1 , 0x01);
 
 
 
-	write_port(0x21 , 0x7D);
-	write_port(0xA1 , 0x7F);
+	outb(0x21 , 0x7D);
+	outb(0xA1 , 0x7F);
 	idt_load();
 	sti();
 }
 
+//Global Descriptor table (GDT)
+struct gdt_pointer {
+    uint16_t limit;
+    uint64_t base;
+} __attribute__ ((packed));
+struct gdt_descriptor {
+    uint16_t limit_low16;
+    uint16_t base_low16;
+    uint8_t  base_mid8;
+    uint8_t access;
+    uint8_t granularity;
+    uint8_t  base_high8;  
+} __attribute__((packed));
+struct gdt_descriptor gdt[8];
+struct gdt_pointer gdtr = {.limit = sizeof(gdt) - 1, .base = (uint64_t)gdt};
 
 
+void gdt_load() {
+    asm volatile("lgdt %0" : : "m"(gdtr));
+}
+void gdt_init(){
+    gdt[1] = (struct gdt_descriptor) { .access = 0b10011010  ,.granularity = 0b00100000 };
+    gdt[2] = (struct gdt_descriptor) { .access = 0b10010110  ,.granularity = 0 };
+    gdt_load();
+	}
 void memory_manager(){/*TODO*/}
 void kmain(struct stivale_struct *bootloader_data)
 {
@@ -116,6 +139,6 @@ void kmain(struct stivale_struct *bootloader_data)
 	kprint_newline();
 	idt_init();
 	kb_init();
-
+	gdt_init();
 	while(1);
 }

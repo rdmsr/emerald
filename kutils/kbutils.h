@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define ENTER_KEY_CODE 0x1C
 #define DELETE_KEY_CODE 0x08
 #define KEYBOARD_DATA_PORT 0x60
@@ -11,12 +12,14 @@ extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
 unsigned int current_loc = 0;
 extern char read_port(unsigned short port);
-extern void write_port(unsigned short port, unsigned char data);
 char *vidptr = (char*)0xb8000;
+static void outb(uint16_t port, uint8_t value) {
+    asm volatile("out %1, %0" : : "a"(value), "Nd"(port) :);
+}
 void kb_init(void)
 {
 
-	write_port(0x21 , 0xFD);
+	outb(0x21 , 0xFD);
 }
 
 
@@ -49,7 +52,7 @@ void keyboard_handler_main(void)
 	unsigned char status;
 	char keycode;
 
-	write_port(0x20, 0x20);
+	outb(0x20, 0x20);
 
 	status = read_port(KEYBOARD_STATUS_PORT);
 	if (status & 0x01) {

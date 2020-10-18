@@ -1,6 +1,5 @@
 bits 64
 section .text
-
 global start
 global keyboard_handler
 global read_port
@@ -16,11 +15,6 @@ read_port:
 	in al, dx	;dx is the lower 16 bits of edx
 	ret
 
-write_port:
-	mov   edx, [rsp + 4]    
-	mov   al, [rsp + 4 + 4]  
-	out   dx, al  
-	ret
 
 load_idt:
 	mov edx, [rsp + 4]
@@ -31,7 +25,6 @@ load_idt:
 keyboard_handler:                 
 	call    keyboard_handler_main
 	iretd
-
 start:
 	cli 				;block interrupts
 	mov rsp, stack_space
@@ -40,6 +33,7 @@ start:
 
 section .bss
 resb 8192; 8KB for stack
+section .text
 stack_space:
 
 Cursor:
