@@ -16,7 +16,8 @@ For arch users:
 For other distros:
 use the make_toolchain script using:
 `sh make_toolchain.sh`
-Screenshots:
+
+### Screenshots:
 
 <img src="https://media.discordapp.net/attachments/739138167277486141/758674552032722964/unknown.png">
 
