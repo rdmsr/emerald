@@ -29,7 +29,6 @@
 
 
 extern void load_idt(unsigned long *idt_ptr);
-
 static char stack[4096] = {0};
 
 __attribute__((section(".stivalehdr"), used))
@@ -82,7 +81,7 @@ void idt_init(void)
 	unsigned long idt_address;
 	unsigned long idt_ptr[2];
 
-	idt_register(0x21, keyboard_handler, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+	idt_register(0x21, keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
 
 	outb(0x20 , 0x11);
 	outb(0xA0 , 0x11);
@@ -123,6 +122,22 @@ struct gdt_pointer gdtr = {.limit = sizeof(gdt) - 1, .base = (uint64_t)gdt};
 
 void gdt_load() {
     asm volatile("lgdt %0" : : "m"(gdtr));
+    asm volatile (R"(
+    mov %%rsp, %%rax
+    push 0x10
+    push %%rax
+    pushf
+    push 0x8
+    push 1f
+    iretq
+    1:
+    mov $0x10, %%ax
+    mov %%ax, %%ds
+    mov %%ax, %%es
+    mov %%ax, %%ss
+    mov %%ax, %%fs
+    mov %%ax, %%gs
+                )" : : : "rax", "memory");
 }
 void gdt_init(){
     gdt[1] = (struct gdt_descriptor) { .access = 0b10011010  ,.granularity = 0b00100000 };

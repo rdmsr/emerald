@@ -1,11 +1,9 @@
 bits 64
 section .text
 global start
-global keyboard_handler
 global read_port
 global write_port
 global load_idt
-
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main
 
@@ -21,10 +19,6 @@ load_idt:
 	lidt [edx]
 	sti 				;turn on interrupts
 	ret
-
-keyboard_handler:                 
-	call    keyboard_handler_main
-	iretd
 start:
 	cli 				;block interrupts
 	mov rsp, stack_space

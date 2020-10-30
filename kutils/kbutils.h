@@ -13,8 +13,8 @@ extern void keyboard_handler(void);
 unsigned int current_loc = 0;
 extern char read_port(unsigned short port);
 char *vidptr = (char*)0xb8000;
-static void outb(uint16_t port, uint8_t value) {
-    asm volatile("out %1, %0" : : "a"(value), "Nd"(port) :);
+static inline void outb(uint16_t port, uint8_t value) {
+    asm volatile("out %0, %1" : : "a"(value), "Nd"(port) :);
 }
 void kb_init(void)
 {
@@ -47,7 +47,8 @@ void clear_screen(void)
 	}
 }
 
-void keyboard_handler_main(void)
+__attribute__((interrupt)) 
+void keyboard_handler_main(void *bruh)
 {
 	unsigned char status;
 	char keycode;

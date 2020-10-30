@@ -12,7 +12,6 @@ CFLAGS = -O2 -pipe -Wall -Wextra
 
 CHARDFLAGS := $(CFLAGS)               \
 	-std=gnu99                     \
-	-masm=intel                    \
 	-fno-pic                       \
 	-mno-sse                       \
 	-mno-sse2                      \
