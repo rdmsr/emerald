@@ -23,7 +23,7 @@ void kb_init(void)
 }
 
 __attribute__((interrupt)) 
-void keyboard_handler_main(void *bruh)
+void keyboard_handler_main(void *nothing)
 {
 	unsigned char status;
 	char keycode;

@@ -19,7 +19,23 @@ struct idt_pointer {
 static struct idt_descriptor idt[256];
 
 static struct idt_pointer idtr = {.size = sizeof(idt) - 1, .addr = (uint64_t)idt};
+void irq_remap(void)
+{
+	outb(0x20, 0x11);
+	outb(0xA0, 0x11);
 
+	outb(0x21, 0x20);
+	outb(0xA1, 0x28);
+
+	outb(0x21, 0x04);
+	outb(0xA1, 0x02);
+
+	outb(0x21, 0x01);
+	outb(0xA1, 0x01);
+
+	outb(0x21, 0x0);
+	outb(0xA1, 0x0);
+}
 void idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t attrib) {
     uint64_t ptr = (uint64_t)handler;
     // each gdt entry is 8 bytes, so transform array index into byte index

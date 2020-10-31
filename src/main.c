@@ -32,7 +32,6 @@
 
 
 extern void load_idt(unsigned long *idt_ptr);
-extern void pic(void);
 static char stack[4096] = {0};
 __attribute__((section(".stivalehdr"), used))
 struct stivale_header header = {
@@ -48,6 +47,7 @@ struct stivale_header header = {
 void kmain(struct stivale_struct *bootloader_data)
 {
 	gdt_init();
+    irq_remap();
 	const char *str = "Welcome to abb1xOS!";
 	clear_screen();
 
@@ -56,7 +56,6 @@ void kmain(struct stivale_struct *bootloader_data)
 	idt_init();
 	kprint_load(" IDT",false);
 	kb_init();
-	pic();
 	kprint_load(" Keyboard",true);
 	
 	kprint(str,15);
