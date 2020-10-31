@@ -8,6 +8,13 @@
 #define BYTES_FOR_EACH_ELEMENT 2
 #define SCREENSIZE BYTES_FOR_EACH_ELEMENT * COLUMNS_IN_LINE * LINES
 #define LINES 25
+#define PIC1		0x20		/* IO base address for master PIC */
+#define PIC2		0xA0		/* IO base address for slave PIC */
+#define PIC1_COMMAND	PIC1
+#define PIC1_DATA	(PIC1+1)
+#define PIC2_COMMAND	PIC2
+#define PIC2_DATA	(PIC2+1)
+#define PIC_EOI		0x20		/* End-of-interrupt command code */
 extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
 unsigned int current_loc = 0;
@@ -21,7 +28,13 @@ void kb_init(void)
 
 	outb(0x21 , 0xFD);
 }
-
+void PIC_sendEOI(unsigned char irq)
+{
+	if(irq >= 8)
+		outb(PIC2_COMMAND,PIC_EOI);
+ 
+	outb(PIC1_COMMAND,PIC_EOI);
+}
 __attribute__((interrupt)) 
 void keyboard_handler_main(void *nothing)
 {
@@ -48,4 +61,5 @@ void keyboard_handler_main(void *nothing)
 		vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
 		vidptr[current_loc++] = 0x07;
 	}
+	PIC_sendEOI(0);
 }
