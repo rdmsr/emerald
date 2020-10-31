@@ -30,7 +30,6 @@
 
 extern void load_idt(unsigned long *idt_ptr);
 static char stack[4096] = {0};
-
 __attribute__((section(".stivalehdr"), used))
 struct stivale_header header = {
     .stack = (uintptr_t)stack + sizeof(stack),
@@ -117,17 +116,17 @@ struct gdt_descriptor {
     uint8_t  base_high8;  
 } __attribute__((packed));
 struct gdt_descriptor gdt[8];
-struct gdt_pointer gdtr = {.limit = sizeof(gdt) - 1, .base = (uint64_t)gdt};
+extern struct gdt_pointer gdtr = {.limit = sizeof(gdt) - 1, .base = (uint64_t)gdt};
 
 
 void gdt_load() {
-    asm volatile("lgdt %0" : : "m"(gdtr));
+    asm volatile("lgdt %0" : : "m"(gdtr) : "memory");
     asm volatile (R"(
     mov %%rsp, %%rax
-    push 0x10
+    push $0x10
     push %%rax
     pushf
-    push 0x8
+    push $0x8
     push 1f
     iretq
     1:
@@ -141,7 +140,7 @@ void gdt_load() {
 }
 void gdt_init(){
     gdt[1] = (struct gdt_descriptor) { .access = 0b10011010  ,.granularity = 0b00100000 };
-    gdt[2] = (struct gdt_descriptor) { .access = 0b10010110  ,.granularity = 0 };
+    gdt[2] = (struct gdt_descriptor) { .access = 0b10010010  ,.granularity = 0 };
     gdt_load();
 	}
 void memory_manager(){/*TODO*/}

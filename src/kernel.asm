@@ -4,6 +4,7 @@ global start
 global read_port
 global write_port
 global load_idt
+extern gdtr
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main
 
