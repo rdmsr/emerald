@@ -47,19 +47,22 @@ void keyboard_handler_main(void *nothing)
 	if (status & 0x01) {
 		keycode = read_port(KEYBOARD_DATA_PORT);
 		if(keycode < 0)
+			PIC_sendEOI(0);
 			return;
 
 		if(keycode == ENTER_KEY_CODE) {
 			kprint_newline();
+			PIC_sendEOI(0);
 			return;
 		}
 		if(keycode == DELETE_KEY_CODE) {
 			kprint_newline();
+			PIC_sendEOI(0);
 			return;
 		}
 
 		vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
 		vidptr[current_loc++] = 0x07;
 	}
-	PIC_sendEOI(0);
+
 }
