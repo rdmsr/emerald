@@ -4,16 +4,15 @@
 
 struct idt_descriptor {
     uint16_t offset_lo;
-    uint16_t cs; // Code segment selector of the ISR
-    uint8_t ist; // Interrupt stack offset
+    uint16_t cs; 
+    uint8_t ist;
     uint8_t attrib;
     uint16_t offset_mid;
     uint32_t offset_hi;
-    uint32_t ignored; // Set to zero
+    uint32_t ignored; 
 } __attribute__((packed));
-// The pointer to the IDT structure; it's officially known as the IDTR
 struct idt_pointer {
-    uint16_t size;  // size - 1
+    uint16_t size;
     uint64_t addr;
 } __attribute__((packed));
 
