@@ -1,5 +1,5 @@
 #include "idt.h"
-#include "../devices/keyboard/kbutils.h"
+#include "../devices/keyboard/keyboard.h"
 #include <stdint.h>
 //unsigned int current_loc = 0;
 extern char read_port(unsigned short port);

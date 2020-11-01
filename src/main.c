@@ -1,6 +1,5 @@
 
-#include "devices/keyboard/kbutils.h"
-#include "kutils/cliutils.h"
+#include "devices/keyboard/keyboard.h"
 #include "sys/idt.h"
 #include "sys/gdt.h"
 #include <stivale.h>
