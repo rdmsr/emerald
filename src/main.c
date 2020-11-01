@@ -62,5 +62,6 @@ void kmain(struct stivale_struct *bootloader_data)
 	kprint(str,15);
 	kprint("EmeraldOS!",10);
 	kprint_newline();
+
 	while(1);
 }

@@ -53,8 +53,8 @@ void isr_init(void) {
     for (int i = 0; i < 0x21; i++) {
         idt_register(i,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
     }
-    idt_register(0x20,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
-    idt_register(0x21, keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    idt_register(0x20,isr_irq_master,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    idt_register(0x21, isr, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
 
     for (int i = 0x22; i < 0x28; i++) {
         idt_register(i,isr_irq_master,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
@@ -63,7 +63,7 @@ void isr_init(void) {
         idt_register(i,isr_irq_slave,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
     }
     for (int i = 0x30; i < 256; i++) {
-        idt_register(i,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+        idt_register(i,keyboard_handler_main,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
     }
 }
 void idt_load() {
