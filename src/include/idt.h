@@ -3,6 +3,8 @@
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #pragma once
 extern void isr(void);
+extern void isr_irq_master(void);
+extern void isr_irq_slave(void);
 struct idt_descriptor {
     uint16_t offset_lo;
     uint16_t cs; 
@@ -47,7 +49,23 @@ void idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t 
         .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
 }
 
+void isr_init(void) {
+    for (int i = 0; i < 0x21; i++) {
+        idt_register(i,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    }
+    idt_register(0x20,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    idt_register(0x21, keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
 
+    for (int i = 0x22; i < 0x28; i++) {
+        idt_register(i,isr_irq_master,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    }
+    for (int i = 0x28; i < 0x2F; i++) {
+        idt_register(i,isr_irq_slave,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    }
+    for (int i = 0x30; i < 256; i++) {
+        idt_register(i,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+    }
+}
 void idt_load() {
     asm volatile("lidt %0" : : "m"(idtr));
 }
@@ -61,8 +79,7 @@ void idt_init(void)
 	unsigned long idt_address;
 	unsigned long idt_ptr[2];
 
-	idt_register(0x21, keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
-	idt_register(0x21,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+	isr_init();
 	idt_load();
 
 	sti();

@@ -5,6 +5,8 @@ global read_port
 global write_port
 global load_idt
 global isr
+global isr_irq_master
+global isr_irq_slave
 extern gdtr
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main
@@ -60,6 +62,16 @@ isr:
 	call keyboard_handler_main
 	popaq
 	mov al, 0x20
+	out 0x20, al
+	iretq
+isr_irq_master:
+	mov al, 0x20
+	out 0x20, al
+	iretq
+
+isr_irq_slave:
+	mov al, 0x20
+	out 0xA0, al
 	out 0x20, al
 	iretq
 	
