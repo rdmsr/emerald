@@ -16,6 +16,7 @@ CHARDFLAGS := $(CFLAGS)               \
 	-mno-sse                       \
 	-mno-sse2                      \
 	-mno-mmx                       \
+	-g                             \
 	-mno-80387                     \
 	-mno-red-zone                  \
 	-mcmodel=kernel                \
