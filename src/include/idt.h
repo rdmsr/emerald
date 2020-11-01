@@ -2,6 +2,7 @@
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #pragma once
+extern void isr(void);
 struct idt_descriptor {
     uint16_t offset_lo;
     uint16_t cs; 
