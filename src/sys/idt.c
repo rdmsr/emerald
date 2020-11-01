@@ -1,7 +1,9 @@
 #include "idt.h"
 #include "../devices/keyboard/kbutils.h"
 #include <stdint.h>
-
+//unsigned int current_loc = 0;
+extern char read_port(unsigned short port);
+//char *vidptr = (char*)0xb8000;
 void EmeraldSys_IDT_irq_remap(void)
 {
 	outb(0x20, 0x11);

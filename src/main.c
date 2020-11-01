@@ -47,7 +47,7 @@ struct stivale_header header = {
 
 void kmain(struct stivale_struct *bootloader_data)
 {
-	gdt_init();
+	EmeraldSys_GDT_gdt_init();
     EmeraldSys_IDT_irq_remap();
 	const char *str = "Welcome to ";
 	clear_screen();
