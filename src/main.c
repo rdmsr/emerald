@@ -1,8 +1,8 @@
 
-#include "kutils/kbutils.h"
+#include "devices/keyboard/kbutils.h"
 #include "kutils/cliutils.h"
-#include "include/idt.h"
-#include "include/gdt.h"
+#include "sys/idt.h"
+#include "sys/gdt.h"
 #include <stivale.h>
 #include <stdint.h>
 #define VGA_ADDRESS 0xb8000
@@ -48,15 +48,15 @@ struct stivale_header header = {
 void kmain(struct stivale_struct *bootloader_data)
 {
 	gdt_init();
-    irq_remap();
+    EmeraldSys_IDT_irq_remap();
 	const char *str = "Welcome to ";
 	clear_screen();
 
 	kprint_newline();
 	kprint_load("GDT",false);
-	idt_init();
+	EmeraldSys_IDT_idt_init();
 	kprint_load("IDT",false);
-	kb_init();
+	EmeraldDevices_keyboard_Keyboard_init();
 	kprint_load("Keyboard",true);
 	
 	kprint(str,15);

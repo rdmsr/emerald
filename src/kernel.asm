@@ -9,7 +9,7 @@ global isr_irq_master
 global isr_irq_slave
 extern gdtr
 extern kmain 		;this is defined in the c file
-extern keyboard_handler_main
+extern EmeraldDevices_keyboard_Keyboard_handler_main
 %macro pushaq 0
     push rax
     push rbx
@@ -59,7 +59,7 @@ load_idt:
 isr:
 	pushaq
 	cld
-	call keyboard_handler_main
+	call EmeraldDevices_keyboard_Keyboard_handler_main
 	popaq
 	mov al, 0x20
 	out 0x20, al
