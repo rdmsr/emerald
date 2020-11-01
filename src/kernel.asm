@@ -59,7 +59,10 @@ isr:
 	cld
 	call keyboard_handler_main
 	popaq
+	mov al, 0x20
+	out 0x20, al
 	iretq
+	
 start:
 	cli 				;block interrupts
 	mov rsp, stack_space
