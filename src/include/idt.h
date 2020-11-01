@@ -1,7 +1,7 @@
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
-
+#pragma once
 struct idt_descriptor {
     uint16_t offset_lo;
     uint16_t cs; 
@@ -18,7 +18,7 @@ struct idt_pointer {
 
 static struct idt_descriptor idt[256];
 
-static struct idt_pointer idtr = {.size = sizeof(idt) - 1, .addr = (uint64_t)idt};
+static struct idt_pointer idtr = {.size = 256 * sizeof(idt) - 1, .addr = (uint64_t)idt};
 
  
 
@@ -61,6 +61,7 @@ void idt_init(void)
 	unsigned long idt_ptr[2];
 
 	idt_register(0x21, keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
+	idt_register(0x21,isr,KERNEL_CODE_SEGMENT_OFFSET, 0, INTERRUPT_GATE);
 	idt_load();
 
 	sti();

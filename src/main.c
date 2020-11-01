@@ -1,6 +1,6 @@
-#include "../kutils/keyboard_map.h"
-#include "../kutils/kbutils.h"
-#include "../kutils/cliutils.h"
+#include "kutils/keyboard_map.h"
+#include "kutils/kbutils.h"
+#include "kutils/cliutils.h"
 #include "include/idt.h"
 #include "include/gdt.h"
 #include <stivale.h>
@@ -32,6 +32,7 @@
 
 
 extern void load_idt(unsigned long *idt_ptr);
+extern void isr(void);
 static char stack[4096] = {0};
 __attribute__((section(".stivalehdr"), used))
 struct stivale_header header = {
