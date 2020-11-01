@@ -23,7 +23,7 @@ void kprint_load(char *str,bool error){
 
 	kprint("[ ",7);
 	kprint("OK ",10);
-	kprint("]",7);
+	kprint("] ",7);
 	kprint(str,0x07);
 	kprint(" loaded",0x07);	
 	kprint_newline();
@@ -32,7 +32,7 @@ void kprint_load(char *str,bool error){
 	{
 	kprint("[ ",7);
 	kprint("ERROR ",12);
-	kprint("]",7);
+	kprint("] ",7);
 	kprint(str,0x07);
 	kprint(" failed to load",0x07);	
 	kprint_newline();

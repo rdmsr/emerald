@@ -1,4 +1,4 @@
-#include "kutils/keyboard_map.h"
+
 #include "kutils/kbutils.h"
 #include "kutils/cliutils.h"
 #include "include/idt.h"
@@ -49,16 +49,18 @@ void kmain(struct stivale_struct *bootloader_data)
 {
 	gdt_init();
     irq_remap();
-	const char *str = "Welcome to abb1xOS!";
+	const char *str = "Welcome to ";
 	clear_screen();
 
 	kprint_newline();
-	kprint_load(" GDT",false);
+	kprint_load("GDT",false);
 	idt_init();
-	kprint_load(" IDT",false);
+	kprint_load("IDT",false);
 	kb_init();
-	kprint_load(" Keyboard",true);
+	kprint_load("Keyboard",true);
 	
 	kprint(str,15);
+	kprint("EmeraldOS!",10);
+	kprint_newline();
 	while(1);
 }

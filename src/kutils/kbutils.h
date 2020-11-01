@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdarg.h>
+#include "keyboard_map.h"
 #define ENTER_KEY_CODE 0x1C
 #define DELETE_KEY_CODE 0x08
 #define KEYBOARD_DATA_PORT 0x60
@@ -36,7 +37,6 @@ void PIC_sendEOI(unsigned char irq)
  
 	outb(PIC1_COMMAND,PIC_EOI);
 }
-__attribute__((interrupt)) 
 void keyboard_handler_main(void *nothing)
 {
 	unsigned char status;
@@ -45,26 +45,21 @@ void keyboard_handler_main(void *nothing)
 	outb(0x20, 0x20);
 
 	status = read_port(KEYBOARD_STATUS_PORT);
-	if (status & 0x01) {
-		keycode = read_port(KEYBOARD_DATA_PORT);
-		if(keycode < 0){
-			PIC_sendEOI(0);
-			return;
+	keycode = read_port(KEYBOARD_DATA_PORT);
+	if(keycode < 0){
+		PIC_sendEOI(0);
+		return;
 		}
 
-		if(keycode == ENTER_KEY_CODE) {
-			kprint_newline();
-			PIC_sendEOI(0);
-			return;
+	if(keycode == ENTER_KEY_CODE) {
+		kprint_newline();
+		return;
 		}
-		if(keycode == DELETE_KEY_CODE) {
-			kprint_newline();
-			PIC_sendEOI(0);
-			return;
+	if(keycode == DELETE_KEY_CODE) {
+		kprint_newline();
+		return;
 		}
 
-		vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
-		vidptr[current_loc++] = 0x07;
-	}
-
+	vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
+	vidptr[current_loc++] = 0x07;
 }
