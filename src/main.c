@@ -56,7 +56,7 @@ void kmain(struct stivale_struct *bootloader_data)
 	EmeraldSys_IDT_idt_init();
 	kprint_load("IDT",false);
 	EmeraldDevices_keyboard_Keyboard_init();
-	kprint_load("Keyboard",true);
+	kprint_load("Keyboard",false);
 	
 	kprint(str,15);
 	kprint("EmeraldOS!",10);

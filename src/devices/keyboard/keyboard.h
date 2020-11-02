@@ -23,12 +23,13 @@
 extern void keyboard_handler(void);
 
 static inline void outb(uint16_t port, uint8_t value) {
-    asm volatile("out %0, %1" : : "a"(value), "Nd"(port) :);
+    asm volatile("outb %0, %1" : : "a"(value), "Nd"(port) :);
 }
+static inline void EmeraldASM_outb(uint16_t port, uint8_t value);
+static unsigned char EmeraldASM_inb(unsigned short port);
 void EmeraldDevices_keyboard_Keyboard_init(void);
 void EmeraldPIC_sendEOI(unsigned char irq);
 void EmeraldDevices_keyboard_Keyboard_handler_main(void *nothing);
-extern char read_port(unsigned short port);
 
 extern void kprint(const char *str,int color);
 extern void kprint_newline(void);

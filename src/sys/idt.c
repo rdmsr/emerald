@@ -2,24 +2,31 @@
 #include "../devices/keyboard/keyboard.h"
 #include <stdint.h>
 //unsigned int current_loc = 0;
-extern char read_port(unsigned short port);
 //char *vidptr = (char*)0xb8000;
+static unsigned char EmeraldASM_inb(unsigned short port) {
+    unsigned char ret;
+    asm volatile ( "inb %1, %0" : "=a"(ret) : "Nd"(port) );
+    return ret;
+} 
+static inline void EmeraldASM_outb(uint16_t port, uint8_t value) {
+    asm volatile("outb %0, %1" : : "a"(value), "Nd"(port) :);
+}
 void EmeraldSys_IDT_irq_remap(void)
 {
-	outb(0x20, 0x11);
-	outb(0xA0, 0x11);
+	EmeraldASM_outb(0x20, 0x11);
+	EmeraldASM_outb(0xA0, 0x11);
 
-	outb(0x21, 0x20);
-	outb(0xA1, 0x28);
+	EmeraldASM_outb(0x21, 0x20);
+	EmeraldASM_outb(0xA1, 0x28);
 
-	outb(0x21, 0x04);
-	outb(0xA1, 0x02);
+	EmeraldASM_outb(0x21, 0x04);
+	EmeraldASM_outb(0xA1, 0x02);
 
-	outb(0x21, 0x01);
-	outb(0xA1, 0x01);
+	EmeraldASM_outb(0x21, 0x01);
+	EmeraldASM_outb(0xA1, 0x01);
 
-	outb(0x21, 0x0);
-	outb(0xA1, 0x0);
+	EmeraldASM_outb(0x21, 0x0);
+	EmeraldASM_outb(0xA1, 0x0);
 }
 void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t attrib) {
     uint64_t ptr = (uint64_t)handler;

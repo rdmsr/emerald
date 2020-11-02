@@ -44,18 +44,6 @@ extern EmeraldDevices_keyboard_Keyboard_handler_main
     pop rbx
     pop rax
 %endmacro
-read_port:
-	mov edx, [rsp + 4]
-			;al is the lower 8 bits of eax
-	in al, dx	;dx is the lower 16 bits of edx
-	ret
-
-
-load_idt:
-	mov edx, [rsp + 4]
-	lidt [edx]
-	sti 				;turn on interrupts
-	ret
 isr:
 	pushaq
 	cld
@@ -71,7 +59,7 @@ isr_irq_master:
 
 isr_irq_slave:
 	mov al, 0x20
-	out 0xA0, al
+	out 0xa0, al
 	out 0x20, al
 	iretq
 	

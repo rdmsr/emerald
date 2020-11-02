@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdarg.h>
+#include <stddef.h>
 //#include "keyboard_map.h"
 unsigned char keyboard_map[128] =
 {
@@ -46,27 +48,34 @@ unsigned char keyboard_map[128] =
 unsigned int current_loc = 0;
 extern char read_port(unsigned short port);
 char *vidptr = (char*)0xb8000;
+static unsigned char EmeraldASM_inb(unsigned short port) {
+    unsigned char ret;
+    asm volatile ( "inb %1, %0" : "=a"(ret) : "Nd"(port) );
+    return ret;
+} 
+static inline void EmeraldASM_outb(uint16_t port, uint8_t value) {
+    asm volatile("outb %0, %1" : : "a"(value), "Nd"(port) :);
+}
 void EmeraldDevices_keyboard_Keyboard_init(void)
 {
 
-	outb(0x21 , 0xFD);
+	EmeraldASM_outb(0x21 , 0xFD);
 }
 void PIC_sendEOI(unsigned char irq)
 {
 	if(irq >= 8)
-		outb(PIC2_COMMAND,PIC_EOI);
+		EmeraldASM_outb(PIC2_COMMAND,PIC_EOI);
  
-	outb(PIC1_COMMAND,PIC_EOI);
+	EmeraldASM_outb(PIC1_COMMAND,PIC_EOI);
 }
 void EmeraldDevices_keyboard_Keyboard_handler_main(void *nothing)
 {
 	unsigned char status;
 	char keycode;
 
-	outb(0x20, 0x20);
-
-	status = read_port(KEYBOARD_STATUS_PORT);
-	keycode = read_port(KEYBOARD_DATA_PORT);
+	EmeraldASM_outb(0x20, 0x20);
+	status = EmeraldASM_inb(KEYBOARD_STATUS_PORT);
+	keycode = EmeraldASM_inb(KEYBOARD_DATA_PORT);
 	if(keycode < 0){
 		PIC_sendEOI(0);
 		return;
