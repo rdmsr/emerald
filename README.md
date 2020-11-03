@@ -1,6 +1,6 @@
-# Abb1xOS
+# EmeraldOS
 
-### This is a basic OS 64 bits kernel written in C with input support!
+### This is a basic 64 bits OS written in C with input support!
 
 Build Requirements : 
 
