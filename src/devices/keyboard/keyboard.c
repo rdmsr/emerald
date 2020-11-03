@@ -47,7 +47,6 @@ unsigned char keyboard_map[128] =
 };
 
 unsigned int current_location = 0;
-extern char read_port(unsigned short port);
 char *videoptr = (char*)0xb8000;
 static unsigned char EmeraldASM_inb(unsigned short port) {
     unsigned char ret;

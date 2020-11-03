@@ -4,10 +4,9 @@
 #include "mem/pmm.h"
 #include "sys/idt.h"
 #include "sys/gdt.h"
-//#include "inc/stivale.h"
+#include "inc/stivale.h"
 #include <stdint.h>
 #define VGA_ADDRESS 0xb8000
-#define VGA_COLOR(character, color) ((uint16_t) (character) | (uint16_t) (color) << 8)
 #define VGA_BLACK        0c
 #define VGA_BLUE         1
 #define VGA_GREEN        2
@@ -24,7 +23,8 @@
 #define VGA_LIGHT_PURPLE 13
 #define VGA_YELLOW       14
 #define VGA_WHITE        15
-
+#define K 1024
+#define M (1024*K)
 
 
 #define IDT_SIZE 256
@@ -46,23 +46,22 @@ struct stivale_header header = {
 };
 
 
-void kmain(struct stivale_struct *bootloader_data,stivale_info_t *info)
+void kmain(struct stivale_struct *bootloader_data)
 {
 	EmeraldSys_GDT_gdt_init();
-    EmeraldSys_IDT_irq_remap();
+  EmeraldSys_IDT_irq_remap();
 	const char *str = "Welcome to ";
 	clear_screen();
-  EmeraldMem_PMM_init_pmm(info);
 	kprint_newline();
 	kprint_load("GDT",false);
 	EmeraldSys_IDT_idt_init();
 	kprint_load("IDT",false);
 	EmeraldDevices_keyboard_Keyboard_init();
 	kprint_load("Keyboard",false);
-
+  EmeraldMem_PMM_pmm_init(1096 * M);
+  kprint_load("PMM",false);
 	kprint(str,15);
 	kprint("EmeraldOS!",10);
 	kprint_newline();
-
 	while(1);
 }

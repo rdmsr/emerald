@@ -24,14 +24,14 @@ struct stivale_module {
     char     string[128];
     uint64_t next;
 } __attribute__((packed));
-typedef struct {
+struct {
     uint64_t addr;
     uint64_t len;
     uint32_t type;
     uint32_t unused;
-} __attribute__((packed)) mmap_entry_t;
+} __attribute__((packed));
 
-typedef struct stivale_struct {
+struct stivale_struct {
     uint64_t cmdline;
     uint64_t memory_map_addr;
     uint64_t memory_map_entries;
@@ -45,4 +45,4 @@ typedef struct stivale_struct {
     uint64_t modules;
     uint64_t epoch;
     uint64_t flags;       // bit 0: 1 if booted with BIOS, 0 if booted with UEFI
-} __attribute__((packed)) stivale_info_t;
+} __attribute__((packed));
