@@ -1,9 +1,9 @@
 OUTPUT_FORMAT(elf32-i386)
-ENTRY(main)
+ENTRY(_start)
 
 SECTIONS
 {
-    . = 0x4000;
+    . = 0x8000;
 
     .text : {
         KEEP(*(.entry*))
@@ -24,5 +24,9 @@ SECTIONS
         *(COMMON)
         *(.bss*)
         bss_end = .;
+    }
+
+    /DISCARD/ : {
+        *(*)
     }
 }

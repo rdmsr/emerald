@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <lib/cio.h>
+#include <sys/cpu.h>
 #include <lib/real.h>
 #include <drivers/vga_textmode.h>
 
@@ -66,35 +66,12 @@ void text_disable_cursor(void) {
 // VGA cursor code taken from: https://wiki.osdev.org/Text_Mode_Cursor
 
 void init_vga_textmode(int *_rows, int *_cols) {
-    port_out_b(0x3d4, 0x0a);
-    port_out_b(0x3d5, 0x20);
+    outb(0x3d4, 0x0a);
+    outb(0x3d5, 0x20);
     text_clear(true);
 
     *_rows = VD_ROWS;
     *_cols = VD_COLS / 2;
-}
-
-static void text_set_cursor_palette(uint8_t c) {
-    cursor_palette = c;
-    draw_cursor();
-    return;
-}
-
-static uint8_t text_get_cursor_palette(void) {
-    return cursor_palette;
-}
-
-static void text_set_text_palette(uint8_t c) {
-    text_palette = c;
-    return;
-}
-
-static uint8_t text_get_text_palette(void) {
-    return text_palette;
-}
-
-static int text_get_cursor_pos_x(void) {
-    return (cursor_offset % VD_COLS) / 2;
 }
 
 static int text_get_cursor_pos_y(void) {

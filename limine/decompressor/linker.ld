@@ -1,5 +1,5 @@
 OUTPUT_FORMAT(elf32-i386)
-ENTRY(main)
+ENTRY(_start)
 
 SECTIONS
 {
@@ -23,5 +23,9 @@ SECTIONS
         *(COMMON)
         *(.bss*)
         bss_end = .;
+    }
+
+    /DISCARD/ : {
+        *(*)
     }
 }

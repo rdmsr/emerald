@@ -14,19 +14,16 @@ stivale2 will recognise whether the ELF file is 32-bit or 64-bit and load the ke
 into the appropriate CPU mode.
 
 stivale2 natively supports (only for 64-bit kernels) and encourages higher half kernels.
-The kernel can load itself at `0xffffffff80100000` or higher (as defined in the linker script)
+The kernel can load itself at `0xffffffff80000000` or higher (as defined in the linker script)
 and the bootloader will take care of everything, no AT linker script directives needed.
 
-If the kernel loads itself in the lower half (`0x100000` or higher), the bootloader
-will not perform the higher half relocation.
+If the kernel loads itself in the lower half, the bootloader will not perform the
+higher half relocation.
 
-The kernel MUST NOT overwrite anything below `0x100000` (physical memory) as that
-is where the bootloader memory structures reside.
-Once the kernel is DONE depending on the bootloader (for page tables, structures, ...)
-then these areas can be reclaimed if one wants.
-
-The kernel MUST NOT request to load itself at an address lower than `0x100000`
-(or `0xffffffff80100000` for higher half kernels) for the same reasons as above.
+*Note: In order to maintain compatibility with Limine and other stivale2-compliant*
+*bootloaders it is strongly advised never to load the kernel or any of its*
+*sections below the 1 MiB physical memory mark. This may work with some stivale2*
+*loaders, but it WILL NOT work with Limine and it's explicitly discouraged.*
 
 ## Kernel entry machine state
 
@@ -39,11 +36,11 @@ the value of `entry_point`.
 At entry, the bootloader will have setup paging mappings as such:
 
 ```
- Base Physical Address -                      Size                      ->  Virtual address
-  0x0000000000000000   -   4 GiB plus any additional memory map entry   ->  0x0000000000000000
-  0x0000000000000000   -   4 GiB plus any additional memory map entry   ->  0xffff800000000000 (4-level paging only)
-  0x0000000000000000   -   4 GiB plus any additional memory map entry   ->  0xff00000000000000 (5-level paging only)
-  0x0000000000000000   -                   0x80000000                   ->  0xffffffff80000000
+ Base Physical Address -                    Size                    ->  Virtual address
+  0x0000000000000000   - 4 GiB plus any additional memory map entry -> 0x0000000000000000
+  0x0000000000000000   - 4 GiB plus any additional memory map entry -> 0xffff800000000000 (4-level paging only)
+  0x0000000000000000   - 4 GiB plus any additional memory map entry -> 0xff00000000000000 (5-level paging only)
+  0x0000000000000000   -                 0x80000000                 -> 0xffffffff80000000
 ```
 
 If the kernel is dynamic and not statically linked, the bootloader will relocate it.
@@ -72,7 +69,9 @@ The A20 gate is enabled.
 
 PIC/APIC IRQs are all masked.
 
-`rsp` is set to the requested stack as per stivale2 header.
+`rsp` is set to the requested stack as per stivale2 header. If the requested value is
+non-null, an invalid return address of 0 is pushed to the stack before jumping
+to the kernel.
 
 `rdi` will point to the stivale2 structure (described below).
 
@@ -100,12 +99,33 @@ The A20 gate is enabled.
 
 PIC/APIC IRQs are all masked.
 
-`esp` is set to the requested stack as per stivale2 header.
+`esp` is set to the requested stack as per stivale2 header. An invalid return address
+of 0 is pushed to the stack before jumping to the kernel.
 
 A pointer to the stivale2 structure (described below) is pushed onto this stack
 before the entry point is called.
 
 All other general purpose registers are set to 0.
+
+## Bootloader-reserved memory
+
+In order for stivale2 to function, it needs to reserve memory areas for either internal
+usage (such as page tables, GDT, SMP), or for kernel interfacing (such as returned
+structures).
+
+stivale2 ensures that none of these areas are found in any of the sections
+marked as "usable" in the memory map.
+
+The location of these areas may vary and it is implementation specific;
+these areas may be in any non-usable memory map section, or in unmarked memory.
+
+The OS must make sure to be done consuming bootloader information and services
+before switching to its own address space, as unmarked memory areas in use by
+the bootloader may become unavailable.
+
+Once the OS is done needing the bootloader, memory map areas marked as "bootloader
+reclaimable" may be used as usable memory. These areas are not guaranteed to be
+aligned, but they are guaranteed to not overlap other sections of the memory map.
 
 ## stivale2 header (.stivale2hdr)
 
@@ -120,11 +140,12 @@ struct stivale2_header {
                             // If set to 0, the ELF entry point will be used
                             // instead.
 
-    uint64_t stack;         // This is the stack address which will be in RSP
+    uint64_t stack;         // This is the stack address which will be in ESP/RSP
                             // when the kernel is loaded.
-                            // It can be set to a non-valid stack address such as 0
-                            // as long as the OS is 64-bit and sets up a stack on its
-                            // own.
+                            // It can only be set to NULL for 64-bit kernels. 32-bit
+                            // kernels are mandated to provide a vaild stack.
+                            // 64-bit and 32-bit valid stacks must be at least 256 bytes
+                            // in usable space and must be 16 byte aligned addresses.
 
     uint64_t flags;         // Bit 0: if 1, enable KASLR
                             // All other bits undefined
@@ -172,7 +193,7 @@ Omitting this tag will make the bootloader default to a CGA-compatible text mode
 if supported.
 
 ```c
-struct stivale2_hdr_tag_framebuffer {
+struct stivale2_header_tag_framebuffer {
     uint64_t identifier;          // Identifier: 0x3ecc1bc43d0f7971
     uint64_t next;
     uint16_t framebuffer_width;   // If all values are set to 0
@@ -188,6 +209,20 @@ The presence of this tag enables support for 5-level paging, if available.
 Identifier: `0x932f477032007e8f`
 
 This tag does not have extra members.
+
+#### SMP header tag
+
+The presence of this tag enables support for booting up application processors.
+
+```c
+struct stivale2_header_tag_smp {
+    uint64_t identifier;          // Identifier: 0x1ab015085f3273df
+    uint64_t next;
+    uint64_t flags;               // Flags:
+                                  //   bit 0: 0 = use xAPIC, 1 = use x2APIC (if available)
+                                  // All other flags are undefined.
+} __attribute__((packed));
+```
 
 ## stivale2 structure
 
@@ -349,5 +384,95 @@ struct stivale2_struct_tag_firmware {
     uint64_t identifier;        // Identifier: 0x359d837855e3858c
     uint64_t next;
     uint64_t flags;             // Bit 0: 0 = UEFI, 1 = BIOS
+} __attribute__((packed));
+```
+
+#### SMP structure tag
+
+This tag reports to the kernel info about a multiprocessor environment.
+
+```c
+struct stivale2_struct_tag_smp {
+    uint64_t identifier;        // Identifier: 0x34d1d96339647025
+    uint64_t next;
+    uint64_t flags;             // Flags:
+                                //   bit 0: Set if x2APIC was requested and it
+                                //          was supported and enabled.
+                                //  All other bits undefined.
+    uint64_t cpu_count;         // Total number of logical CPUs (including BSP)
+    struct stivale2_smp_info smp_info[];  // Array of smp_info structs, one per
+                                          // logical processor, including BSP.
+} __attribute__((packed));
+```
+
+*Note: In the code below, the BSP refers to the bootstrap processor,*
+*AKA the processor that the system was started with, and the one whose*
+*control is handed to by stivale2 first.*
+
+*The LAPIC ID of the BSP is in most cases `0`, but this is not guaranteed.*
+*To get the LAPIC ID of the BSP, see `CPUID` leaf `1`, and in case the*
+*x2APIC is used, see `CPUID` leaves `0x1f` and `0xb`. Note that the `CPUID`*
+*instruction has to be executed on the BSP itself.*
+
+```c
+struct stivale2_smp_info {
+    uint32_t acpi_processor_uid; // ACPI Processor UID as specified by MADT
+    uint32_t lapic_id;           // LAPIC ID as specified by MADT
+    uint64_t target_stack;       // The stack that will be loaded in ESP/RSP
+                                 // once the goto_address field is loaded.
+                                 // This MUST point to a valid stack of at least
+                                 // 256 bytes in size, and 16-byte aligned.
+                                 // target_stack is an unused field for the
+                                 // struct describing the BSP (lapic_id == 0)
+    uint64_t goto_address;       // This address is polled by the started APs
+                                 // until the kernel on another CPU performs an
+                                 // atomic write to this field.
+                                 // When that happens, bootloader code will
+                                 // load up ESP/RSP with the stack value as
+                                 // specified in target_stack.
+                                 // It will then proceed to load a pointer to
+                                 // this very structure into either register
+                                 // RDI for 64-bit or on the stack for 32-bit,
+                                 // then, goto_address is called (a bogus return
+                                 // address is pushed onto the stack) and execution
+                                 // is handed off.
+                                 // The CPU state will be the same as described
+                                 // in kernel entry machine state, with the exception
+                                 // of ESP/RSP and RDI/stack arg being set up as
+                                 // above.
+                                 // goto_address is an unused field for the
+                                 // struct describing the BSP.
+    uint64_t extra_argument;     // This field is here for the kernel to use
+                                 // for whatever it wants. Writes here should
+                                 // be performed before writing to goto_address
+                                 // so that the receiving processor can safely
+                                 // retrieve the data.
+                                 // extra_argument is an unused field for the
+                                 // struct describing the BSP.
+} __attribute__((packed));
+```
+
+#### MMIO32 UART tag
+
+This tag reports that there is a memory mapped UART port and its address. To write to this port, write the character, zero extended to a 32 bit unsigned integer to the address provided.
+
+```c
+struct stivale2_struct_tag_mmio32_uart {
+    uint64_t identifier;        // Identifier: 0xb813f9b8dbc78797
+    uint64_t next;
+    uint64_t addr;              // The address of the UART port
+} __attribute__((packed));
+```
+
+#### Device tree blob tag
+
+This tag describes a device tree blob for the platform.
+
+```c
+struct stivale2_struct_tag_dtb {
+    uint64_t identifier;        // Identifier: 0xabb29bd49a2833fa
+    uint64_t next;
+    uint64_t addr;              // The address of the dtb
+    uint64_t size;              // The size of the dtb
 } __attribute__((packed));
 ```

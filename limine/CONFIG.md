@@ -21,9 +21,17 @@ Some *local assignments* are shared between entries using any *protocol*, while 
 
 *Globally assignable* keys are:
 * `TIMEOUT` - Specifies the timeout in seconds before the first *entry* is automatically booted.
+* `DEFAULT_ENTRY` - 0-based entry index of the entry which will be automatically selected at startup. If unspecified, it is `0`.
+* `GRAPHICS` - If set to `yes`, do use graphical VESA framebuffer for the boot menu, else use text mode.
+* `THEME_BLACK`, `THEME_RED`, `THEME_GREEN`, `THEME_BROWN`, `THEME_BLUE`, `THEME_MAGENTA`, `THEME_CYAN`, `THEME_GREY` - Specifies the colors used by the terminal (RRGGBB). Ignored if `GRAPHICS` is not `yes`.
+* `THEME_MARGIN` - Set the amount of margin around the terminal. Ignored if `GRAPHICS` is not `yes`.
+* `THEME_MARGIN_GRADIENT` - Set the thickness in pixel for the gradient around the terminal. Ignored if `GRAPHICS` is not `yes`.
+* `BACKGROUND_DRIVE` - Drive where to find the background .BMP file. Assume boot drive if unspecified. Ignored if `GRAPHICS` is not `yes`.
+* `BACKGROUND_PARTITION` - Partition where to find the background .BMP file. Ignored if `GRAPHICS` is not `yes`.
+* `BACKGROUND_PATH` - Path where to find the background .BMP file. Ignored if `GRAPHICS` is not `yes`.
 
 *Locally assignable (non protocol specific)* keys are:
-* `PROTOCOL` - The boot protocol that will be used to boot the kernel. Valid protocols are: `linux`, `stivale`, `chainload`.
+* `PROTOCOL` - The boot protocol that will be used to boot the kernel. Valid protocols are: `linux`, `stivale`, `stivale2`, `chainload`.
 * `KERNEL_PROTO` - Alias of `PROTOCOL`.
 * `CMDLINE` - The command line string to be passed to the kernel. Can be omitted.
 * `KERNEL_CMDLINE` - Alias of `CMDLINE`.
@@ -35,7 +43,7 @@ Some *local assignments* are shared between entries using any *protocol*, while 
   * `KERNEL_PATH` - The path of the kernel in said partition, forward slashes to delimit directories.
   * `INITRD_PARTITION` - Partition index of the initial ramdisk.
   * `INITRD_PATH` - The path to the initial ramdisk.
-* stivale protocol:
+* stivale and stivale2 protocols:
   * `KERNEL_DRIVE` - The BIOS drive (in decimal) where the kernel resides (if unspecified, boot drive is assumed).
   * `KERNEL_PARTITION` - The index (in decimal) of the partition containing the kernel.
   * `KERNEL_PATH` - The path of the kernel in said partition, forward slashes to delimit directories.

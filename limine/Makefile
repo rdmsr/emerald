@@ -1,5 +1,6 @@
 CC = cc
 CFLAGS = -O2 -pipe -Wall -Wextra
+PATH := $(shell pwd)/toolchain/bin:$(PATH)
 
 .PHONY: all clean stage2 stage2-clean decompressor decompressor-clean toolchain test.img echfs-test ext2-test fat32-test
 
@@ -7,8 +8,11 @@ all: stage2 decompressor
 	gzip -n -9 < stage2/stage2.bin > stage2/stage2.bin.gz
 	cd bootsect && nasm bootsect.asm -fbin -o ../limine.bin
 
-clean: stage2-clean decompressor-clean
+clean: stage2-clean decompressor-clean test-clean
 	rm -f stage2/stage2.bin.gz
+
+distclean: clean
+	rm limine-install
 
 stage2:
 	$(MAKE) -C stage2 all
@@ -21,6 +25,9 @@ decompressor:
 
 decompressor-clean:
 	$(MAKE) -C decompressor clean
+
+test-clean:
+	$(MAKE) -C test clean
 
 toolchain:
 	cd toolchain && ./make_toolchain.sh -j`nproc`
@@ -39,8 +46,9 @@ echfs-test: limine-install test.img
 	echfs-utils -m -p0 test.img quick-format 512
 	echfs-utils -m -p0 test.img import test/test.elf boot/test.elf
 	echfs-utils -m -p0 test.img import test/limine.cfg limine.cfg
+	echfs-utils -m -p0 test.img import test/bg.bmp bg.bmp
 	./limine-install limine.bin test.img
-	qemu-system-x86_64 -hda test.img -debugcon stdio -enable-kvm
+	qemu-system-x86_64 -net none -smp 4 -enable-kvm -cpu host -hda test.img -debugcon stdio
 
 ext2-test: limine-install test.img
 	$(MAKE) -C test
@@ -58,7 +66,7 @@ ext2-test: limine-install test.img
 	sudo losetup -d `cat loopback_dev`
 	rm -rf test_image loopback_dev
 	./limine-install limine.bin test.img
-	qemu-system-x86_64 -hda test.img -debugcon stdio
+	qemu-system-x86_64 -net none -smp 4 -enable-kvm -cpu host -hda test.img -debugcon stdio
 
 fat32-test: limine-install test.img
 	$(MAKE) -C test
@@ -76,4 +84,4 @@ fat32-test: limine-install test.img
 	sudo losetup -d `cat loopback_dev`
 	rm -rf test_image loopback_dev
 	./limine-install limine.bin test.img
-	qemu-system-x86_64 -hda test.img -debugcon stdio
+	qemu-system-x86_64 -net none -smp 4 -enable-kvm -cpu host -hda test.img -debugcon stdio

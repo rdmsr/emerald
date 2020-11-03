@@ -8,32 +8,122 @@
 #include <lib/libc.h>
 #include <lib/config.h>
 #include <lib/term.h>
+#include <lib/readline.h>
+#include <mm/pmm.h>
+#include <drivers/vbe.h>
 
 static char *cmdline;
 #define CMDLINE_MAX 1024
 
 static char config_entry_name[1024];
 
-char *menu(void) {
-    cmdline = balloc(CMDLINE_MAX);
+char *menu(int boot_drive) {
+    cmdline = conv_mem_alloc(CMDLINE_MAX);
 
     char buf[16];
 
-    if (config_get_value(buf, 0, 16, "GRAPHICS")) {
-        if (!strcmp(buf, "on")) {
-            term_vbe();
-        }
+    int selected_entry = 0;
+    if (config_get_value(buf, 0, 16, "DEFAULT_ENTRY")) {
+        selected_entry = (int)strtoui(buf);
     }
 
-    int timeout;
-    if (!config_get_value(buf, 0, 16, "TIMEOUT")) {
-        timeout = 5;
-    } else {
+    int timeout = 5;
+    if (config_get_value(buf, 0, 16, "TIMEOUT")) {
         timeout = (int)strtoui(buf);
     }
 
+    if (!timeout)
+        goto autoboot;
+
+    // If there is GRAPHICS config key and the value is "yes", enable graphics
+    if (config_get_value(buf, 0, 16, "GRAPHICS") && !strcmp(buf, "yes")) {
+        // default scheme
+        int margin = 64;
+        int margin_gradient = 20;
+        uint32_t colourscheme[] = {
+            0x00000000, // black
+            0x00aa0000, // red
+            0x0000aa00, // green
+            0x00aa5500, // brown
+            0x000000aa, // blue
+            0x00aa00aa, // magenta
+            0x0000aaaa, // cyan
+            0x00aaaaaa  // grey
+        };
+
+        if (config_get_value(buf, 0, 16, "THEME_BLACK")) {
+            colourscheme[0] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_RED")) {
+            colourscheme[1] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_GREEN")) {
+            colourscheme[2] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_BROWN")) {
+            colourscheme[3] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_BLUE")) {
+            colourscheme[4] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_MAGENTA")) {
+            colourscheme[5] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_CYAN")) {
+            colourscheme[6] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_GREY")) {
+            colourscheme[7] = (int)strtoui16(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_MARGIN")) {
+            margin = (int)strtoui(buf);
+        }
+
+        if (config_get_value(buf, 0, 16, "THEME_MARGIN_GRADIENT")) {
+            margin_gradient = (int)strtoui(buf);
+        }
+
+        int bg_drive;
+        if (!config_get_value(buf, 0, 16, "BACKGROUND_DRIVE")) {
+            bg_drive = boot_drive;
+        } else {
+            bg_drive = (int)strtoui(buf);
+        }
+        int bg_part;
+        if (!config_get_value(buf, 0, 16, "BACKGROUND_PARTITION")) {
+            goto nobg;
+        } else {
+            bg_part = (int)strtoui(buf);
+        }
+        if (!config_get_value(cmdline, 0, CMDLINE_MAX, "BACKGROUND_PATH"))
+            goto nobg;
+
+        struct file_handle *bg_file = conv_mem_alloc(sizeof(struct file_handle));
+        if (fopen(bg_file, bg_drive, bg_part, cmdline))
+            goto nobg;
+
+        struct image *bg = conv_mem_alloc(sizeof(struct image));
+        if (open_image(bg, bg_file))
+            goto nobg;
+
+        term_vbe(colourscheme, margin, margin_gradient, bg);
+        goto yesbg;
+
+    nobg:
+        term_vbe(colourscheme, margin, margin_gradient, NULL);
+
+    yesbg:;
+    }
+
     disable_cursor();
-    int selected_entry = 0;
     bool skip_timeout = false;
 
 refresh:
@@ -55,23 +145,26 @@ refresh:
     if (max_entries == 0)
         panic("Config contains no entries.");
 
-    print("\n");
+    print("\nArrows to choose, enter to select, 'e' to edit command line.");
+
+    int c;
 
     if (skip_timeout == false) {
+        print("\n\n");
         for (int i = timeout; i; i--) {
             print("\rBooting automatically in %u, press any key to stop the countdown...", i);
-            if (pit_sleep_and_quit_on_keypress(18)) {
+            if ((c = pit_sleep_and_quit_on_keypress(18))) {
                 skip_timeout = true;
-                goto refresh;
+                print("\e[2K\r\e[2A");
+                goto timeout_aborted;
             }
         }
         goto autoboot;
     }
 
-    print("Arrows to choose, enter to select, 'e' to edit command line.");
-
     for (;;) {
-        int c = getchar();
+        c = getchar();
+timeout_aborted:
         switch (c) {
             case GETCHAR_CURSOR_UP:
                 if (--selected_entry == -1)
@@ -91,7 +184,6 @@ refresh:
                     }
                 }
                 clear(true);
-                term_textmode();
                 return cmdline;
             case 'e':
                 config_set_entry(selected_entry);
@@ -102,9 +194,8 @@ refresh:
                     }
                 }
                 print("\n\n> ");
-                gets(cmdline, cmdline, CMDLINE_MAX);
+                readline(cmdline, cmdline, CMDLINE_MAX);
                 clear(true);
-                term_textmode();
                 return cmdline;
         }
     }

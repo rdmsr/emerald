@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <lib/print.h>
 #include <lib/blib.h>
-#include <lib/cio.h>
+#include <sys/cpu.h>
 #include <lib/term.h>
 
 static const char *base_digits = "0123456789abcdef";
@@ -111,8 +111,9 @@ void print(const char *fmt, ...) {
     va_end(args);
 }
 
+static char print_buf[PRINT_BUF_MAX];
+
 void vprint(const char *fmt, va_list args) {
-    char  *print_buf = balloc(PRINT_BUF_MAX);
     size_t print_buf_i = 0;
 
     for (;;) {
@@ -171,8 +172,6 @@ out:
 
 #ifdef E9_OUTPUT
     for (size_t i = 0; i < print_buf_i; i++)
-        port_out_b(0xe9, print_buf[i]);
+        outb(0xe9, print_buf[i]);
 #endif
-
-    brewind(PRINT_BUF_MAX);
 }

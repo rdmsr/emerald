@@ -6,47 +6,54 @@
 #include <lib/blib.h>
 #include <lib/part.h>
 #include <lib/print.h>
+#include <mm/pmm.h>
 
-#define SECTOR_SIZE 512
 #define BLOCK_SIZE_IN_SECTORS 16
-#define BLOCK_SIZE  (SECTOR_SIZE * BLOCK_SIZE_IN_SECTORS)
+#define BLOCK_SIZE (sector_size * BLOCK_SIZE_IN_SECTORS)
 
 #define CACHE_INVALID (~((uint64_t)0))
 
 static uint8_t *cache        = NULL;
 static uint64_t cached_block = CACHE_INVALID;
 
-static struct {
+struct dap {
     uint16_t size;
     uint16_t count;
     uint16_t offset;
     uint16_t segment;
     uint64_t lba;
-} dap = { 16, BLOCK_SIZE_IN_SECTORS, 0, 0, 0 };
+};
 
-static int cache_block(int drive, uint64_t block) {
+static struct dap *dap = NULL;
+
+static int cache_block(int drive, uint64_t block, int sector_size) {
     if (block == cached_block)
         return 0;
 
-    if (!cache)
-        cache = balloc_aligned(BLOCK_SIZE, 16);
+    if (!dap) {
+        dap = conv_mem_alloc(sizeof(struct dap));
+        dap->size  = 16;
+        dap->count = BLOCK_SIZE_IN_SECTORS;
+    }
 
-    dap.segment = rm_seg(cache);
-    dap.offset  = rm_off(cache);
-    dap.lba     = block * BLOCK_SIZE_IN_SECTORS;
+    if (!cache)
+        cache = conv_mem_alloc_aligned(BLOCK_SIZE, 16);
+
+    dap->segment = rm_seg(cache);
+    dap->offset  = rm_off(cache);
+    dap->lba     = block * BLOCK_SIZE_IN_SECTORS;
 
     struct rm_regs r = {0};
     r.eax = 0x4200;
     r.edx = drive;
-    r.esi = (uint32_t)&dap;
+    r.esi = (uint32_t)rm_off(dap);
+    r.ds  = rm_seg(dap);
 
     rm_int(0x13, &r, &r);
 
     if (r.eflags & EFLAGS_CF) {
         int ah = (r.eax >> 8) & 0xff;
-        panic("Disk error %x. Drive %x, LBA %x.\n", ah, drive, dap.lba);
-        cached_block = CACHE_INVALID;
-        return ah;
+        panic("Disk error %x. Drive %x, LBA %x.\n", ah, drive, dap->lba);
     }
 
     cached_block = block;
@@ -55,12 +62,31 @@ static int cache_block(int drive, uint64_t block) {
 }
 
 int read(int drive, void *buffer, uint64_t loc, uint64_t count) {
+    struct rm_regs r = {0};
+    struct bios_drive_params drive_params;
+
+    r.eax = 0x4800;
+    r.edx = drive;
+    r.ds  = rm_seg(&drive_params);
+    r.esi = rm_off(&drive_params);
+
+    drive_params.buf_size = sizeof(struct bios_drive_params);
+
+    rm_int(0x13, &r, &r);
+
+    if (r.eflags & EFLAGS_CF) {
+        int ah = (r.eax >> 8) & 0xff;
+        panic("Disk error %x. Drive %x.\n", ah, drive);
+    }
+
+    int sector_size = drive_params.bytes_per_sect;
+
     uint64_t progress = 0;
     while (progress < count) {
         uint64_t block = (loc + progress) / BLOCK_SIZE;
 
         int ret;
-        if ((ret = cache_block(drive, block)))
+        if ((ret = cache_block(drive, block, sector_size)))
             return ret;
 
         uint64_t chunk = count - progress;

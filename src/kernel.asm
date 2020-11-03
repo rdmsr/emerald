@@ -1,9 +1,7 @@
 bits 64
 section .text
 global start
-global read_port
 global write_port
-global load_idt
 global isr
 global isr_irq_master
 global isr_irq_slave

@@ -14,19 +14,16 @@ stivale will recognise whether the ELF file is 32-bit or 64-bit and load the ker
 into the appropriate CPU mode.
 
 stivale natively supports (only for 64-bit kernels) and encourages higher half kernels.
-The kernel can load itself at `0xffffffff80100000` (as defined in the linker script)
+The kernel can load itself at `0xffffffff80000000` (as defined in the linker script)
 and the bootloader will take care of everything, no AT linker script directives needed.
 
-If the kernel loads itself in the lower half (`0x100000` or higher), the bootloader
-will not perform the higher half relocation.
+If the kernel loads itself in the lower half, the bootloader will not perform the
+higher half relocation.
 
-The kernel MUST NOT overwrite anything below `0x100000` (physical memory) as that
-is where the bootloader memory structures reside.
-Once the kernel is DONE depending on the bootloader (for page tables, structures, ...)
-then these areas can be reclaimed if one wants.
-
-The kernel MUST NOT request to load itself at an address lower than `0x100000`
-(or `0xffffffff80100000` for higher half kernels) for the same reasons as above.
+*Note: In order to maintain compatibility with Limine and other stivale-compliant*
+*bootloaders it is strongly advised never to load the kernel or any of its*
+*sections below the 1 MiB physical memory mark. This may work with some stivale*
+*loaders, but it WILL NOT work with Limine and it's explicitly discouraged.*
 
 ## Kernel entry machine state
 
@@ -39,11 +36,11 @@ the value of `entry_point`.
 At entry, the bootloader will have setup paging mappings as such:
 
 ```
- Base Physical Address -                      Size                      ->  Virtual address
-  0x0000000000000000   -   4 GiB plus any additional memory map entry   ->  0x0000000000000000
-  0x0000000000000000   -   4 GiB plus any additional memory map entry   ->  0xffff800000000000 (4-level paging only)
-  0x0000000000000000   -   4 GiB plus any additional memory map entry   ->  0xff00000000000000 (5-level paging only)
-  0x0000000000000000   -                   0x80000000                   ->  0xffffffff80000000
+ Base Physical Address -                    Size                    ->  Virtual address
+  0x0000000000000000   - 4 GiB plus any additional memory map entry -> 0x0000000000000000
+  0x0000000000000000   - 4 GiB plus any additional memory map entry -> 0xffff800000000000 (4-level paging only)
+  0x0000000000000000   - 4 GiB plus any additional memory map entry -> 0xff00000000000000 (5-level paging only)
+  0x0000000000000000   -                 0x80000000                 -> 0xffffffff80000000
 ```
 
 If the kernel is dynamic and not statically linked, the bootloader will relocate it.
@@ -72,7 +69,9 @@ The A20 gate is enabled.
 
 PIC/APIC IRQs are all masked.
 
-`rsp` is set to the requested stack as per stivale header.
+`rsp` is set to the requested stack as per stivale header. If the requested value is
+non-null, an invalid return address of 0 is pushed to the stack before jumping
+to the kernel.
 
 `rdi` will point to the stivale structure (described below).
 
@@ -100,12 +99,33 @@ The A20 gate is enabled.
 
 PIC/APIC IRQs are all masked.
 
-`esp` is set to the requested stack as per stivale header.
+`esp` is set to the requested stack as per stivale header. An invalid return address
+of 0 is pushed to the stack before jumping to the kernel.
 
 A pointer to the stivale structure (described below) is pushed onto this stack
 before the entry point is called.
 
 All other general purpose registers are set to 0.
+
+## Bootloader-reserved memory
+
+In order for stivale to function, it needs to reserve memory areas for either internal
+usage (such as page tables, GDT, SMP), or for kernel interfacing (such as returned
+structures).
+
+stivale ensures that none of these areas are found in any of the sections
+marked as "usable" in the memory map.
+
+The location of these areas may vary and it is implementation specific;
+these areas may be in any non-usable memory map section, or in unmarked memory.
+
+The OS must make sure to be done consuming bootloader information and services
+before switching to its own address space, as unmarked memory areas in use by
+the bootloader may become unavailable.
+
+Once the OS is done needing the bootloader, memory map areas marked as "bootloader
+reclaimable" may be used as usable memory. These areas are not guaranteed to be
+aligned, but they are guaranteed to not overlap other sections of the memory map.
 
 ## stivale header (.stivalehdr)
 
@@ -115,8 +135,12 @@ the header that the bootloader will parse.
 Said header looks like this:
 ```c
 struct stivale_header {
-    uint64_t stack;   // This is the stack address which will be in RSP
+    uint64_t stack;   // This is the stack address which will be in ESP/RSP
                       // when the kernel is loaded.
+                      // It can only be set to NULL for 64-bit kernels. 32-bit
+                      // kernels are mandated to provide a vaild stack.
+                      // 64-bit and 32-bit valid stacks must be at least 256 bytes
+                      // in usable space and must be 16 byte aligned addresses.
 
     uint16_t flags;   // Flags
                       // bit 0  0 = text mode, 1 = graphics framebuffer mode
@@ -173,12 +197,13 @@ struct mmap_entry {
 `type` is an enumeration that can have the following values:
 
 ```
-1  - Usable RAM
-2  - Reserved
-3  - ACPI reclaimable
-4  - ACPI NVS
-5  - Bad memory
-10 - Kernel/Modules
+1      - Usable RAM
+2      - Reserved
+3      - ACPI reclaimable
+4      - ACPI NVS
+5      - Bad memory
+10     - Kernel/Modules
+0x1000 - Bootloader Reclaimable
 ```
 
 All other values are undefined.

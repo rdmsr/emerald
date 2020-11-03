@@ -30,8 +30,3 @@ static unsigned char EmeraldASM_inb(unsigned short port);
 void EmeraldDevices_keyboard_Keyboard_init(void);
 void EmeraldPIC_sendEOI(unsigned char irq);
 void EmeraldDevices_keyboard_Keyboard_handler_main(void *nothing);
-
-extern void kprint(const char *str,int color);
-extern void kprint_newline(void);
-extern void kprint_load(char *str,bool error);
-extern void clear_screen(void);

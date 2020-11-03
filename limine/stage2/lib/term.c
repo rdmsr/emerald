@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <lib/term.h>
 #include <lib/real.h>
+#include <lib/image.h>
 #include <drivers/vga_textmode.h>
 #include <drivers/vbe.h>
 
@@ -21,11 +22,11 @@ void (*get_cursor_pos)(int *x, int *y);
 void (*set_text_fg)(int fg);
 void (*set_text_bg)(int bg);
 
-static int rows, cols;
+int term_rows, term_cols;
 
-void term_vbe(void) {
+void term_vbe(uint32_t *colours, int margin, int margin_gradient, struct image *background) {
     term_deinit();
-    vbe_tty_init(&rows, &cols);
+    vbe_tty_init(&term_rows, &term_cols, colours, margin, margin_gradient, background);
 
     raw_putchar    = vbe_putchar;
     clear          = vbe_clear;
@@ -41,7 +42,7 @@ void term_vbe(void) {
 
 void term_textmode(void) {
     term_deinit();
-    init_vga_textmode(&rows, &cols);
+    init_vga_textmode(&term_rows, &term_cols);
 
     raw_putchar    = text_putchar;
     clear          = text_clear;
@@ -112,6 +113,12 @@ static void term_putchar(char c) {
 }
 
 static void sgr(void) {
+    if (esc_value0 == 0){
+        set_text_bg(0);
+        set_text_fg(7);
+        return;
+    }
+
     if (esc_value0 >= 30 && esc_value0 <= 37) {
         set_text_fg(esc_value0 - 30);
         return;
@@ -149,16 +156,16 @@ static void escape_parse(char c) {
         case 'B':
             if (esc_default0)
                 esc_value0 = 1;
-            if ((get_cursor_pos_y() + esc_value0) > (rows - 1))
-                esc_value0 = (rows - 1) - get_cursor_pos_y();
+            if ((get_cursor_pos_y() + esc_value0) > (term_rows - 1))
+                esc_value0 = (term_rows - 1) - get_cursor_pos_y();
             set_cursor_pos(get_cursor_pos_x(),
                                 get_cursor_pos_y() + esc_value0);
             break;
         case 'C':
             if (esc_default0)
                 esc_value0 = 1;
-            if ((get_cursor_pos_x() + esc_value0) > (cols - 1))
-                esc_value0 = (cols - 1) - get_cursor_pos_x();
+            if ((get_cursor_pos_x() + esc_value0) > (term_cols - 1))
+                esc_value0 = (term_cols - 1) - get_cursor_pos_x();
             set_cursor_pos(get_cursor_pos_x() + esc_value0,
                                 get_cursor_pos_y());
             break;
@@ -177,10 +184,10 @@ static void escape_parse(char c) {
                 esc_value0 = 0;
             if (esc_default1)
                 esc_value1 = 0;
-            if (esc_value1 >= cols)
-                esc_value1 = cols - 1;
-            if (esc_value0 >= rows)
-                esc_value0 = rows - 1;
+            if (esc_value1 >= term_cols)
+                esc_value1 = term_cols - 1;
+            if (esc_value0 >= term_rows)
+                esc_value0 = term_rows - 1;
             set_cursor_pos(esc_value1, esc_value0);
             break;
         case 'm':
@@ -193,6 +200,19 @@ static void escape_parse(char c) {
                     break;
                 default:
                     break;
+            }
+            break;
+        case 'K':
+            switch (esc_value0) {
+                case 2: {
+                    int x = get_cursor_pos_x();
+                    int y = get_cursor_pos_y();
+                    set_cursor_pos(0, y);
+                    for (int i = 0; i < term_cols; i++)
+                        raw_putchar(' ');
+                    set_cursor_pos(x, y);
+                    break;
+                }
             }
             break;
         default:

@@ -1,20 +1,3 @@
-#include <lib/asm.h>
-
-ASM_BASIC(
-    ".section .entry\n\t"
-
-    "cld\n\t"
-
-    // Zero out .bss
-    "xor al, al\n\t"
-    "mov edi, OFFSET bss_begin\n\t"
-    "mov ecx, OFFSET bss_end\n\t"
-    "sub ecx, OFFSET bss_begin\n\t"
-    "rep stosb\n\t"
-
-    "jmp main\n\t"
-);
-
 #include <limine.h>
 #include <lib/term.h>
 #include <lib/real.h>
@@ -22,21 +5,28 @@ ASM_BASIC(
 #include <lib/libc.h>
 #include <lib/part.h>
 #include <lib/config.h>
-#include <lib/e820.h>
-#include <lib/memmap.h>
+#include <sys/e820.h>
+#include <sys/a20.h>
 #include <lib/print.h>
 #include <fs/file.h>
 #include <lib/elf.h>
+#include <mm/pmm.h>
+#include <mm/mtrr.h>
 #include <protos/stivale.h>
 #include <protos/stivale2.h>
 #include <protos/linux.h>
 #include <protos/chainload.h>
 #include <menu.h>
 
-void main(int boot_drive) {
+void entry(int boot_drive) {
+    mtrr_save();
+
     term_textmode();
 
     print("Limine " LIMINE_VERSION "\n\n");
+
+    if (!a20_enable())
+        panic("Could not enable A20 line");
 
     print("Boot drive: %x\n", boot_drive);
 
@@ -63,7 +53,7 @@ void main(int boot_drive) {
     init_e820();
     init_memmap();
 
-    char *cmdline = menu();
+    char *cmdline = menu(boot_drive);
 
     char proto[32];
     if (!config_get_value(proto, 0, 32, "KERNEL_PROTO")) {

@@ -2,11 +2,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <drivers/vbe.h>
-#include <lib/memmap.h>
 #include <lib/libc.h>
 #include <lib/blib.h>
 #include <lib/real.h>
 #include <lib/print.h>
+#include <lib/image.h>
+#include <mm/pmm.h>
+#include <mm/mtrr.h>
 
 #define VGA_FONT_WIDTH  8
 #define VGA_FONT_HEIGHT 16
@@ -22,10 +24,12 @@ static void vga_font_retrieve(void) {
     r.ebx = 0x0600;
     rm_int(0x10, &r, &r);
 
-    vga_font = ext_mem_balloc(VGA_FONT_MAX);
+    vga_font = ext_mem_alloc(VGA_FONT_MAX);
 
     memcpy(vga_font, (void *)rm_desegment(r.es, r.ebp), VGA_FONT_MAX);
 }
+
+static uint32_t ansi_colours[8];
 
 static uint32_t *vbe_framebuffer;
 static uint16_t  vbe_pitch;
@@ -33,29 +37,9 @@ static uint16_t  vbe_width = 0;
 static uint16_t  vbe_height = 0;
 static uint16_t  vbe_bpp = 0;
 
-void vbe_plot_px(int x, int y, uint32_t hex) {
-    size_t fb_i = x + (vbe_pitch / sizeof(uint32_t)) * y;
+static int frame_height, frame_width;
 
-    vbe_framebuffer[fb_i] = hex;
-}
-
-struct vbe_char {
-    char c;
-    uint32_t fg;
-    uint32_t bg;
-};
-
-void vbe_plot_char(struct vbe_char c, int x, int y) {
-    int orig_x = x;
-    uint8_t *glyph = &vga_font[c.c * VGA_FONT_HEIGHT];
-
-    for (int i = 0; i < VGA_FONT_HEIGHT; i++) {
-        for (int j = VGA_FONT_WIDTH - 1; j >= 0; j--)
-            vbe_plot_px(x++, y, (glyph[i] & (1 << j)) ? c.fg : c.bg);
-        y++;
-        x = orig_x;
-    }
-}
+static struct image *background;
 
 static struct vbe_char *grid;
 
@@ -66,21 +50,145 @@ static int cursor_y;
 
 static uint32_t cursor_fg = 0x00000000;
 static uint32_t cursor_bg = 0x00ffffff;
-static uint32_t text_fg   = 0x00ffffff;
-static uint32_t text_bg   = 0x00000000;
+static uint32_t text_fg;
+static uint32_t text_bg;
 
 static int rows;
 static int cols;
+static int margin_gradient;
 
-static void plot_char_grid(struct vbe_char c, int x, int y) {
-    vbe_plot_char(c, x * VGA_FONT_WIDTH, y * VGA_FONT_HEIGHT);
-    grid[x + y * cols] = c;
+#define A(rgb) (uint8_t)(rgb >> 24)
+#define R(rgb) (uint8_t)(rgb >> 16)
+#define G(rgb) (uint8_t)(rgb >> 8)
+#define B(rgb) (uint8_t)(rgb)
+#define ARGB(a, r, g, b) (a << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF)
+
+static inline uint32_t colour_blend(uint32_t fg, uint32_t bg) {
+    unsigned alpha = 255 - A(fg);
+    unsigned inv_alpha = A(fg) + 1;
+
+    uint8_t r = (uint8_t)((alpha * R(fg) + inv_alpha * R(bg)) / 256);
+    uint8_t g = (uint8_t)((alpha * G(fg) + inv_alpha * G(bg)) / 256);
+    uint8_t b = (uint8_t)((alpha * B(fg) + inv_alpha * B(bg)) / 256);
+
+    return ARGB(0, r, g, b);
+}
+
+void vbe_plot_px(int x, int y, uint32_t hex) {
+    size_t fb_i = x + (vbe_pitch / sizeof(uint32_t)) * y;
+
+    vbe_framebuffer[fb_i] = hex;
+}
+
+static void _vbe_plot_bg_blent_px(int x, int y, uint32_t hex) {
+    vbe_plot_px(x, y, colour_blend(hex, background->get_pixel(background, x, y)));
+}
+
+void (*vbe_plot_bg_blent_px)(int x, int y, uint32_t hex) = vbe_plot_px;
+
+static uint32_t blend_gradient_from_box(int x, int y, uint32_t hex) {
+    if (x >= frame_width  && x < frame_width  + VGA_FONT_WIDTH  * cols
+     && y >= frame_height && y < frame_height + VGA_FONT_HEIGHT * rows) {
+        return hex;
+    }
+
+    uint32_t bg_px = background->get_pixel(background, x, y);
+
+    if (margin_gradient == 0)
+        return bg_px;
+
+    int distance, x_distance, y_distance;
+
+    if (x < frame_width)
+        x_distance = frame_width - x;
+    else
+        x_distance = x - (frame_width + VGA_FONT_WIDTH * cols);
+
+    if (y < frame_height)
+        y_distance = frame_height - y;
+    else
+        y_distance = y - (frame_height + VGA_FONT_HEIGHT * rows);
+
+    if (x >= frame_width && x < frame_width + VGA_FONT_WIDTH * cols) {
+        distance = y_distance;
+    } else if (y >= frame_height && y < frame_height + VGA_FONT_HEIGHT * rows) {
+        distance = x_distance;
+    } else {
+        distance = sqrt((uint64_t)x_distance * (uint64_t)x_distance
+                      + (uint64_t)y_distance * (uint64_t)y_distance);
+    }
+
+    if (distance > margin_gradient)
+        return bg_px;
+
+    uint8_t gradient_step = (0xff - A(hex)) / margin_gradient;
+    uint8_t new_alpha     = A(hex) + gradient_step * distance;
+
+    return colour_blend((hex & 0xffffff) | (new_alpha << 24), bg_px);
+}
+
+void vbe_plot_background(int x, int y, int width, int height) {
+    if (background) {
+        for (int yy = 0; yy < height; yy++) {
+            for (int xx = 0; xx < width; xx++) {
+                vbe_plot_px(x + xx, y + yy, blend_gradient_from_box(xx, yy, text_bg));
+            }
+        }
+    } else {
+        for (int yy = 0; yy < height; yy++) {
+            for (int xx = 0; xx < width; xx++) {
+                vbe_plot_px(x + xx, y + yy, text_bg);
+            }
+        }
+    }
+}
+
+void vbe_plot_rect(int x, int y, int width, int height, uint32_t hex) {
+    for (int yy = 0; yy < height; yy++) {
+        for (int xx = 0; xx < width; xx++) {
+            vbe_plot_px(x + xx, y + yy, hex);
+        }
+    }
+}
+
+void vbe_plot_bg_blent_rect(int x, int y, int width, int height, uint32_t hex) {
+    for (int yy = 0; yy < height; yy++) {
+        for (int xx = 0; xx < width; xx++) {
+            vbe_plot_bg_blent_px(x + xx, y + yy, hex);
+        }
+    }
+}
+
+struct vbe_char {
+    char c;
+    uint32_t fg;
+    uint32_t bg;
+};
+
+void vbe_plot_char(struct vbe_char *c, int x, int y) {
+    uint8_t *glyph = &vga_font[c->c * VGA_FONT_HEIGHT];
+
+    vbe_plot_bg_blent_rect(x, y, VGA_FONT_WIDTH, VGA_FONT_HEIGHT, c->bg);
+
+    for (int i = 0; i < VGA_FONT_HEIGHT; i++) {
+        for (int j = 0; j < VGA_FONT_WIDTH; j++) {
+            if ((glyph[i] & (0x80 >> j)))
+                vbe_plot_bg_blent_px(x + j, y + i, c->fg);
+        }
+    }
+}
+
+static void plot_char_grid(struct vbe_char *c, int x, int y) {
+    vbe_plot_char(c, x * VGA_FONT_WIDTH + frame_width,
+                     y * VGA_FONT_HEIGHT + frame_height);
+    grid[x + y * cols] = *c;
 }
 
 static void clear_cursor(void) {
     if (cursor_status) {
-        vbe_plot_char(grid[cursor_x + cursor_y * cols],
-                  cursor_x * VGA_FONT_WIDTH, cursor_y * VGA_FONT_HEIGHT);
+        vbe_plot_char(&grid[cursor_x + cursor_y * cols],
+                      cursor_x * VGA_FONT_WIDTH + frame_width,
+                      cursor_y * VGA_FONT_HEIGHT + frame_height);
     }
 }
 
@@ -89,14 +197,15 @@ static void draw_cursor(void) {
     c.fg = cursor_fg;
     c.bg = cursor_bg;
     if (cursor_status)
-        vbe_plot_char(c, cursor_x * VGA_FONT_WIDTH, cursor_y * VGA_FONT_HEIGHT);
+        vbe_plot_char(&c, cursor_x * VGA_FONT_WIDTH + frame_width,
+                          cursor_y * VGA_FONT_HEIGHT + frame_height);
 }
 
 static void scroll(void) {
     clear_cursor();
 
     for (int i = cols; i < rows * cols; i++) {
-        plot_char_grid(grid[i], (i - cols) % cols, (i - cols) / cols);
+        plot_char_grid(&grid[i], (i - cols) % cols, (i - cols) / cols);
     }
 
     // Clear the last line of the screen.
@@ -105,7 +214,7 @@ static void scroll(void) {
     empty.fg = text_fg;
     empty.bg = text_bg;
     for (int i = rows * cols - cols; i < rows * cols; i++) {
-        plot_char_grid(empty, i % cols, i / cols);
+        plot_char_grid(&empty, i % cols, i / cols);
     }
 
     draw_cursor();
@@ -119,7 +228,7 @@ void vbe_clear(bool move) {
     empty.fg = text_fg;
     empty.bg = text_bg;
     for (int i = 0; i < rows * cols; i++) {
-        plot_char_grid(empty, i % cols, i / cols);
+        plot_char_grid(&empty, i % cols, i / cols);
     }
 
     if (move) {
@@ -151,17 +260,6 @@ void vbe_get_cursor_pos(int *x, int *y) {
     *x = cursor_x;
     *y = cursor_y;
 }
-
-static uint32_t ansi_colours[] = {
-    0x00000000,              // black
-    0x00aa0000,              // red
-    0x0000aa00,              // green
-    0x00aa5500,              // brown
-    0x000000aa,              // blue
-    0x00aa00aa,              // magenta
-    0x0000aaaa,              // cyan
-    0x00aaaaaa               // grey
-};
 
 void vbe_set_text_fg(int fg) {
     text_fg = ansi_colours[fg];
@@ -202,7 +300,7 @@ void vbe_putchar(char c) {
             ch.c  = c;
             ch.fg = text_fg;
             ch.bg = text_bg;
-            plot_char_grid(ch, cursor_x++, cursor_y);
+            plot_char_grid(&ch, cursor_x++, cursor_y);
             if (cursor_x == cols) {
                 cursor_x = 0;
                 cursor_y++;
@@ -217,12 +315,31 @@ void vbe_putchar(char c) {
     }
 }
 
-void vbe_tty_init(int *_rows, int *_cols) {
+void vbe_tty_init(int *_rows, int *_cols, uint32_t *_colours, int _margin, int _margin_gradient, struct image *_background) {
     init_vbe(&vbe_framebuffer, &vbe_pitch, &vbe_width, &vbe_height, &vbe_bpp);
+
+    mtrr_set_range((uint64_t)(size_t)vbe_framebuffer,
+                   (uint64_t)vbe_pitch * vbe_height, MTRR_MEMORY_TYPE_WC);
+
     vga_font_retrieve();
-    *_cols = cols = vbe_width / VGA_FONT_WIDTH;
-    *_rows = rows = vbe_height / VGA_FONT_HEIGHT;
-    grid = ext_mem_balloc(rows * cols * sizeof(struct vbe_char));
+    *_cols = cols = (vbe_width - _margin * 2) / VGA_FONT_WIDTH;
+    *_rows = rows = (vbe_height - _margin * 2) / VGA_FONT_HEIGHT;
+    grid = ext_mem_alloc(rows * cols * sizeof(struct vbe_char));
+    background = _background;
+
+    if (background)
+        vbe_plot_bg_blent_px = _vbe_plot_bg_blent_px;
+
+    memcpy(ansi_colours, _colours, sizeof(ansi_colours));
+    text_bg = ansi_colours[0];
+    text_fg = ansi_colours[7];
+
+    margin_gradient = _margin_gradient;
+
+    frame_height = vbe_height / 2 - (VGA_FONT_HEIGHT * rows) / 2;
+    frame_width  = vbe_width  / 2 - (VGA_FONT_WIDTH  * cols) / 2;
+
+    vbe_plot_background(0, 0, vbe_width, vbe_height);
     vbe_clear(true);
 }
 
