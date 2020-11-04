@@ -1,13 +1,14 @@
-# EmeraldOS
+# 💎 EmeraldOS
 
-### This is a basic 64 bits OS written in C with input support!
+### This is a basic x86_64 OS written in C
 
 Build Requirements : 
-
-             A Linux distro(Debian,Arch...)
-             x86_64-elf-gcc
-             Qemu
-             Limine(Bootloader)
+```
+Linux distro(Debian,Arch...)
+x86_64-elf-gcc
+Qemu
+Limine(Bootloader)
+```
 ### How to build:
 
 install x86_64-elf-gcc. 
@@ -21,6 +22,6 @@ use the make_toolchain script using:
 You can use prebuilt .hdd images in the build/ directory I suggest you run them using qemu
 ### Screenshots:
 
-<img src="https://media.discordapp.net/attachments/739138167277486141/758674552032722964/unknown.png">
-
+<img src="https://cdn.discordapp.com/attachments/745313714747605105/773343861526364171/unknown.png">
+<img src="https://media.discordapp.net/attachments/745313714747605105/773344029995040788/unknown.png">
 
