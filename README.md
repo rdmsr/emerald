@@ -1,5 +1,8 @@
 # 💎 EmeraldOS
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c01428b7b3864d1f86eb1753c6c8deaf)](https://app.codacy.com/gh/Abb1x/emerald?utm_source=github.com&utm_medium=referral&utm_content=Abb1x/emerald&utm_campaign=Badge_Grade)
+
+
 ### This is a basic x86_64 OS written in C
 
 Build Requirements : 
