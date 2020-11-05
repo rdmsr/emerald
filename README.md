@@ -23,8 +23,14 @@ use the make_toolchain script using:
 
 ### Prebuilt images
 You can use prebuilt .hdd images in the build/ directory I suggest you run them using qemu
+### TODO
+
+- [ ] VMM
+- [ ] EXT2 filesystem
+- [ ] Start Porting stuff
 ### Screenshots:
 
 <img src="https://cdn.discordapp.com/attachments/745313714747605105/773343861526364171/unknown.png">
 <img src="https://media.discordapp.net/attachments/745313714747605105/773344029995040788/unknown.png">
+
 
