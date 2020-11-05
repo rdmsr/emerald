@@ -16,5 +16,5 @@ void EmeraldMem_PMM_pmm_init(uint32_t mem_size);
 uint32_t EmeraldMem_PMM_allocate_block();
 void EmeraldMem_PMM_free_block(uint32_t blk_num);
 uint32_t EmeraldMem_PMM_first_free_block();
-void simple_test();
+void* memset(void* bufptr, int value, size_t size);
 #endif
