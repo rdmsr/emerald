@@ -1,4 +1,6 @@
-# 💎 EmeraldOS
+
+
+<h1><img src="https://cdn.discordapp.com/attachments/765557872682729479/774391211288821780/logo.png" width="25"> EmeraldOS</h1>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c01428b7b3864d1f86eb1753c6c8deaf)](https://app.codacy.com/gh/Abb1x/emerald?utm_source=github.com&utm_medium=referral&utm_content=Abb1x/emerald&utm_campaign=Badge_Grade)
 
