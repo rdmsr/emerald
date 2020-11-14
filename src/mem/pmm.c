@@ -1,7 +1,7 @@
 #include "pmm.h"
 #include "../devices/video/vga.h"
 #include <stdint.h>
-
+#include "../debug-utilities/logger.h"
 uint8_t * bitmap = (uint8_t*)(&end);
 uint8_t * mem_start;
 uint32_t total_blocks;

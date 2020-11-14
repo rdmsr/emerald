@@ -3,5 +3,5 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stddef.h>
-void log(char* a);
+void log(char* format,...);
 #endif

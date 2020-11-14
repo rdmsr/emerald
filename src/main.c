@@ -2,15 +2,14 @@
 #include "devices/keyboard/keyboard.h"
 #include "devices/video/vga.h"
 #include "devices/video/colors.h"
-//#include "debug-utilities/logger.h"
 #include "devices/serial/serial.h"
 #include "inc/stivale.h"
 #include "mem/pmm.h"
 #include "sys/gdt.h"
 #include "sys/idt.h"
 #include <stdint.h>
-
 #include "debug-utilities/logger.h"
+
 #define VGA_ADDRESS 0xb8000
 
 #define K 1024
@@ -44,7 +43,7 @@ void kmain(struct stivale_struct* bootloader_data)
     kprint_load("PMM", false);
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
-    kprint_newline();
+    log("hello %");
     while (1);
 
 }
