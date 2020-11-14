@@ -12,6 +12,8 @@ CFLAGS = -O2 -pipe -Wall -Wextra
 
 CHARDFLAGS := $(CFLAGS)               \
 	-std=gnu99                     \
+	-Wall							\
+	-Wextra							\
 	-fno-pic                       \
 	-mno-sse                       \
 	-mno-sse2                      \
