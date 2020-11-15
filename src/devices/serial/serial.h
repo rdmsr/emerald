@@ -10,4 +10,6 @@ int EmeraldDevices_Serial_serial_received();
 char EmeraldDevices_Serial_read_serial();
 int EmeraldDevices_Serial_is_transmit_empty();
 void EmeraldDevices_Serial_write_serial(char a);
+void puts(char* string);
+void putchar(char character);
 #endif

@@ -14,7 +14,7 @@
 
 #define K 1024
 #define M (1024 * K)
-
+#define MSIZE 48 * M
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
@@ -43,7 +43,6 @@ void kmain(struct stivale_struct* bootloader_data)
     kprint_load("PMM", false);
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
-    log("hello %");
     while (1);
 
 }

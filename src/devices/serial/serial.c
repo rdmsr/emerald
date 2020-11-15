@@ -1,6 +1,6 @@
 
 #include "serial.h"
-#define PORT 0x3f8 //this is COM1 (for qemu debugging)
+#define PORT 0x3f8 //this is COM1's adress (for qemu debugging)
 
 static inline void EmeraldASM_outb(uint16_t port, uint8_t value)
 {
@@ -17,6 +17,7 @@ static unsigned char EmeraldASM_inb(unsigned short port)
                  : "Nd"(port));
     return ret;
 }
+//init serial
 void EmeraldDevices_Serial_init_serial()
 {
     EmeraldASM_outb(PORT + 1, 0x00);
@@ -47,4 +48,17 @@ void EmeraldDevices_Serial_write_serial(char a)
 { 
     while(EmeraldDevices_Serial_is_transmit_empty() == 0);
     EmeraldASM_outb(PORT,a);
+}
+// Functions to print letters
+void puts(char* string)
+{
+      for(int i=0;i<strlen(string);i++)
+    {
+        char output = string[i];
+        EmeraldDevices_Serial_write_serial((int)output);
+    }  
+}
+void putchar(char character)
+{
+    EmeraldDevices_Serial_write_serial((int)(character));
 }

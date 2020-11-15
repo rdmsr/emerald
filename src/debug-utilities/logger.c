@@ -1,31 +1,9 @@
 #include "logger.h"
 #include "../devices/serial/serial.h"
+#include "../inc/string.h"
 #include <stdarg.h>
-//---------------------------String funcs------------------------
-unsigned int strlen(const char *s)
-{
-    unsigned int count = 0;
 
-    while(*s!='\0')
-    {
-        count++;
-        s++;
-    }
-    return count;
-}
-void puts(char* string)
-{
-      for(int i=0;i<strlen(string);i++)
-    {
-        char output = string[i];
-        EmeraldDevices_Serial_write_serial((int)output);
-    }  
-}
-void putchar(char character)
-{
-    EmeraldDevices_Serial_write_serial((int)(character));
-}
-//--------------------------------------------------Printf-------------------
+
 char *convert(unsigned int num, int base) 
 { 
 	static char Representation[]= "0123456789ABCDEF";
@@ -40,13 +18,12 @@ char *convert(unsigned int num, int base)
 		*--ptr = Representation[num%base]; 
 		num /= base; 
 	}while(num != 0); 
-	
 	return(ptr); 
 }
 
 void log(char* format,...) 
 { 
-	char* logstr = "[\033[1;33mLOG\033[1;33m\033[0m] ";
+	char* logstr = "[\033[1;33m LOG \033[1;33m\033[0m] ";
     puts(logstr);
 	char *traverse; 
 	unsigned int i; 
