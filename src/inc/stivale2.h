@@ -84,7 +84,7 @@ struct stivale2_struct_tag_memmap {
 #define STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID 0x506461d2950408fa
 
 enum {
-    STIVALE2_FBUF_MMODEL_RGB  = 1
+    STIVALE2_FBUF_MMODEL_RGB = 1
 };
 
 struct stivale2_struct_tag_framebuffer {
@@ -94,13 +94,13 @@ struct stivale2_struct_tag_framebuffer {
     uint16_t framebuffer_height;
     uint16_t framebuffer_pitch;
     uint16_t framebuffer_bpp;
-    uint8_t  memory_model;
-    uint8_t  red_mask_size;
-    uint8_t  red_mask_shift;
-    uint8_t  green_mask_size;
-    uint8_t  green_mask_shift;
-    uint8_t  blue_mask_size;
-    uint8_t  blue_mask_shift;
+    uint8_t memory_model;
+    uint8_t red_mask_size;
+    uint8_t red_mask_shift;
+    uint8_t green_mask_size;
+    uint8_t green_mask_shift;
+    uint8_t blue_mask_size;
+    uint8_t blue_mask_shift;
 } __attribute__((packed));
 
 #define STIVALE2_STRUCT_TAG_MODULES_ID 0x4b6fe466aade04ce

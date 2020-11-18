@@ -25,7 +25,6 @@ void kprint(const char* str, int color)
         vidptr[current_loc++] = str[i++];
         vidptr[current_loc++] = color;
     }
-
 }
 void kprint_newline(void)
 {
@@ -62,18 +61,18 @@ void clear_screen(void)
 }
 void EmeraldDevices_VGA_enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
 {
-	EmeraldASM_outb(0x3D4, 0x0A);
-	EmeraldASM_outb(0x3D5, (EmeraldASM_inb(0x3D5) & 0xC0) | cursor_start);
- 
-	EmeraldASM_outb(0x3D4, 0x0B);
-	EmeraldASM_outb(0x3D5, (EmeraldASM_inb(0x3D5) & 0xE0) | cursor_end);
+    EmeraldASM_outb(0x3D4, 0x0A);
+    EmeraldASM_outb(0x3D5, (EmeraldASM_inb(0x3D5) & 0xC0) | cursor_start);
+
+    EmeraldASM_outb(0x3D4, 0x0B);
+    EmeraldASM_outb(0x3D5, (EmeraldASM_inb(0x3D5) & 0xE0) | cursor_end);
 }
 void EmeraldDevices_VGA_update_cursor(int x, int y)
 {
-	uint16_t pos = y * 80 + x;
- 
-	outb(0x3D4, 0x0F);
-	outb(0x3D5, (uint8_t) (pos & 0xFF));
-	outb(0x3D4, 0x0E);
-	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+    uint16_t pos = y * 80 + x;
+
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t)(pos & 0xFF));
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
 }

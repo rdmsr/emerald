@@ -1,10 +1,10 @@
 #include "keyboard.h"
+#include "../../debug-utilities/logger.h"
 #include "../video/vga/vga.h"
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "../../debug-utilities/logger.h"
 #define ENTER_KEY_CODE 0x1C
 //#include "keyboard_map.h"
 unsigned char keyboard_map[128] = {
@@ -85,8 +85,8 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
         PIC_sendEOI(0);
         return;
     }
- 
-    if(keycode == ENTER_KEY_CODE){
+
+    if (keycode == ENTER_KEY_CODE) {
         kprint_newline();
         return;
     }
@@ -94,8 +94,8 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
         kprint_newline();
         return;
     }
-    log("Interrupt pressed: %d letter: %c",keycode,keyboard_map[(unsigned char)keycode]);
+    //log("Interrupt pressed: %d letter: %c",keycode,keyboard_map[(unsigned char)keycode]);
     videoptr[current_location++] = keyboard_map[(unsigned char)keycode];
     videoptr[current_location++] = 0x07;
-    EmeraldDevices_VGA_update_cursor(current_location / 2,0);
+    EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
 }
