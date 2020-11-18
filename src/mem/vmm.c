@@ -1,12 +1,33 @@
 #include "vmm.h"
-#include "pmm.h"
-void EmeraldMem_VMM_vmm_create_pagemap(pagemap_t *map){
-  uint64_t page = EmeraldMem_PMM_allocate_block(sizeof(pagemap_t));
-  if (map == 0) {
-      return false;
-  }
-  uint64_t *pml4 = (uint64_t *)page;
-  memset(pml4, 0, sizeof(pagemap_t));
-  map->pml4 = pml4;
-  return true;
+
+void EmeraldMem_VMM_vmm_create_pagemap(pagemap_t pagemap)
+{
+    //TODO
+}
+
+void * get_physical_addr(void  * virtualaddr)
+{
+    //Page directory index
+    unsigned long pdindex = (unsigned long)virtualaddr>>22;
+    //Page Table index
+    unsigned long ptindex = (unsigned long)virtualaddr>>12 & 0x03FF;
+    //check if the PD entry is present
+    unsigned long * pd = (unsigned long *)0xFFFFF000;  
+    //check if the PT entry is present
+    unsigned long * pt = ((unsigned long *)0xFFC00000) + (0x400 * pdindex);
+
+    return (void *)((pt[ptindex] & ~0xFFF) + ((unsigned long)virtualaddr & 0xFFF));
+}
+void EmeraldMem_VMM_map_page(void * physaddr, void * virtualaddr, unsigned int flags)
+{
+ 
+    unsigned long pdindex = (unsigned long)virtualaddr >> 22;
+    unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
+ 
+    unsigned long * pd = (unsigned long *)0xFFFFF000;
+ 
+    unsigned long * pt = ((unsigned long *)0xFFC00000) + (0x400 * pdindex);
+ 
+    pt[ptindex] = ((unsigned long)physaddr) | (flags & 0xFFF) | 0x01; // Bit Present
+ 
 }

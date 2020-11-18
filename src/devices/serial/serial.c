@@ -1,6 +1,6 @@
 
 #include "serial.h"
-#define PORT 0x3f8 //this is COM1's adress (for qemu debugging)
+#define PORT 0x3f8 //this is COM1's address (for qemu debugging)
 
 static inline void EmeraldASM_outb(uint16_t port, uint8_t value)
 {

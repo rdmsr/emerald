@@ -1,5 +1,5 @@
 #include "pmm.h"
-#include "../devices/video/vga.h"
+#include "../devices/video/vga/vga.h"
 #include <stdint.h>
 #include "../debug-utilities/logger.h"
 uint8_t * bitmap = (uint8_t*)(&end);
@@ -28,23 +28,26 @@ void EmeraldMem_PMM_pmm_init(uint32_t mem_size) {
     log("Bitmap size: %d",bitmap_size);
 }
 
-
+//malloc
 uint32_t EmeraldMem_PMM_allocate_block() {
     uint32_t free_block = EmeraldMem_PMM_first_free_block();
     SETBIT(free_block);
     return free_block;
 }
-
+//free
 void EmeraldMem_PMM_free_block(uint32_t blk_num) {
     CLEARBIT(blk_num);
 }
 
-
+uint32_t last_free_block = 0;
 uint32_t EmeraldMem_PMM_first_free_block() {
     uint32_t i;
-    for(i = 0; i < total_blocks; i++) {
-        if(!ISSET(i))
+    for(i = last_free_block; i < total_blocks; i++) {
+        if(!ISSET(i)){
+            last_free_block = i;
             return i;
+        }
     }
-    return (uint32_t) -1;
+    last_free_block = 0;
+    return EmeraldMem_PMM_first_free_block();
 }
