@@ -1,5 +1,5 @@
 #include "string.h"
-
+/* Reimplementations of stdlibs*/
 unsigned int strlen(const char* s)
 {
     unsigned int count = 0;

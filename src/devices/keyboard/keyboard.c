@@ -47,7 +47,7 @@ unsigned char keyboard_map[128] = {
 };
 unsigned int current_location = 0;
 char* videoptr = (char*)0xb8000;
-static unsigned char EmeraldASM_inb(unsigned short port)
+unsigned char EmeraldASM_inb(unsigned short port)
 {
     unsigned char ret;
     asm volatile("inb %1, %0"
@@ -55,7 +55,7 @@ static unsigned char EmeraldASM_inb(unsigned short port)
                  : "Nd"(port));
     return ret;
 }
-static inline void EmeraldASM_outb(uint16_t port, uint8_t value)
+void EmeraldASM_outb(uint16_t port, uint8_t value)
 {
     asm volatile("outb %0, %1"
                  :
@@ -76,10 +76,9 @@ void PIC_sendEOI(unsigned char irq)
 }
 void EmeraldDevices_keyboard_Keyboard_handler_main()
 {
-    unsigned char status;
     char keycode;
     EmeraldASM_outb(0x20, 0x20);
-    status = EmeraldASM_inb(KEYBOARD_STATUS_PORT);
+    EmeraldASM_inb(KEYBOARD_STATUS_PORT);
     keycode = EmeraldASM_inb(KEYBOARD_DATA_PORT);
     if (keycode < 0) {
         PIC_sendEOI(0);

@@ -18,7 +18,7 @@
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
-void kmain(struct stivale2_struct* info);
+void kmain();
 static uint8_t stack[4096] = { 0 };
 struct stivale2_header_tag_smp smp_request = {
     .tag = {
@@ -47,10 +47,9 @@ void init()
     EmeraldMem_PMM_pmm_init(1096 * M);
     kprint_load("PMM", false);
 }
-void kmain(struct stivale2_struct* info)
+void kmain()
 {
     init();
-
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VGA_enable_cursor(10, 20);
     EmeraldDevices_VGA_update_cursor(0, 0);

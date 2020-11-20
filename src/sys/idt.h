@@ -20,13 +20,12 @@ struct idt_pointer {
     uint64_t addr;
 } __attribute__((packed));
 
-static struct idt_descriptor idt[256];
 
-static struct idt_pointer idtr = {.size = 256 * sizeof(idt) - 1, .addr = (uint64_t)idt};
+
 
  
 void EmeraldSys_IDT_irq_remap(void);
-void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t ist, uint8_t attrib);
+void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, /*uint8_t ist,*/ uint8_t attrib);
 void EmeraldSys_IDT_isr_init(void);
 void EmeraldSys_IDT_idt_load(void);
 void EmeraldASM_sti();

@@ -26,7 +26,7 @@ void log(char* format, ...)
     char* traverse;
     unsigned int i;
     char* s;
-
+    static const unsigned ZERO = 0;
     va_list arg;
     va_start(arg, format);
 
@@ -46,7 +46,7 @@ void log(char* format, ...)
 
         case 'd':
             i = va_arg(arg, int);
-            if (i < 0) {
+            if (i < ZERO) {
                 i = -i;
                 putchar('-');
             }

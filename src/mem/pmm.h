@@ -9,7 +9,8 @@
 #define ISSET(i) ((bitmap[i / BLOCKS_PER_BUCKET] >> (i % BLOCKS_PER_BUCKET)) & 0x1)
 #define GET_BUCKET32(i) (*((uint32_t*)&bitmap[i / 32]))
 
-#define BLOCK_ALIGN(addr) (((addr)&0xFFFFF000) + 0x1000)
+
+#define BLOCK_ALIGN(addr) (((addr) & 0xFFFFF000) + 0x1000)
 extern uint32_t end;
 
 void EmeraldMem_PMM_pmm_init(uint32_t mem_size);

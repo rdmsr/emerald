@@ -22,15 +22,15 @@
 //extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
 
-static inline void outb(uint16_t port, uint8_t value)
+inline void outb(uint16_t port, uint8_t value)
 {
     asm volatile("outb %0, %1"
                  :
                  : "a"(value), "Nd"(port)
                  :);
 }
-static inline void EmeraldASM_outb(uint16_t port, uint8_t value);
-static unsigned char EmeraldASM_inb(unsigned short port);
+void EmeraldASM_outb(uint16_t port, uint8_t value);
+unsigned char EmeraldASM_inb(unsigned short port);
 void EmeraldDevices_keyboard_Keyboard_init(void);
 void EmeraldPIC_sendEOI(unsigned char irq);
 void EmeraldDevices_keyboard_Keyboard_handler_main();

@@ -33,7 +33,6 @@ struct stivale2_header_tag_smp {
     struct stivale2_tag tag;
     uint64_t flags;
 } __attribute__((packed));
-
 #define STIVALE2_HEADER_TAG_5LV_PAGING_ID 0x932f477032007e8f
 
 /* --- Struct --------------------------------------------------------------- */

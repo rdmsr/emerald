@@ -3,21 +3,6 @@
 //TODO: Switch to a better video driver (bootloader framebuffer)
 unsigned int current_loc = 0;
 char* vidptr = (char*)0xb8000;
-static unsigned char EmeraldASM_inb(unsigned short port)
-{
-    unsigned char ret;
-    asm volatile("inb %1, %0"
-                 : "=a"(ret)
-                 : "Nd"(port));
-    return ret;
-}
-static inline void EmeraldASM_outb(uint16_t port, uint8_t value)
-{
-    asm volatile("outb %0, %1"
-                 :
-                 : "a"(value), "Nd"(port)
-                 :);
-}
 void kprint(const char* str, int color)
 {
     unsigned int i = 0;
@@ -71,8 +56,8 @@ void EmeraldDevices_VGA_update_cursor(int x, int y)
 {
     uint16_t pos = y * 80 + x;
 
-    outb(0x3D4, 0x0F);
-    outb(0x3D5, (uint8_t)(pos & 0xFF));
-    outb(0x3D4, 0x0E);
-    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+    EmeraldASM_outb(0x3D4, 0x0F);
+    EmeraldASM_outb(0x3D5, (uint8_t)(pos & 0xFF));
+    EmeraldASM_outb(0x3D4, 0x0E);
+    EmeraldASM_outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
 }

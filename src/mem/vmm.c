@@ -1,9 +1,10 @@
-#include "vmm.h"
-
+//#include "vmm.h"
+/*
 void EmeraldMem_VMM_vmm_create_pagemap(pagemap_t pagemap)
 {
-    //TODO
+    return;
 }
+
 
 void* get_physical_addr(void* virtualaddr)
 {
@@ -27,6 +28,6 @@ void EmeraldMem_VMM_map_page(void* physaddr, void* virtualaddr, unsigned int fla
     unsigned long* pd = (unsigned long*)0xFFFFF000;
 
     unsigned long* pt = ((unsigned long*)0xFFC00000) + (0x400 * pdindex);
-
+    
     pt[ptindex] = ((unsigned long)physaddr) | (flags & 0xFFF) | 0x01; // Bit Present
-}
+}*/

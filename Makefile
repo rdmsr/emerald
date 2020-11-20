@@ -14,6 +14,7 @@ CHARDFLAGS := $(CFLAGS)               \
 	-std=gnu99                     \
 	-Wall							\
 	-Wextra							\
+	-Werror							\
 	-fno-pic                       \
 	-mno-sse                       \
 	-mno-sse2                      \
