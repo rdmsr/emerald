@@ -1,6 +1,7 @@
 #include "keyboard.h"
 #include <debug-utilities/logger.h>
 #include <devices/video/vga/vga.h>
+#include <libasm/asm.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -47,21 +48,6 @@ unsigned char keyboard_map[128] = {
 };
 unsigned int current_location = 0;
 char* videoptr = (char*)0xb8000;
-unsigned char EmeraldASM_inb(unsigned short port)
-{
-    unsigned char ret;
-    asm volatile("inb %1, %0"
-                 : "=a"(ret)
-                 : "Nd"(port));
-    return ret;
-}
-void EmeraldASM_outb(uint16_t port, uint8_t value)
-{
-    asm volatile("outb %0, %1"
-                 :
-                 : "a"(value), "Nd"(port)
-                 :);
-}
 
 void EmeraldDevices_keyboard_Keyboard_init(void)
 {

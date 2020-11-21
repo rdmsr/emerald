@@ -1,5 +1,5 @@
 ASMFILES  := $(shell find src/ -type f -name '*.asm')
-CFILES    := $(shell find src/ -type f -name '*.c')
+CFILES    := $(shell find src/ lib/ -type f -name '*.c')
 CC         = /home/abbix/opt/cross/bin/x86_64-elf-gcc
 LD         = /home/abbix/opt/cross/x86_64-elf/bin/ld
 OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
@@ -26,6 +26,7 @@ CHARDFLAGS := $(CFLAGS)               \
 	-ffreestanding                 \
 	-fno-stack-protector           \
 	-Isrc/                         \
+	-Ilib/							\
 
 LDHARDFLAGS := $(LDFLAGS)        \
 	-static                   \

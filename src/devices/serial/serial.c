@@ -1,6 +1,7 @@
 
 #include "serial.h"
-#include "../../inc/string.h"
+#include <libstr/string.h>
+#include <libasm/asm.h>
 #define PORT 0x3f8 //this is COM1's address (for qemu debugging)
 
 //init serial

@@ -1,6 +1,6 @@
 #include "vga.h"
-#include "../../serial/serial.h"
-//TODO: Switch to a better video driver (bootloader framebuffer)
+#include <devices/serial/serial.h>
+#include <libasm/asm.h>
 unsigned int current_loc = 0;
 char* vidptr = (char*)0xb8000;
 void kprint(const char* str, int color)
