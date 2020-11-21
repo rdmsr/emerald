@@ -55,6 +55,5 @@ void kmain()
     EmeraldDevices_VGA_update_cursor(0, 0);
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
-    while (1)
-        ;
+    while (1);
 }
