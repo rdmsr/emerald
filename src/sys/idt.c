@@ -1,6 +1,7 @@
 #include "idt.h"
 #include <devices/keyboard/keyboard.h>
 #include <stdint.h>
+#include <debug-utilities/logger.h>
 //unsigned int current_loc = 0;
 //char *vidptr = (char*)0xb8000;
 static struct idt_descriptor idt[256];
@@ -62,12 +63,13 @@ void EmeraldASM_sti()
 }
 void EmeraldSys_IDT_idt_init(void)
 {
+    char* idt_init = "Initializing IDT...\033[1;30m loading ISR... loading IDT... \033[1;0mDone";
+
     /*unsigned long keyboard_address;*/
     /*unsigned long idt_address;*/
     /*unsigned long idt_ptr[2];*/
-
     EmeraldSys_IDT_isr_init();
     EmeraldSys_IDT_idt_load();
-
     EmeraldASM_sti();
+    log("%s",idt_init);
 }

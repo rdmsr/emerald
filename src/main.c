@@ -41,7 +41,6 @@ void init()
     EmeraldDevices_Serial_init_serial();
     EmeraldSys_GDT_gdt_init();
     kprint_load("GDT", false);
-
     EmeraldSys_IDT_idt_init();
     kprint_load("IDT", false);
     EmeraldMem_PMM_pmm_init(1096 * M);
@@ -50,7 +49,9 @@ void init()
 void kmain()
 {
     init();
+    char* irq_remap = "Remapping IRQs...";
     EmeraldSys_IDT_irq_remap();
+    log("%s",irq_remap);
     EmeraldDevices_VGA_enable_cursor(10, 20);
     EmeraldDevices_VGA_update_cursor(0, 0);
     kprint("Welcome to ", 15);
