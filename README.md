@@ -9,22 +9,16 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Abb1x/emerald)
 
 ### This is a basic x86_64 OS written in C
-
-Build Requirements :
-```
-Linux distro(Debian,Arch...)
-x86_64-elf-gcc
-Qemu
-Limine(Bootloader)
-```
 ### How to build:
-
-install x86_64-elf-gcc.
-For arch users:
-`yay -S x86_64-elf-gcc`
-For other distros:
-use the make_toolchain script using:
-`sh make_toolchain.sh`
+get x86_64-elf-gcc [here](https://wiki.osdev.org/GCC_Cross-Compiler)
+<br>
+First clone the repo:
+```git clone https://github.com/Abb1x/emerald.git```
+<br>
+Then you need to init the submodules(clone limine):
+```cd emerald && git submodule init && git submodule update```
+<br>
+Now you need to compile the source code using the cross-compiler, modify the Makefile if needed
 
 ### Prebuilt images
 You can use prebuilt .hdd images in the build/ directory I suggest you run them using qemu
