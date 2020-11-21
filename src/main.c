@@ -1,13 +1,13 @@
 
-#include "debug-utilities/logger.h"
-#include "devices/keyboard/keyboard.h"
-#include "devices/serial/serial.h"
-#include "devices/video/colors.h"
-#include "devices/video/vga/vga.h"
-#include "inc/stivale2.h"
-#include "mem/pmm.h"
-#include "sys/gdt.h"
-#include "sys/idt.h"
+#include <debug-utilities/logger.h>
+#include <devices/keyboard/keyboard.h>
+#include <devices/serial/serial.h>
+#include <devices/video/colors.h>
+#include <devices/video/vga/vga.h>
+#include <inc/stivale2.h>
+#include <mem/pmm.h>
+#include <sys/gdt.h>
+#include <sys/idt.h>
 #include <stdint.h>
 
 #define VGA_ADDRESS 0xb8000

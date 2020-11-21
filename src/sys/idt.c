@@ -1,5 +1,5 @@
 #include "idt.h"
-#include "../devices/keyboard/keyboard.h"
+#include <devices/keyboard/keyboard.h>
 #include <stdint.h>
 //unsigned int current_loc = 0;
 //char *vidptr = (char*)0xb8000;

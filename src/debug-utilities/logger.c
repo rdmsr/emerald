@@ -1,6 +1,6 @@
 #include "logger.h"
-#include "../devices/serial/serial.h"
-#include "../inc/string.h"
+#include <devices/serial/serial.h>
+#include <inc/string.h>
 #include <stdarg.h>
 
 char* convert(unsigned int num, int base)

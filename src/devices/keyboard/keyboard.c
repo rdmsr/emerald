@@ -1,6 +1,6 @@
 #include "keyboard.h"
-#include "../../debug-utilities/logger.h"
-#include "../video/vga/vga.h"
+#include <debug-utilities/logger.h>
+#include <devices/video/vga/vga.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
