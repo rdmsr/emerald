@@ -3,26 +3,12 @@
 #include <libstr/string.h>
 #include <stdarg.h>
 
-char* convert(unsigned int num, int base)
-{
-    static char Representation[] = "0123456789ABCDEF";
-    static char buffer[50];
-    char* ptr;
-
-    ptr = &buffer[49];
-    *ptr = '\0';
-
-    do {
-        *--ptr = Representation[num % base];
-        num /= base;
-    } while (num != 0);
-    return (ptr);
-}
 
 void log(char* format, ...)
 {
-    char* logstr = "[\033[1;33m LOG \033[1;33m\033[0m] ";
-    puts(logstr);
+    EmeraldDevices_RTC_read_rtc();
+    printf("%d:%d:%d [\033[1;33m LOG \033[1;33m\033[0m] %s",hour,minute,second," ");
+
     char* traverse;
     unsigned int i;
     char* s;

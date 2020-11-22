@@ -37,7 +37,7 @@ LDHARDFLAGS := $(LDFLAGS)        \
 .DEFAULT_GOAL = $(KERNEL_HDD)
 disk: $(KERNEL_HDD)
 run: $(KERNEL_HDD)
-	qemu-system-x86_64 -m 2G -hda $(KERNEL_HDD)
+	qemu-system-x86_64 -drive file=$(KERNEL_HDD),format=raw -serial stdio -enable-kvm -rtc base=localtime
 
 %.o: %.c
 	$(CC) $(CHARDFLAGS) -c $< -o $@

@@ -63,7 +63,7 @@ void EmeraldASM_sti()
 }
 void EmeraldSys_IDT_idt_init(void)
 {
-    char* idt_init = "Initializing IDT...\033[1;30m loading ISR... loading IDT... \033[1;0mDone";
+    char* idt_init = "Initializing IDT...\033[0;37m loading ISR... loading IDT... \033[1;0mDone";
 
     /*unsigned long keyboard_address;*/
     /*unsigned long idt_address;*/

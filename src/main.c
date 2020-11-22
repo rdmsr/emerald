@@ -4,6 +4,7 @@
 #include <devices/serial/serial.h>
 #include <devices/video/colors.h>
 #include <devices/video/vga/vga.h>
+#include <devices/RTC/rtc.h>
 #include <inc/stivale2.h>
 #include <mem/pmm.h>
 #include <sys/gdt.h>
@@ -45,6 +46,7 @@ void init()
     kprint_load("IDT", false);
     EmeraldMem_PMM_pmm_init(1096 * M);
     kprint_load("PMM", false);
+    EmeraldDevices_RTC_read_rtc() ;
 }
 void kmain()
 {
