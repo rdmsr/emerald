@@ -1,6 +1,5 @@
 #include "keyboard.h"
 #include <debug-utilities/logger.h>
-#include <devices/video/vga/vga.h>
 #include <devices/RTC/rtc.h>
 #include <libasm/asm.h>
 #include <stdarg.h>
@@ -8,7 +7,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #define ENTER_KEY_CODE 0x1C
-//#include "keyboard_map.h"
 unsigned char keyboard_map[128] = {
     0, 27, '1', '2', '3', '4', '5', '6', '7', '8', /* 9 */
     '9', '0', '-', '=', ' ', /* Backspace */
@@ -48,7 +46,6 @@ unsigned char keyboard_map[128] = {
     0, /* All other keys are undefined */
 };
 unsigned int current_location = 0;
-char* videoptr = (char*)0xb8000;
 
 void EmeraldDevices_keyboard_Keyboard_init(void)
 {
@@ -81,7 +78,7 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
         return;
     }
     //log("Interrupt pressed: %d letter: %c",keycode,keyboard_map[(unsigned char)keycode]);
-    videoptr[current_location++] = keyboard_map[(unsigned char)keycode];
-    videoptr[current_location++] = 0x07;
+    vidptr[current_location++] = keyboard_map[(unsigned char)keycode];
+    vidptr[current_location++] = 0x07;
     EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
 }

@@ -6,8 +6,8 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/Abb1x/emerald)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Abb1x/emerald)
 
-### This is a basic x86_64 OS written in C
-### How to build
+### 💎 This is a basic x86_64 OS written in C
+### ⚙️ How to build
 get x86_64-elf-gcc [here](https://wiki.osdev.org/GCC_Cross-Compiler)
 <br>
 First clone the repo:
@@ -20,7 +20,7 @@ Now you need to compile the source code using the cross-compiler, modify the Mak
 
 ### Prebuilt images
 You can use prebuilt .hdd images in the build/ directory I suggest you run them using qemu
-### TODO
+### ✅ TODO
 
 - [ ] VMM
 - [ ] EXT2 filesystem

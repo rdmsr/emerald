@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <devices/video/vga/vga.h>
 //#include "keyboard_map.h"
 //#define ENTER_KEY_CODE 0x1C
 #define DELETE_KEY_CODE 0x08
@@ -21,7 +22,7 @@
 
 //extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
-
+extern char* vidptr;
 inline void outb(uint16_t port, uint8_t value)
 {
     asm volatile("outb %0, %1"
