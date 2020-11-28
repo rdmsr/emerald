@@ -1,9 +1,17 @@
-#include <stdbool.h>
-#include <stdint.h>
-typedef struct {
-    uint64_t* pml4;
-} pagemap_t;
+#ifndef VIRTUAL_MEMORY_MANAGER
+#define VIRTUAL_MEMORY_MANAGER
 
-void EmeraldMem_VMM_vmm_create_pagemap(pagemap_t pagemap);
-void* get_physical_addr(void* virtualaddr);
-void EmeraldMem_VMM_map_page(void* physaddr, void* virtualaddr, unsigned int flags);
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct 
+{
+    //TODO: maybe implement lock
+    uintptr_t* pml4;
+}pagemap_t __attribute__((aligned(4096)));
+
+bool vmm_create_pagemap(pagemap_t *map);
+bool vmm_map_page(pagemap_t *page_map, uintptr_t virt, uintptr_t phys, uintptr_t flags);
+bool vmm_unmap_page(pagemap_t *page_map, uintptr_t virt);
+
+#endif

@@ -1,7 +1,7 @@
 ASMFILES  := $(shell find src/ -type f -name '*.asm')
 CFILES    := $(shell find src/ lib/ -type f -name '*.c')
-CC         = /home/abbix/opt/cross/bin/x86_64-elf-gcc
-LD         = /home/abbix/opt/cross/x86_64-elf/bin/ld
+CC         = /opt/toolchain/bin/x86_64-elf-gcc
+LD         = /opt/toolchain/bin/x86_64-elf-ld
 OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
 KERNEL_HDD = build/disk.hdd
 KERNEL_ELF = kernel.elf
