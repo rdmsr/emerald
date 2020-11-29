@@ -7,6 +7,7 @@
 #include <devices/RTC/rtc.h>
 #include <inc/stivale2.h>
 #include <mem/pmm.h>
+#include <mem/vmm.h>
 #include <sys/gdt.h>
 #include <sys/idt.h>
 #include <stdint.h>
@@ -58,5 +59,6 @@ void kmain()
     EmeraldDevices_VGA_update_cursor(0, 0);
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
+    //simple_test();
     while (1);
 }

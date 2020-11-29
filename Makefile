@@ -40,25 +40,29 @@ run: $(KERNEL_HDD)
 	qemu-system-x86_64 -drive file=$(KERNEL_HDD),format=raw -serial stdio -enable-kvm -rtc base=localtime
 
 %.o: %.c
-	$(CC) $(CHARDFLAGS) -c $< -o $@
+	@echo [ CC ] $<
+	@$(CC) $(CHARDFLAGS) -c $< -o $@
 %.o: %.asm
-	nasm $(NASMFLAGS) $< -o $@
+	@echo [ NASM ] $<
+	@nasm $(NASMFLAGS) $< -o $@
 $(KERNEL_ELF): $(OBJ)
-	$(LD) $(LDHARDFLAGS) $(OBJ) -o $@
+
+	@$(LD) $(LDHARDFLAGS) $(OBJ) -o $@
 
 limine/limine-install:
 	$(MAKE) -C limine/ limine-install
 
 $(KERNEL_HDD): $(KERNEL_ELF) limine/limine-install
-	-mkdir build
-	rm -f $(KERNEL_HDD)
-	dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD)
-	parted -s $(KERNEL_HDD) mklabel msdos
-	parted -s $(KERNEL_HDD) mkpart primary 1 100%
-	echfs-utils -m -p0 $(KERNEL_HDD) quick-format 32768
-	echfs-utils -m -p0 $(KERNEL_HDD) import $(KERNEL_ELF) $(KERNEL_ELF)
-	echfs-utils -m -p0 $(KERNEL_HDD) import limine.cfg limine.cfg
-	limine/limine-install limine/limine.bin $(KERNEL_HDD)
+	@echo [ LIMINE ] $(KERNEL_ELF)
+	@-mkdir build
+	@rm -f $(KERNEL_HDD)
+	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD)
+	@parted -s $(KERNEL_HDD) mklabel msdos
+	@parted -s $(KERNEL_HDD) mkpart primary 1 100%
+	@echfs-utils -m -p0 $(KERNEL_HDD) quick-format 32768
+	@echfs-utils -m -p0 $(KERNEL_HDD) import $(KERNEL_ELF) $(KERNEL_ELF)
+	@echfs-utils -m -p0 $(KERNEL_HDD) import limine.cfg limine.cfg
+	@limine/limine-install limine/limine.bin $(KERNEL_HDD)
 
 clean:
 	rm -f $(KERNEL_HDD) $(KERNEL_ELF) $(OBJ)
