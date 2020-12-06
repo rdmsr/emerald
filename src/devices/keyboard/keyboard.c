@@ -77,7 +77,7 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
         kprint_newline();
         return;
     }
-    //log("Interrupt pressed: %d letter: %c",keycode,keyboard_map[(unsigned char)keycode]);
+    /*log("Interrupt pressed: %d letter: %c",keycode,keyboard_map[(unsigned char)keycode]);*/
     vidptr[current_location++] = keyboard_map[(unsigned char)keycode];
     vidptr[current_location++] = 0x07;
     EmeraldDevices_VGA_update_cursor(current_location / 2, 0);

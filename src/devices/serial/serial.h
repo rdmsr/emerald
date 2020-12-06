@@ -11,4 +11,5 @@ int EmeraldDevices_Serial_is_transmit_empty();
 void EmeraldDevices_Serial_write_serial(char a);
 void puts(char* string);
 void putchar(char character);
+void shutdown();
 #endif

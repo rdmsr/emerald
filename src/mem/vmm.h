@@ -3,5 +3,5 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-uintptr_t EmeraldMem_MMU_translate();
+
 #endif

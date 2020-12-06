@@ -11,7 +11,6 @@
 #include <sys/gdt.h>
 #include <sys/idt.h>
 #include <stdint.h>
-
 #define VGA_ADDRESS 0xb8000
 
 #define K 1024
@@ -59,6 +58,5 @@ void kmain()
     EmeraldDevices_VGA_update_cursor(0, 0);
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
-    //simple_test();
     while (1);
 }

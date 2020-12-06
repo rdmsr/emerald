@@ -1,11 +1,10 @@
 bits 64
 section .text
 global start
-global write_port
 global isr
 global isr_irq_master
 global isr_irq_slave
-extern gdtr
+global shutdown
 extern kmain 		;this is defined in the c file
 extern EmeraldDevices_keyboard_Keyboard_handler_main
 %macro pushaq 0
@@ -61,6 +60,8 @@ isr_irq_slave:
 	out 0x20, al
 	iretq
 
+ 
+  iretq
 start:
 	cli 				;block interrupts
 	mov rsp, stack_space

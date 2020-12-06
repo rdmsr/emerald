@@ -2,7 +2,7 @@
 #include <debug-utilities/logger.h>
 #include <libasm/asm.h>
 #define CURRENT_YEAR 2020
-//stolen from osdev.org
+/*stolen from osdev.org*/
 int century_register = 0x00;
 unsigned char second;
 unsigned char minute;
