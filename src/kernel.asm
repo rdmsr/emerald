@@ -5,7 +5,7 @@ global isr
 global isr_irq_master
 global isr_irq_slave
 global shutdown
-extern kmain 		;this is defined in the c file
+extern kmain 		
 extern EmeraldDevices_keyboard_Keyboard_handler_main
 %macro pushaq 0
     push rax

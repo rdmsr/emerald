@@ -1,4 +1,3 @@
-
 #include <debug-utilities/logger.h>
 #include <devices/keyboard/keyboard.h>
 #include <devices/serial/serial.h>
@@ -11,6 +10,7 @@
 #include <sys/gdt.h>
 #include <sys/idt.h>
 #include <stdint.h>
+#include <firmware/bios/bios.h>
 #define VGA_ADDRESS 0xb8000
 
 #define K 1024
@@ -46,11 +46,28 @@ void init()
     kprint_load("IDT", false);
     EmeraldMem_PMM_pmm_init(1096 * M);
     kprint_load("PMM", false);
-    EmeraldDevices_RTC_read_rtc() ;
+    EmeraldDevices_RTC_read_rtc();
+}
+void test_paging()
+{
+    pagemap_t* test_pagemap=test_pagemap;
+
+    EmeraldMem_VMM_create_pagemap(test_pagemap);
+    
+    uint64_t test_virtual_adress = 0x297DE000;
+    
+    uint64_t* test_physical_adress=test_physical_adress;
+    
+    EmeraldMem_VMM_map_page(test_pagemap, test_virtual_adress, *test_physical_adress, 0b11);
+    log("%s","Mapped page");
+    EmeraldMem_VMM_unmap_page(test_pagemap,test_virtual_adress);
+    log("%s","Unmapped page");
+
 }
 void kmain()
 {
     init();
+    test_paging();
     char* irq_remap = "Remapping IRQs...";
     EmeraldSys_IDT_irq_remap();
     log("%s",irq_remap);
