@@ -21,9 +21,9 @@ uint64_t* walk_to_page_and_map(uint64_t* current, uint16_t index)
 
     return (uint64_t *)current[index];
 }   
-void EmeraldMem_VMM_map_page(pagemap_t *page_map, uint64_t virtual_adress,uintptr_t physical_adress, uintptr_t flags)
+void EmeraldMem_VMM_map_page(pagemap_t *page_map, uint64_t virtual_adress,uintptr_t flags)
 {
-  //uint16_t offset = virtual_adress & 0xFFF;
+  uintptr_t physical_adress = virtual_adress - 0xffffffff80000000;
   uint16_t level1 = virtual_adress>>12;
   uint16_t level2 = virtual_adress>>21;
   uint16_t level3 = virtual_adress>>30;
@@ -35,6 +35,7 @@ void EmeraldMem_VMM_map_page(pagemap_t *page_map, uint64_t virtual_adress,uintpt
   uint64_t* pml1 = walk_to_page_and_map(root, level2);
   pml1[level1] = physical_adress | flags;
   
+  asm volatile ("mov %0, %%cr3" :: "r"(&root):"memory");
 }
 
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)
