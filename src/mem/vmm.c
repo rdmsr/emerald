@@ -30,12 +30,15 @@ void EmeraldMem_VMM_map_page(pagemap_t *page_map, uint64_t virtual_adress,uintpt
   uint16_t level4 = virtual_adress>>39;
 
   uint64_t* root = page_map->pml4;
+  
   walk_to_page_and_map(root, level4);
   walk_to_page_and_map(root, level3);
+  
   uint64_t* pml1 = walk_to_page_and_map(root, level2);
+  
   pml1[level1] = physical_adress | flags;
   
-  asm volatile ("mov %0, %%cr3" :: "r"(&root):"memory");
+  asm volatile ("mov %%cr3,%0" :: "r"(&root):"memory");
 }
 
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)
