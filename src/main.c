@@ -50,18 +50,7 @@ void init()
 }
 void test_paging()
 {
-    pagemap_t* test_pagemap=test_pagemap;
-
-    EmeraldMem_VMM_create_pagemap(test_pagemap);
-    
-    uint64_t test_virtual_adress = 0x297DE000;
-    
-    uint64_t* test_physical_adress=test_physical_adress;
-    
-    EmeraldMem_VMM_map_page(test_pagemap, test_virtual_adress, *test_physical_adress, 0b11);
-    log("%s","Mapped page");
-    EmeraldMem_VMM_unmap_page(test_pagemap,test_virtual_adress);
-    log("%s","Unmapped page");
+  EmeraldMem_VMM_initialize();
 
 }
 void kmain()
