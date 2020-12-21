@@ -22,7 +22,8 @@ Now you need to compile the source code using the cross-compiler, modify the Mak
 You can use prebuilt .hdd images in the releases tab I suggest you run them using qemu
 ## :heavy_check_mark: TODO
 
-- [ ] VMM
+- [x] VMM
+- [ ] Multitasking
 - [ ] EXT2 filesystem
 - [ ] Start Porting stuff
 ### Screenshots
