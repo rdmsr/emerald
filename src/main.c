@@ -7,10 +7,10 @@
 #include <inc/stivale2.h>
 #include <mem/pmm.h>
 #include <mem/vmm.h>
-#include <sys/gdt.h>
-#include <sys/idt.h>
+#include <sys/gdt/gdt.h>
+#include <sys/idt/idt.h>
 #include <stdint.h>
-#include <firmware/bios/bios.h>
+#include <sys/firmware/legacy/bios.h>
 #define VGA_ADDRESS 0xb8000
 
 #define K 1024
@@ -51,7 +51,6 @@ void init()
 void test_paging()
 {
   EmeraldMem_VMM_initialize();
-
 }
 void kmain()
 {
