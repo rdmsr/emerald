@@ -61,7 +61,8 @@ void EmeraldDevices_RTC_read_rtc()
         last_year = year;
         last_century = century;
 
-        while (get_update_in_progress_flag());
+        while (get_update_in_progress_flag())
+            ;
         second = get_RTC_register(0x00);
         minute = get_RTC_register(0x02);
         hour = get_RTC_register(0x04);

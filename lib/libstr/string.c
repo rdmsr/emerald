@@ -1,6 +1,6 @@
 #include "string.h"
 #include <stdarg.h>
-/* Reimplementations of stdlibs*/
+/* Reimplementations of stdlibs for string manipulation*/
 unsigned int strlen(const char* s)
 {
     unsigned int count = 0;
@@ -85,10 +85,28 @@ void printf(char* format, ...)
         case 'x':
             i = va_arg(arg, unsigned int);
             puts(convert(i, 16));
-            break;
+             break;
         }
     }
 
     va_end(arg);
 
+}
+char* strcpy(char* destination, const char* source)
+{
+    if (destination == NULL)
+        return NULL;
+ 
+    char *ptr = destination;
+ 
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+ 
+    *destination = '\0';
+ 
+    return ptr;
 }

@@ -9,8 +9,10 @@
 #include <mem/vmm.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
+#include <libint/int.h>
 #include <stdint.h>
 #include <ascii.h>
+#include <libstr/string.h>
 #include <sys/firmware/legacy/bios.h>
 #define VGA_ADDRESS 0xb8000
 
@@ -52,7 +54,7 @@ void init()
 void kmain()
 {
     init();
-    puts(ascii_art);
+    set_ascii();
     EmeraldMem_VMM_initialize();
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VGA_enable_cursor(10, 20);
