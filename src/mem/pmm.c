@@ -22,7 +22,7 @@ void EmeraldMem_PMM_pmm_init(uint32_t mem_size)
 
     memset(bitmap, 0, bitmap_size);
 
-    //If I want to get mem_start : mem_start = (uint8_t*)BLOCK_ALIGN(((uint32_t)(bitmap + bitmap_size))); 
+    // mem_start = (uint8_t*)BLOCK_ALIGN(((uint32_t)(bitmap + bitmap_size))); 
     int mb = mem_size / (1024 * 1024);
     log("Initializing PMM...\033[0;37m Bitmap adress = %d,Memory size = %d mb,Bitmap size = %d %s",bitmap,mb,bitmap_size,"\033[1;0mDone");
 }

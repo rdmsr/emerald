@@ -23,15 +23,19 @@ uint64_t* walk_to_page_and_map(uint64_t* current, uint16_t index)
 }
 uintptr_t lower_half(uintptr_t arg)
 {
+  /* offset is defined in link.ld */
   return arg - 0xffffffff80000000;
 }
 uintptr_t higher_half(uintptr_t arg)
 {
+  /* offset is defined in link.ld */
   return arg + 0xffffffff80000000;
 }
 void EmeraldMem_VMM_map_page(pagemap_t *page_map,uintptr_t physical_adress,uint64_t virtual_adress,uintptr_t flags)
 {
+  /* get physical adress */
   physical_adress = lower_half(virtual_adress);
+  /* Paging levels */
   uint16_t level1 = virtual_adress>>12;
   uint16_t level2 = virtual_adress>>21;
   uint16_t level3 = virtual_adress>>30;
@@ -49,6 +53,7 @@ void EmeraldMem_VMM_map_page(pagemap_t *page_map,uintptr_t physical_adress,uint6
 
 void EmeraldMem_VMM_initialize()
 {
+  /* This function maps the first 4gb of ram */
   pagemap_t* page_map=page_map;
   
   EmeraldMem_VMM_create_pagemap(page_map);
@@ -57,11 +62,14 @@ void EmeraldMem_VMM_initialize()
   
   uintptr_t root_lower_half = lower_half(*root);
   
+  /* Map the 4 gb */
   for(uint64_t i = 0; i < 0x100000000; i+=0x1000)
   {
     EmeraldMem_VMM_map_page(page_map,i, higher_half(i),0b11);
   }
+  /* Loads root into cr3 */
    asm volatile ("mov %%cr3,%0" :: "r"(&root_lower_half):"memory");
+   log("%s", "Paging enabled");
 }
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)
 {

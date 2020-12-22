@@ -10,6 +10,7 @@
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
 #include <stdint.h>
+#include <ascii.h>
 #include <sys/firmware/legacy/bios.h>
 #define VGA_ADDRESS 0xb8000
 
@@ -48,17 +49,12 @@ void init()
     kprint_load("PMM", false);
     EmeraldDevices_RTC_read_rtc();
 }
-void test_paging()
-{
-  EmeraldMem_VMM_initialize();
-}
 void kmain()
 {
     init();
-    test_paging();
-    char* irq_remap = "Remapping IRQs...";
+    puts(ascii_art);
+    EmeraldMem_VMM_initialize();
     EmeraldSys_IDT_irq_remap();
-    log("%s",irq_remap);
     EmeraldDevices_VGA_enable_cursor(10, 20);
     EmeraldDevices_VGA_update_cursor(0, 0);
     kprint("Welcome to ", 15);
