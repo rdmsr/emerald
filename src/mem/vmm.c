@@ -69,7 +69,7 @@ void EmeraldMem_VMM_initialize()
   }
   /* Loads root into cr3 */
    asm volatile ("mov %%cr3,%0" :: "r"(&root_lower_half):"memory");
-   log("%s", "Paging enabled");
+   log(INFO,"%s", "Paging enabled");
 }
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)
 {

@@ -24,7 +24,7 @@ if (hour>=12 && hour<18)
   }
 if (hour>=18)
   {
-    strcpy(&ascii_art[448],"Good Night!\n");
+    strcpy(&ascii_art[448],"Good Evening!\n");
   }
  puts(ascii_art);
 }

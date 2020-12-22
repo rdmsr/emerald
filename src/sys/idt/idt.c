@@ -24,7 +24,7 @@ void EmeraldSys_IDT_irq_remap(void)
 
     EmeraldASM_outb(0x21, 0x0);
     EmeraldASM_outb(0xA1, 0x0);
-    log("%s", "IRQs Remapped");
+    log(INFO,"%s", "IRQs Remapped");
 }
 void EmeraldSys_IDT_idt_register(uint16_t idx, void* handler, uint8_t cs, /*uint8_t ist,*/ uint8_t attrib)
 {
@@ -72,5 +72,5 @@ void EmeraldSys_IDT_idt_init(void)
     EmeraldSys_IDT_isr_init();
     EmeraldSys_IDT_idt_load();
     EmeraldASM_sti();
-    log("%s",idt_init);
+    log(INFO,"%s",idt_init);
 }

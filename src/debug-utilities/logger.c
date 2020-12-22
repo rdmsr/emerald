@@ -4,10 +4,29 @@
 #include <stdarg.h>
 
 
-void log(char* format, ...)
+void log(int status,char* format, ...)
 {
     EmeraldDevices_RTC_read_rtc();
-    printf("%d:%d:%d [\033[1;33m LOG \033[1;33m\033[0m] %s",hour,minute,second," ");
+    char* string;
+    switch(status)
+    {
+    case INFO:
+      string = "%d:%d:%d [\033[1;34m INFO \033[1;34m\033[0m] %s";
+      break;
+    case DEBUG:
+      string = "%d:%d:%d [\033[1;36m DEBUG \033[1;36m\033[0m] %s";
+      break;
+    case WARNING:
+      string = "%d:%d:%d [\033[1;33m WARNING \033[1;33m\033[0m] %s";
+      break;
+    case ERROR:
+      string = "%d:%d:%d [\033[1;31m ERROR \033[1;31m\033[0m] %s";
+      break;
+    default:
+      string = " string";
+    };
+    
+    printf(string,hour,minute,second," ");
 
     char* traverse;
     unsigned int i;

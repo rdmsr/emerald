@@ -15,7 +15,6 @@
 #include <libstr/string.h>
 #include <sys/firmware/legacy/bios.h>
 #define VGA_ADDRESS 0xb8000
-
 #define K 1024
 #define M (1024 * K)
 #define MSIZE 48 * M
