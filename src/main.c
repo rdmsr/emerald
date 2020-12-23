@@ -8,8 +8,8 @@
 #include <inc/stivale2.h>
 #include <libint/int.h>
 #include <libstr/string.h>
-#include <mem/pmm.h>
-#include <mem/vmm.h>
+#include <mem/physical/pmm.h>
+#include <mem/virtual/vmm.h>
 #include <stdint.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>

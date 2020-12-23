@@ -25,7 +25,7 @@ struct idt_pointer {
 
  
 void EmeraldSys_IDT_irq_remap(void);
-void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, /*uint8_t ist,*/ uint8_t attrib);
+void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs,uint8_t attrib);
 void EmeraldSys_IDT_isr_init(void);
 void EmeraldSys_IDT_idt_load(void);
 void EmeraldASM_sti();
