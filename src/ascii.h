@@ -2,6 +2,7 @@
 #define ASCII_H
 #include <devices/RTC/rtc.h>
 #include <libstr/string.h>
+#include <debug-utilities/logger.h>
 char ascii_art[] = "\e[0;32m  _____                         _     _ \n"
                   " |  ___|                       | |   | |\n"
                   " | |__ _ __ ___   ___ _ __ __ _| | __| |\n"
@@ -14,6 +15,7 @@ char ascii_art[] = "\e[0;32m  _____                         _     _ \n"
 
 void set_ascii()
 {
+  
 if (hour<12)
   {
     strcpy(&ascii_art[448],"Good Morning!\n");
