@@ -11,18 +11,18 @@ unsigned int strlen(const char* s)
     }
     return count;
 }
-char* itoa(int val, int base){
+char* itoa(int val, int base)
+{
 
-    static char buf[32] = {0};
+    static char buf[32] = { 0 };
 
     int i = 30;
 
-    for(; val && i ; --i, val /= base)
+    for (; val && i; --i, val /= base)
 
         buf[i] = "0123456789abcdef"[val % base];
 
-    return &buf[i+1];
-
+    return &buf[i + 1];
 }
 char* convert(unsigned int num, int base)
 {
@@ -85,28 +85,26 @@ void printf(char* format, ...)
         case 'x':
             i = va_arg(arg, unsigned int);
             puts(convert(i, 16));
-             break;
+            break;
         }
     }
 
     va_end(arg);
-
 }
 char* strcpy(char* destination, const char* source)
 {
     if (destination == NULL)
         return NULL;
- 
-    char *ptr = destination;
- 
-    while (*source != '\0')
-    {
+
+    char* ptr = destination;
+
+    while (*source != '\0') {
         *destination = *source;
         destination++;
         source++;
     }
- 
+
     *destination = '\0';
- 
+
     return ptr;
 }

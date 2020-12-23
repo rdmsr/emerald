@@ -1,6 +1,6 @@
 #include "bios.h"
-#include <stdint.h>
 #include <libasm/asm.h>
+#include <stdint.h>
 void reboot()
 {
     uint8_t good = 0x02;
@@ -9,4 +9,3 @@ void reboot()
     EmeraldASM_outb(0x64, 0xFE);
     asm volatile("hlt");
 }
-

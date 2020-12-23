@@ -1,19 +1,19 @@
+#include <ascii.h>
 #include <debug-utilities/logger.h>
+#include <devices/RTC/rtc.h>
 #include <devices/keyboard/keyboard.h>
 #include <devices/serial/serial.h>
 #include <devices/video/colors.h>
 #include <devices/video/vga/vga.h>
-#include <devices/RTC/rtc.h>
 #include <inc/stivale2.h>
+#include <libint/int.h>
+#include <libstr/string.h>
 #include <mem/pmm.h>
 #include <mem/vmm.h>
+#include <stdint.h>
+#include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
-#include <libint/int.h>
-#include <stdint.h>
-#include <ascii.h>
-#include <libstr/string.h>
-#include <sys/firmware/legacy/bios.h>
 #define VGA_ADDRESS 0xb8000
 #define K 1024
 #define M (1024 * K)

@@ -1,6 +1,7 @@
 #ifndef STRING_H
 #define STRING_H
 #include <devices/serial/serial.h>
+#include <libint/int.h>
 unsigned int strlen(const char* s);
 char* itoa(int val, int base);
 void printf(char* format, ...);

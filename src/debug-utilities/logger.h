@@ -9,7 +9,7 @@ enum status {
 	WARNING,
 	DEBUG,
 	ERROR
-};
+};	
 void log(int status,char* format, ...);
 extern unsigned char second;
 extern unsigned char minute;
