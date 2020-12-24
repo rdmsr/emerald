@@ -1,10 +1,12 @@
-#ifndef SCHEDULING_H
-#define SCHEDULING_H
+#ifndef TASK_H
+#define TASK_H
+#pragma once
 #include <stdint.h>
 typedef struct
 {
-  uint64_t virtual_adress;
-  char* task_name;
+    uint64_t virtual_adress;
+    int id;
+    char name[];
 } process_t;
 
 #endif

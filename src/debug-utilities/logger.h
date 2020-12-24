@@ -1,16 +1,17 @@
 #ifndef LOGGER_H
 #define LOGGER_H
+#include <devices/RTC/rtc.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <devices/RTC/rtc.h>
-enum status {
-	INFO,
-	WARNING,
-	DEBUG,
-	ERROR
-};	
-void log(int status,char* format, ...);
+enum status
+{
+    INFO,
+    WARNING,
+    DEBUG,
+    ERROR
+};
+void log(int status, char *format, ...);
 extern unsigned char second;
 extern unsigned char minute;
 extern unsigned char hour;

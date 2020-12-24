@@ -2,28 +2,28 @@
 #include <debug-utilities/logger.h>
 #include <devices/RTC/rtc.h>
 #include <libasm/asm.h>
+#include <libint/int.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <libint/int.h>
 #define ENTER_KEY_CODE 0x1C
 unsigned char keyboard_map[128] = {
-    0, 27, '1', '2', '3', '4', '5', '6', '7', '8', /* 9 */
-    '9', '0', '-', '=', ' ', /* Backspace */
-    '\t', /* Tab */
-    'q', 'w', 'e', 'r', /* 19 */
-    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', /* Enter key */
-    0, /* 29   - Control */
+    0, 27, '1', '2', '3', '4', '5', '6', '7', '8',    /* 9 */
+    '9', '0', '-', '=', ' ',                          /* Backspace */
+    '\t',                                             /* Tab */
+    'q', 'w', 'e', 'r',                               /* 19 */
+    't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',     /* Enter key */
+    0,                                                /* 29   - Control */
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', /* 39 */
-    '\'', '`', 0, /* Left shift */
-    '\\', 'z', 'x', 'c', 'v', 'b', 'n', /* 49 */
-    'm', ',', '.', '/', 0, /* Right shift */
+    '\'', '`', 0,                                     /* Left shift */
+    '\\', 'z', 'x', 'c', 'v', 'b', 'n',               /* 49 */
+    'm', ',', '.', '/', 0,                            /* Right shift */
     '*',
-    0, /* Alt */
+    0,   /* Alt */
     ' ', /* Space bar */
-    0, /* Caps lock */
-    0, /* 59 - F1 key ... > */
+    0,   /* Caps lock */
+    0,   /* 59 - F1 key ... > */
     0, 0, 0, 0, 0, 0, 0, 0,
     0, /* < ... F10 */
     0, /* 69 - Num lock*/
@@ -65,16 +65,19 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
     EmeraldASM_outb(0x20, 0x20);
     EmeraldASM_inb(KEYBOARD_STATUS_PORT);
     keycode = EmeraldASM_inb(KEYBOARD_DATA_PORT);
-    if (keycode < 0) {
+    if (keycode < 0)
+    {
         PIC_sendEOI(0);
         return;
     }
 
-    if (keycode == ENTER_KEY_CODE) {
+    if (keycode == ENTER_KEY_CODE)
+    {
         kprint_newline();
         return;
     }
-    if (keycode == DELETE_KEY_CODE) {
+    if (keycode == DELETE_KEY_CODE)
+    {
         kprint_newline();
         return;
     }

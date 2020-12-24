@@ -3,11 +3,12 @@
 #include <libstr/string.h>
 #include <stdarg.h>
 
-void log(int status, char* format, ...)
+void log(int status, char *format, ...)
 {
     EmeraldDevices_RTC_read_rtc();
-    char* string;
-    switch (status) {
+    char *string;
+    switch (status)
+    {
     case INFO:
         string = "%d:%d:%d [\033[1;34m INFO \033[1;34m\033[0m] %s";
         break;
@@ -28,16 +29,19 @@ void log(int status, char* format, ...)
 
     unsigned int i;
     unsigned int ZERO = 0;
-    char* s;
+    char *s;
 
     va_list arg;
     va_start(arg, format);
 
-    while (*format) {
+    while (*format)
+    {
 
-        if (*format == '%') {
+        if (*format == '%')
+        {
             format++;
-            switch (*format) {
+            switch (*format)
+            {
             case 'c':
                 i = va_arg(arg, int);
                 putchar(i);
@@ -45,7 +49,8 @@ void log(int status, char* format, ...)
 
             case 'd':
                 i = va_arg(arg, int);
-                if (i < ZERO) {
+                if (i < ZERO)
+                {
                     i = -i;
                     putchar('-');
                 }
@@ -58,7 +63,7 @@ void log(int status, char* format, ...)
                 break;
 
             case 's':
-                s = va_arg(arg, char*);
+                s = va_arg(arg, char *);
                 puts(s);
                 break;
 
@@ -70,7 +75,9 @@ void log(int status, char* format, ...)
                 putchar('%');
                 break;
             }
-        } else {
+        }
+        else
+        {
             putchar(*format);
         }
         format++;

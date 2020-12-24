@@ -22,20 +22,18 @@
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 void kmain();
-static uint8_t stack[4096] = { 0 };
+static uint8_t stack[4096] = {0};
 struct stivale2_header_tag_smp smp_request = {
     .tag = {
         .identifier = STIVALE2_HEADER_TAG_SMP_ID,
-        .next = 0 },
-    .flags = 0
-};
+        .next = 0},
+    .flags = 0};
 
 __attribute__((section(".stivale2hdr"), used)) struct stivale2_header header2 = {
     .entry_point = (uint64_t)kmain,
     .stack = (uintptr_t)stack + sizeof(stack),
     .flags = 0,
-    .tags = (uint64_t)&smp_request
-};
+    .tags = (uint64_t)&smp_request};
 void init()
 {
     EmeraldDevices_keyboard_Keyboard_init();
@@ -50,11 +48,13 @@ void init()
     kprint_load("PMM", false);
     EmeraldDevices_RTC_read_rtc();
 }
-void kmain()
+void kmain(struct stivale2_mmap_entry *info)
 {
     init();
+    log(DEBUG, "%d", info->length);
     set_ascii();
     EmeraldMem_VMM_initialize();
+    log(INFO, "Paging enabled");
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VGA_enable_cursor(10, 20);
     EmeraldDevices_VGA_update_cursor(0, 0);
