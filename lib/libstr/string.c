@@ -1,20 +1,21 @@
 #include "string.h"
 #include <stdarg.h>
 /* Reimplementations of stdlibs for string manipulation*/
-unsigned int strlen(const char* s)
+unsigned int strlen(const char *s)
 {
     unsigned int count = 0;
 
-    while (*s != '\0') {
+    while (*s != '\0')
+    {
         count++;
         s++;
     }
     return count;
 }
-char* itoa(int val, int base)
+char *itoa(int val, int base)
 {
 
-    static char buf[32] = { 0 };
+    static char buf[32] = {0};
 
     int i = 30;
 
@@ -24,40 +25,44 @@ char* itoa(int val, int base)
 
     return &buf[i + 1];
 }
-char* convert(unsigned int num, int base)
+char *convert(unsigned int num, int base)
 {
     static char Representation[] = "0123456789ABCDEF";
     static char buffer[50];
-    char* ptr;
+    char *ptr;
 
     ptr = &buffer[49];
     *ptr = '\0';
 
-    do {
+    do
+    {
         *--ptr = Representation[num % base];
         num /= base;
     } while (num != 0);
     return (ptr);
 }
 
-void printf(char* format, ...)
+void printf(char *format, ...)
 {
-    char* traverse;
+    char *traverse;
     unsigned int i;
-    char* s;
+    char *s;
     static const unsigned ZERO = 0;
     va_list arg;
     va_start(arg, format);
 
-    for (traverse = format; *traverse != '\0'; traverse++) {
-        while (*traverse != '%') {
+    for (traverse = format; *traverse != '\0'; traverse++)
+    {
+        while (*traverse != '%')
+        {
             putchar(*traverse);
             traverse++;
         }
 
         traverse++;
 
-        switch (*traverse) {
+        switch (*traverse)
+        {
         case 'c':
             i = va_arg(arg, int);
             putchar(i);
@@ -65,7 +70,8 @@ void printf(char* format, ...)
 
         case 'd':
             i = va_arg(arg, int);
-            if (i < ZERO) {
+            if (i < ZERO)
+            {
                 i = -i;
                 putchar('-');
             }
@@ -78,7 +84,7 @@ void printf(char* format, ...)
             break;
 
         case 's':
-            s = va_arg(arg, char*);
+            s = va_arg(arg, char *);
             puts(s);
             break;
 
@@ -91,14 +97,15 @@ void printf(char* format, ...)
 
     va_end(arg);
 }
-char* strcpy(char* destination, const char* source)
+char *strcpy(char *destination, const char *source)
 {
     if (destination == NULL)
         return NULL;
 
-    char* ptr = destination;
+    char *ptr = destination;
 
-    while (*source != '\0') {
+    while (*source != '\0')
+    {
         *destination = *source;
         destination++;
         source++;

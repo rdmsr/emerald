@@ -10,7 +10,7 @@
 #define ENTER_KEY_CODE 0x1C
 unsigned char keyboard_map[128] = {
     0, 27, '1', '2', '3', '4', '5', '6', '7', '8',    /* 9 */
-    '9', '0', '-', '=', ' ',                          /* Backspace */
+    '9', '0', '-', '=', '\n',                          /* Backspace */
     '\t',                                             /* Tab */
     'q', 'w', 'e', 'r',                               /* 19 */
     't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',     /* Enter key */
@@ -81,8 +81,7 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
         kprint_newline();
         return;
     }
-    /*log("Interrupt pressed: %d letter: %c",keycode,keyboard_map[(unsigned char)keycode]);*/
     vidptr[current_location++] = keyboard_map[(unsigned char)keycode];
     vidptr[current_location++] = 0x07;
-    EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
+    EmeraldDevices_VGA_update_cursor(current_location / 2,0);
 }

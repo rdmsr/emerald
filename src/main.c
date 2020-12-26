@@ -48,10 +48,9 @@ void init()
     kprint_load("PMM", false);
     EmeraldDevices_RTC_read_rtc();
 }
-void kmain(struct stivale2_mmap_entry *info)
+void kmain()
 {
     init();
-    log(DEBUG, "%d", info->length);
     set_ascii();
     EmeraldMem_VMM_initialize();
     log(INFO, "Paging enabled");
@@ -60,5 +59,6 @@ void kmain(struct stivale2_mmap_entry *info)
     EmeraldDevices_VGA_update_cursor(0, 0);
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
-    while (1);
+    while (1)
+        ;
 }

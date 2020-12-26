@@ -1,2 +1,8 @@
 .hdd
 .o
+.creator
+.config
+.cflags
+.cxxflags
+.files
+.includes

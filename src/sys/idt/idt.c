@@ -60,10 +60,7 @@ void EmeraldSys_IDT_idt_load(void)
                  :
                  : "m"(idtr));
 }
-void EmeraldASM_sti()
-{
-    asm volatile("sti");
-}
+
 void EmeraldSys_IDT_idt_init(void)
 {
     EmeraldSys_IDT_isr_init();

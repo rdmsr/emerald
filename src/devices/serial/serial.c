@@ -20,8 +20,7 @@ int EmeraldDevices_Serial_serial_received()
 }
 char EmeraldDevices_Serial_read_serial()
 {
-    while (EmeraldDevices_Serial_serial_received() == 0)
-        ;
+    while (EmeraldDevices_Serial_serial_received() == 0);
     return EmeraldASM_inb(PORT);
 }
 
@@ -31,14 +30,14 @@ int EmeraldDevices_Serial_is_transmit_empty()
 }
 void EmeraldDevices_Serial_write_serial(char a)
 {
-    while (EmeraldDevices_Serial_is_transmit_empty() == 0)
-        ;
+    while (EmeraldDevices_Serial_is_transmit_empty() == 0);
     EmeraldASM_outb(PORT, a);
 }
 
-void puts(char* string)
+void puts(char *string)
 {
-    for (unsigned int i = 0; i < strlen(string); i++) {
+    for (unsigned int i = 0; i < strlen(string); i++)
+    {
         char output = string[i];
         EmeraldDevices_Serial_write_serial((int)output);
     }

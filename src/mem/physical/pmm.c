@@ -2,7 +2,6 @@
 
 #include "pmm.h"
 #include <debug-utilities/logger.h>
-#include <devices/video/vga/vga.h>
 #include <stdint.h>
 uint8_t *bitmap = (uint8_t *)(&end);
 uint8_t *mem_start;
