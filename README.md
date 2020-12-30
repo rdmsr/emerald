@@ -26,11 +26,7 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [ ] Multitasking
 - [ ] EXT2 filesystem
 - [ ] Userspace
-<<<<<<< HEAD
 - [ ] Port libc
-=======
-- [ ] Port libc 
->>>>>>> 1da3ffd764f2469f1fa2af69cc09d16dc025b811
 ### Screenshots
 
 <img src="https://cdn.discordapp.com/attachments/745313714747605105/773343861526364171/unknown.png">
