@@ -25,7 +25,8 @@ You can use prebuilt .hdd images in the releases tab I suggest you run them usin
 - [x] VMM
 - [ ] Multitasking
 - [ ] EXT2 filesystem
-- [ ] Start Porting stuff
+- [ ] Userspace
+- [ ] Port libc
 ### Screenshots
 
 <img src="https://cdn.discordapp.com/attachments/745313714747605105/773343861526364171/unknown.png">
