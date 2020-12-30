@@ -19,14 +19,18 @@ Then you need to init the submodules(clone limine):
 Now you need to compile the source code using the cross-compiler, modify the Makefile if needed
 
 ### Prebuilt images
-You can use prebuilt .hdd images in the releases tab I suggest you run them using qemu
+You can use prebuilt .hdd images in the releases tab, I suggest you run them using qemu
 ## :heavy_check_mark: TODO
 
 - [x] VMM
 - [ ] Multitasking
 - [ ] EXT2 filesystem
 - [ ] Userspace
+<<<<<<< HEAD
 - [ ] Port libc
+=======
+- [ ] Port libc 
+>>>>>>> 1da3ffd764f2469f1fa2af69cc09d16dc025b811
 ### Screenshots
 
 <img src="https://cdn.discordapp.com/attachments/745313714747605105/773343861526364171/unknown.png">
