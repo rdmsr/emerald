@@ -8,11 +8,18 @@ char *vidptr = (char *)0xb8000;
 void kprint(const char *str, int color)
 {
     unsigned int i = 0;
-    while (str[i] != '\0')
+    while (str[i] != '\0' && str[i] != '\n')
+
     {
+      
         vidptr[current_loc++] = str[i++];
         vidptr[current_loc++] = color;
     }
+    
+      if(str[i] == '\n')
+      {
+	kprint_newline();
+      }
 }
 void kprint_newline(void)
 {

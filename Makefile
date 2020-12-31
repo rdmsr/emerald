@@ -1,7 +1,7 @@
 ASMFILES  := $(shell find src/ -type f -name '*.asm')
-CFILES    := $(shell find src/ lib/ -type f -name '*.c')
-CC         = /opt/toolchain/bin/x86_64-elf-gcc
-LD         = /opt/toolchain/bin/x86_64-elf-ld
+CFILES    := $(shell find src/ libk/ -type f -name '*.c')
+CC         = /home/abbix/cross_compiler/bin/x86_64-pc-elf-gcc
+LD         = /home/abbix/cross_compiler/bin/x86_64-pc-elf-ld
 OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
 KERNEL_HDD = build/disk.hdd
 KERNEL_ELF = kernel.elf
@@ -24,7 +24,7 @@ CHARDFLAGS := $(CFLAGS)               \
 	-ffreestanding                 \
 	-fno-stack-protector           \
 	-Isrc/                         \
-	-Ilib/							\
+	-Ilibk/							\
 
 LDHARDFLAGS := $(LDFLAGS)        \
 	-static                   \
@@ -35,7 +35,7 @@ LDHARDFLAGS := $(LDFLAGS)        \
 .DEFAULT_GOAL = $(KERNEL_HDD)
 disk: $(KERNEL_HDD)
 run: $(KERNEL_HDD)
-	qemu-system-x86_64 -drive file=$(KERNEL_HDD),format=raw -serial stdio -enable-kvm -rtc base=localtime
+	qemu-system-x86_64 -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime
 
 %.o: %.c
 	@echo [ CC ] $<

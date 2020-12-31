@@ -1,7 +1,7 @@
 #include "rtc.h"
 #include <debug-utilities/logger.h>
 #include <libasm/asm.h>
-#define CURRENT_YEAR 2020
+#define CURRENT_YEAR 2021
 /*stolen from osdev.org*/
 int century_register = 0x00;
 unsigned char second;

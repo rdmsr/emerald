@@ -10,7 +10,7 @@ char ascii_art[] = "\e[0;32m  _____                         _     _ \n"
                    " | |__| | | | | |  __/ | | (_| | | (_| |\n"
                    " \\____/_| |_| |_|\\___|_|  \\__,_|_|\\__,_|\n\e[0m"
                    " ─────────────────────────────────────────────────\n"
-                   "Copyright (c) 2020 EmeraldOS contributors\n"
+                   "Copyright (c) 2020-2021 EmeraldOS contributors\n"
                    "                                               \n";
 
 void set_ascii()
@@ -18,15 +18,15 @@ void set_ascii()
 
     if (hour < 12)
     {
-        strcpy(&ascii_art[448], "Good Morning!\n");
+        strcpy(&ascii_art[453], "Good Morning!\n");
     }
     if (hour >= 12 && hour < 18)
     {
-        strcpy(&ascii_art[448], "Good Afternoon!\n");
+        strcpy(&ascii_art[453], "Good Afternoon!\n");
     }
     if (hour >= 18)
     {
-        strcpy(&ascii_art[448], "Good Evening!\n");
+        strcpy(&ascii_art[453], "Good Evening!\n");
     }
     puts(ascii_art);
 }
