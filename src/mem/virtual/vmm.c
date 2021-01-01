@@ -1,10 +1,29 @@
 #include "vmm.h"
 #include "../physical/pmm.h"
 #include <debug-utilities/logger.h>
+
+/*
+
+Virtual Memory Manager
+----------------------
+
+How does it work?
+
+in my VMM, I use a memory management scheme called 'paging' here is how it works:
+
+The virtual memory is split in equally-sized blocks called "pages" they are usually 4kb long or 4096 bytes.
+
+These pages are then mapped on a pagemap (also called pagetable)
+
+*/
+
+/* In this function we create a pagemap with pages of size 4096 */
 void EmeraldMem_VMM_create_pagemap(pagemap_t *map)
 {
+    /* We allocate the page */
     uint64_t page = EmeraldMem_PMM_allocate_block(4096);
 
+    /* PML4 stands for page map level 4 */
     uint64_t *pml4 = (uint64_t *)page;
 
     memset(pml4, 0, 4096);
@@ -35,6 +54,7 @@ void EmeraldMem_VMM_map_page(pagemap_t *page_map, uintptr_t physical_adress, uin
 {
     /* get physical adress */
     physical_adress = lower_half(virtual_adress);
+    
     /* Paging levels */
     uint16_t level1 = virtual_adress >> 12;
     uint16_t level2 = virtual_adress >> 21;
@@ -67,7 +87,7 @@ void EmeraldMem_VMM_initialize()
     {
         EmeraldMem_VMM_map_page(page_map, i, higher_half(i), 0b11);
     }
-    /* Loads root into cr3 */
+    /* Enables Paging */
     asm volatile("mov %%cr3,%0" ::"r"(&root_lower_half)
                  : "memory");
     log(INFO, "Mapped Kernel");
