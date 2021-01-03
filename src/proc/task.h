@@ -9,7 +9,7 @@ typedef struct
 
 typedef struct
 {
-  uint8_t priority = 0;
+  uint8_t priority;
   uint32_t time_slice;
   regs64_t registers;
 } thread_t;
