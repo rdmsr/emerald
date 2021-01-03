@@ -21,6 +21,9 @@ void log(int status, char *format, ...)
     case ERROR:
         string = "%d:%d:%d [\033[1;31m ERROR \033[1;31m\033[0m] %s";
         break;
+    case PANIC:
+      string = "%d:%d:%d [\033[1;31m PANIC \033[1;31m\033[0m] %s";
+      break;
     default:
         string = " string";
     };

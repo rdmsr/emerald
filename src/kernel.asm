@@ -2,6 +2,7 @@ bits 64
 section .text
 global start
 global isr
+global panic
 global isr_irq_master
 global isr_irq_slave
 global shutdown
@@ -67,7 +68,6 @@ start:
 	mov rsp, stack_space
 	call kmain
 	hlt 				;halt the CPU
-
 section .bss
 resb 8192; 8KB for stack
 section .text

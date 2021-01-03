@@ -55,7 +55,7 @@ void clear_screen(void)
     while (i < SCREENSIZE)
     {
         vidptr[i++] = ' ';
-        vidptr[i++] = 0x07;
+        vidptr[i++] = 0xAA;
     }
 }
 void EmeraldDevices_VGA_enable_cursor(uint8_t cursor_start, uint8_t cursor_end)

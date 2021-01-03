@@ -9,6 +9,7 @@ enum status
     INFO,
     WARNING,
     DEBUG,
+    PANIC,
     ERROR
 };
 void log(int status, char *format, ...);
