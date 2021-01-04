@@ -15,7 +15,7 @@ typedef struct
   regs64_t registers;
 } thread_t;
 
-typedef struct
+typedef struct process_struct
 {
     int id;
     thread_t thread;
@@ -24,5 +24,5 @@ typedef struct
 } process_t;
 
 process_t EmeraldProc_Task_create_process(int id, uint8_t priority,uintptr_t physical_adress,thread_t thread, char *name);
-
+void EmeraldProc_Scheduler_schedule_task();
 #endif

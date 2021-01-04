@@ -27,14 +27,13 @@ void EmeraldMem_PMM_pmm_init(uint32_t mem_size)
     log(INFO, "Initializing PMM...\033[0;37m Bitmap adress = %d,Memory size = %d mb,Bitmap size = %d %s", bitmap, mb, bitmap_size, "\033[1;0mDone");
 }
 
-//malloc
 uint32_t EmeraldMem_PMM_allocate_block()
 {
     uint32_t free_block = EmeraldMem_PMM_first_free_block();
     SETBIT(free_block);
     return free_block;
 }
-//free
+
 void EmeraldMem_PMM_free_block(uint32_t block_num)
 {
     CLEARBIT(block_num);
