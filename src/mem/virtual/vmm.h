@@ -14,4 +14,6 @@ void EmeraldMem_VMM_create_pagemap(pagemap_t *map);
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress);
 void EmeraldMem_VMM_initialize();
 void EmeraldMem_set_bit(uint8_t* num, uint8_t bit, uint8_t state);
+uintptr_t lower_half(uintptr_t arg);
+uintptr_t higher_half(uintptr_t arg);
 #endif

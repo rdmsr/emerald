@@ -11,6 +11,7 @@
 #include <mem/physical/pmm.h>
 #include <mem/virtual/vmm.h>
 #include <stdint.h>
+#include <proc/task.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
@@ -57,7 +58,10 @@ void kmain()
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VGA_enable_cursor(10, 20);
     EmeraldDevices_VGA_update_cursor(0, 0);
-    kprint("Welcome to", 15);
+    kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
+    thread_t thread;
+    EmeraldProc_Task_create_process(10,20,0x297DE000,thread,"process1");
+    EmeraldProc_Task_create_process(20,92,0xFFF,thread,"process2");
     while (1);
 }

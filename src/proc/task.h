@@ -2,6 +2,7 @@
 #define TASK_H
 #pragma once
 #include <stdint.h>
+#include <mem/virtual/vmm.h>
 typedef struct
 {
   uint64_t rax,rbx,rcx,rdx,rsi,rdi,rbp,rsp,r8,r9,r10,r11,r12,r13,r14,r15;
@@ -16,13 +17,12 @@ typedef struct
 
 typedef struct
 {
-    uint64_t virtual_adress;
     int id;
     thread_t thread;
-    char name[];
+    pagemap_t* pagemap;
+    char* name;
 } process_t;
 
-void EmeraldProc_timer_init();
-void EmeraldProc_change_priority(uint8_t priority);
+process_t EmeraldProc_Task_create_process(int id, uint8_t priority,uintptr_t physical_adress,thread_t thread, char *name);
 
 #endif

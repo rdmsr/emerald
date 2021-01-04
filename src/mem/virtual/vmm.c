@@ -82,7 +82,7 @@ void EmeraldMem_VMM_initialize()
 
     uintptr_t root_lower_half = lower_half(*root);
 
-    /* Map the 4 gb */
+    /* Maps the first 4 gb */
     for (uint64_t i = 0; i < 0x100000000; i += 0x1000)
     {
         EmeraldMem_VMM_map_page(page_map, i, higher_half(i), 0b11);
