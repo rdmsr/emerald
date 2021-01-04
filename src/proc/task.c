@@ -1,5 +1,6 @@
 #include "task.h"
 #include <debug-utilities/logger.h>
+#include <libk.h>
 struct process_struct* process_queue;
 int size_of_queue = 0;
 void queue_append(process_t process)
@@ -47,6 +48,7 @@ void EmeraldProc_Scheduler_schedule_task()
       process_queue[i + 1] = temp;
       
       log(INFO,"Swapped process named %s with process named %s",process_queue[i].name,process_queue[i + 1].name);
+      kassert(process_queue[i].thread.priority > process_queue[i + 1].thread.priority);
     }
   }
 }
