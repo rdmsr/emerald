@@ -27,7 +27,6 @@ void EmeraldMem_VMM_create_pagemap(pagemap_t *map)
     uint64_t *pml4 = (uint64_t *)page;
 
     memset(pml4, 0, 4096);
-
     map->pml4 = pml4;
 }
 uint64_t *walk_to_page_and_map(uint64_t *current, uint16_t index)

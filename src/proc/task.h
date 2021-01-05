@@ -25,4 +25,5 @@ typedef struct process_struct
 
 process_t EmeraldProc_Task_create_process(int id, uint8_t priority,uintptr_t physical_adress,thread_t thread, char *name);
 void EmeraldProc_Scheduler_schedule_task();
+void EmeraldProc_Scheduler_give_cpu(thread_t thread);
 #endif

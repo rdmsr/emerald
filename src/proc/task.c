@@ -36,7 +36,7 @@ process_t EmeraldProc_Task_create_process(int id,uint8_t priority, uintptr_t vir
 
 }
 /* This is probably not the best implementation but it works for now, bubble sort has a complexity of O(n2) which is not the best*/
-void EmeraldProc_Scheduler_schedule_task()
+void EmeraldProc_Scheduler_schedule_tasks()
 {
   /* Puts the process with the highest priority at the start of the queue */
   for(int i=0; i<size_of_queue - 1; i++)
@@ -51,4 +51,8 @@ void EmeraldProc_Scheduler_schedule_task()
       kassert(process_queue[i].thread.priority > process_queue[i + 1].thread.priority);
     }
   }
+}
+void EmeraldProc_Scheduler_give_cpu(thread_t thread)
+{
+  log(INFO,"TODO: Implement EmeraldProc_Scheduler_give_cpu");
 }
