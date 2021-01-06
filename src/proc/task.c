@@ -1,4 +1,5 @@
 #include "task.h"
+#include "PIT.h"
 #include <debug-utilities/logger.h>
 #include <libk.h>
 struct process_struct* process_queue;
@@ -32,12 +33,14 @@ process_t EmeraldProc_Task_create_process(int id,uint8_t priority, uintptr_t vir
   size_of_queue++;
   queue_append(process);
   log(INFO,"Created process called: %s with id: %d, with virtual adress: %d and physical adress: %d, position in queue: %d",name,id,virtual_adress,lower_half(virtual_adress),position);
+ 
   return process;
 
 }
 /* This is probably not the best implementation but it works for now, bubble sort has a complexity of O(n2) which is not the best*/
-void EmeraldProc_Scheduler_schedule_tasks()
+void EmeraldProc_Scheduler_schedule_task()
 {
+  EmeraldProc_PIT_init(1000);
   /* Puts the process with the highest priority at the start of the queue */
   for(int i=0; i<size_of_queue - 1; i++)
   {
@@ -52,7 +55,9 @@ void EmeraldProc_Scheduler_schedule_tasks()
     }
   }
 }
+
+
 void EmeraldProc_Scheduler_give_cpu(thread_t thread)
 {
-  log(INFO,"TODO: Implement EmeraldProc_Scheduler_give_cpu");
+  log(INFO,"TODO: Implement EmeraldProc_Scheduler_give_cpu, thread's priority is %d",thread.priority);
 }
