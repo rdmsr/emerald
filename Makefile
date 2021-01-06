@@ -35,7 +35,7 @@ LDHARDFLAGS := $(LDFLAGS)        \
 .DEFAULT_GOAL = $(KERNEL_HDD)
 disk: $(KERNEL_HDD)
 run: $(KERNEL_HDD)
-	qemu-system-x86_64 -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime
+	qemu-system-x86_64 -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 512
 
 %.o: %.c
 	@echo [ CC ] $<
@@ -45,6 +45,7 @@ run: $(KERNEL_HDD)
 	@nasm $(NASMFLAGS) $< -o $@
 $(KERNEL_ELF): $(OBJ)
 
+	@echo [ LD ] $<
 	@$(LD) $(LDHARDFLAGS) $(OBJ) -o $@
 
 limine/limine-install:
