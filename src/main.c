@@ -15,13 +15,9 @@
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
-#define VGA_ADDRESS 0xb8000
 #define K 1024
 #define M (1024 * K)
 #define MSIZE 48 * M
-#define IDT_SIZE 256
-#define INTERRUPT_GATE 0x8e
-#define KERNEL_CODE_SEGMENT_OFFSET 0x08
 void kmain();
 static uint8_t stack[4096] = {0};
 struct stivale2_header_tag_smp smp_request = {
