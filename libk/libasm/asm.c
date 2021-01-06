@@ -17,5 +17,5 @@ void EmeraldASM_outb(uint16_t port, uint8_t value)
 }
 void EmeraldASM_sti()
 {
-  asm volatile("sti");
+    asm volatile("sti");
 }

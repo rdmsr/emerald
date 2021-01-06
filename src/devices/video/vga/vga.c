@@ -1,8 +1,8 @@
 #include "vga.h"
+#include <debug-utilities/logger.h>
 #include <devices/serial/serial.h>
 #include <libasm/asm.h>
 #include <mem/virtual/vmm.h>
-#include <debug-utilities/logger.h>
 unsigned int current_loc = 0;
 char *vidptr = (char *)0xb8000;
 void kprint(const char *str, int color)
@@ -11,15 +11,15 @@ void kprint(const char *str, int color)
     while (str[i] != '\0' && str[i] != '\n')
 
     {
-      
+
         vidptr[current_loc++] = str[i++];
         vidptr[current_loc++] = color;
     }
-    
-      if(str[i] == '\n')
-      {
-	kprint_newline();
-      }
+
+    if (str[i] == '\n')
+    {
+        kprint_newline();
+    }
 }
 void kprint_newline(void)
 {

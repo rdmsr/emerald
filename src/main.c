@@ -4,14 +4,15 @@
 #include <devices/keyboard/keyboard.h>
 #include <devices/serial/serial.h>
 #include <devices/video/colors.h>
+#include <devices/video/vbe/vbe.h>
 #include <devices/video/vga/vga.h>
 #include <inc/stivale2.h>
 #include <libint/int.h>
 #include <libstr/string.h>
 #include <mem/physical/pmm.h>
 #include <mem/virtual/vmm.h>
-#include <stdint.h>
 #include <proc/task.h>
+#include <stdint.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
@@ -45,6 +46,7 @@ void init()
     kprint_load("PMM", false);
     EmeraldDevices_RTC_read_rtc();
 }
+
 void kmain()
 {
     init();
@@ -57,9 +59,11 @@ void kmain()
     kprint("Welcome to ", 15);
     kprint("EmeraldOS!", 10);
     thread_t thread;
-    EmeraldProc_Task_create_process(10,20,0x297DE000,thread,"process1");
-    EmeraldProc_Task_create_process(20,92,0xFFF,thread,"process2");
-    EmeraldProc_Task_create_process(30,30,0xFFF,thread,"process3");
+    EmeraldProc_Task_create_process(10, 20, 0x297DE000, thread, "process1");
+    EmeraldProc_Task_create_process(20, 92, 0xFFF, thread, "process2");
+    EmeraldProc_Task_create_process(30, 30, 0xFFF, thread, "process3");
     EmeraldProc_Scheduler_schedule_task();
+    struct stivale2_struct_tag_framebuffer *fb = fb;
+    EmeraldDevices_VBE_init(fb);
     while (1);
 }

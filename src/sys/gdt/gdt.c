@@ -3,7 +3,7 @@
 #include <libstr/string.h>
 #include <stdint.h>
 struct gdt_descriptor gdt[8];
-struct gdt_pointer gdtr = { .limit = sizeof(gdt) - 1, .base = (uint64_t)gdt };
+struct gdt_pointer gdtr = {.limit = sizeof(gdt) - 1, .base = (uint64_t)gdt};
 
 void EmeraldSys_GDT_gdt_load()
 {
@@ -33,8 +33,8 @@ void EmeraldSys_GDT_gdt_load()
 }
 void EmeraldSys_GDT_gdt_init()
 {
-    gdt[1] = (struct gdt_descriptor) { .access = 0b10011010, .granularity = 0b00100000 };
-    gdt[2] = (struct gdt_descriptor) { .access = 0b10010010, .granularity = 0 };
+    gdt[1] = (struct gdt_descriptor){.access = 0b10011010, .granularity = 0b00100000};
+    gdt[2] = (struct gdt_descriptor){.access = 0b10010010, .granularity = 0};
     log(INFO, "Initializing GDT... \033[0;37mGDT[1] = {.access = 0b%s .granularity = 0b%s} GDT[2] = {.access = 0b%s .granularity = 0b%s%s %s", itoa(gdt[1].access, 2), itoa(gdt[1].granularity, 2), itoa(gdt[2].access, 2), itoa(gdt[2].granularity, 2), "}", "\033[1;0mDone");
     log(INFO, "Loading GDT...");
     EmeraldSys_GDT_gdt_load();

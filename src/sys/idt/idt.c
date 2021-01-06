@@ -25,7 +25,7 @@ void EmeraldSys_IDT_irq_remap(void)
     EmeraldASM_outb(0xA1, 0x0);
     log(INFO, "IRQs Remapped");
 }
-void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs,uint8_t attrib)
+void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t attrib)
 {
     uint64_t ptr = (uint64_t)handler;
     idt[idx] = (struct idt_descriptor){

@@ -53,7 +53,7 @@ void EmeraldMem_VMM_map_page(pagemap_t *page_map, uintptr_t physical_adress, uin
 {
     /* get physical adress */
     physical_adress = lower_half(virtual_adress);
-    
+
     /* Paging levels */
     uint16_t level1 = virtual_adress >> 12;
     uint16_t level2 = virtual_adress >> 21;
@@ -106,11 +106,14 @@ void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)
     pml1[level1] = 0;
 }
 
-void EmeraldMem_set_bit(uint8_t* num, uint8_t bit, uint8_t state)
+void EmeraldMem_set_bit(uint8_t *num, uint8_t bit, uint8_t state)
 {
-    if (state == 0) {
-    *num &= ~(1 << bit);
-  } else if (state == 1) {
-    *num = (*num | (1 << bit));
-  }
+    if (state == 0)
+    {
+        *num &= ~(1 << bit);
+    }
+    else if (state == 1)
+    {
+        *num = (*num | (1 << bit));
+    }
 }
