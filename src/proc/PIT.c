@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "PIT.h"
 #include <libasm/asm.h>
 #include <debug-utilities/logger.h>
