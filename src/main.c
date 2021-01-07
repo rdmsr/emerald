@@ -21,17 +21,27 @@
 #define MSIZE 48 * M
 void kmain();
 static uint8_t stack[4096] = {0};
+struct stivale2_header_tag_framebuffer fb_request = {
+    .tag = {
+        .identifier = STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
+        .next = 0},
+    .framebuffer_bpp = 0,
+    .framebuffer_height = 0,
+    .framebuffer_width = 0};
 struct stivale2_header_tag_smp smp_request = {
     .tag = {
         .identifier = STIVALE2_HEADER_TAG_SMP_ID,
-        .next = 0},
+        .next = (uint64_t)&fb_request},
     .flags = 0};
 
 __attribute__((section(".stivale2hdr"), used)) struct stivale2_header header2 = {
     .entry_point = (uint64_t)kmain,
     .stack = (uintptr_t)stack + sizeof(stack),
     .flags = 0,
-    .tags = (uint64_t)&smp_request};
+    .tags = (uint64_t)&smp_request,
+
+};
+
 void init()
 {
     EmeraldDevices_keyboard_Keyboard_init();
@@ -65,5 +75,6 @@ void kmain()
     EmeraldProc_Scheduler_schedule_task();
     struct stivale2_struct_tag_framebuffer *fb = fb;
     EmeraldDevices_VBE_init(fb);
+    vbe_clear_screen();
     while (1);
 }
