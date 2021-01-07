@@ -41,7 +41,8 @@ extern EmeraldDevices_keyboard_Keyboard_handler_main
     pop rcx
     pop rbx
     pop rax
-%endmacro
+	%endmacro
+
 isr:
 	pushaq
 	cld
@@ -72,4 +73,3 @@ section .bss
 resb 8192; 8KB for stack
 section .text
 stack_space:
-
