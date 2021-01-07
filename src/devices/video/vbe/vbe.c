@@ -24,7 +24,6 @@ void vbe_clear_screen()
   
     color_t *color;
     color = &bg_color;
-    EmeraldDevices_VBE_draw_pixel(1, 1, get_color(color));
     for (int i = 0; i < fb_info->framebuffer_width; i++)
     {
         for (int j = 0; j < fb_info->framebuffer_height; j++)
@@ -36,11 +35,11 @@ void vbe_clear_screen()
 void EmeraldDevices_VBE_init(struct stivale2_struct_tag_framebuffer *fb)
 {
     size_t fb_size = fb->framebuffer_height * fb->framebuffer_pitch;
-
     pagemap_t *pagemap = pagemap;
 
     for (uint64_t i = fb->framebuffer_addr; i < fb->framebuffer_addr + fb_size; i += 4096)
     {
+        log(DEBUG,"mapped");
         EmeraldMem_VMM_map_page(pagemap, i, higher_half(i), 0b11);
     }
     log(DEBUG, "found a %dx%d display", fb->framebuffer_height, fb->framebuffer_height);
