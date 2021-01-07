@@ -54,10 +54,13 @@ void EmeraldDevices_VBE_init(struct stivale2_struct *info)
 
         tag = (struct stivale2_tag *)tag->next;
     }
-    log(DEBUG, "found a %dx%d display", fb_info->framebuffer_width, fb_info->framebuffer_height);
+    log(INFO, "Framebuffer info:");
+    log(INFO, "\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
+    log(INFO, "\t Pitch: %d", fb_info->framebuffer_pitch);
+    log(INFO, "\t BPP: %x", fb_info->framebuffer_bpp);
 }
 
-void EmeraldDevices_VBE_putchar(char character, int position_x, int position_y,color_t color)
+void EmeraldDevices_VBE_putchar(char character, int position_x, int position_y, color_t color)
 {
     for (uint8_t iy = 0; iy < 8; iy++)
     {
@@ -71,7 +74,7 @@ void EmeraldDevices_VBE_putchar(char character, int position_x, int position_y,c
         }
     }
 }
-void EmeraldDevices_VBE_put(char c,color_t color)
+void EmeraldDevices_VBE_put(char c, color_t color)
 {
     if (c == '\n')
     {
@@ -80,10 +83,10 @@ void EmeraldDevices_VBE_put(char c,color_t color)
     }
     else
     {
-      EmeraldDevices_VBE_putchar(c, cursor_x, cursor_y,color);
+        EmeraldDevices_VBE_putchar(c, cursor_x, cursor_y, color);
         cursor_x += 8;
 
-        if (cursor_x >= (size_t)fb_info->framebuffer_width -5 )
+        if (cursor_x >= (size_t)fb_info->framebuffer_width - 5)
         {
             cursor_x = 5;
             cursor_y += 10;
@@ -91,10 +94,10 @@ void EmeraldDevices_VBE_put(char c,color_t color)
     }
 }
 
-void EmeraldDevices_VBE_print(char *string,color_t color)
+void EmeraldDevices_VBE_print(char *string, color_t color)
 {
     while (*string)
     {
-      EmeraldDevices_VBE_put(*string++,color);
+        EmeraldDevices_VBE_put(*string++, color);
     }
 }
