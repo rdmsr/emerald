@@ -1,5 +1,7 @@
 #include "keyboard.h"
 #include <debug-utilities/logger.h>
+#include <devices/video/vbe/vbe.h>
+#include <devices/video/colors.h>
 #include <devices/RTC/rtc.h>
 #include <libasm/asm.h>
 #include <libint/int.h>
@@ -81,7 +83,7 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
         kprint_newline();
         return;
     }
-    vidptr[current_location++] = keyboard_map[(unsigned char)keycode];
-    vidptr[current_location++] = 0x07;
+    color_t white = {255,255,255};
+    EmeraldDevices_VBE_put(keyboard_map[(unsigned char)keycode],white);
     EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
 }

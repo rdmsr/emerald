@@ -40,40 +40,46 @@ __attribute__((section(".stivale2hdr"), used)) struct stivale2_header header2 = 
     .tags = (uint64_t)&smp_request,
 
 };
-
-void init()
+color_t white = { 255,255,255}, green = {0,148,99}, gray = {94, 94, 94};
+void print_load(char* string)
 {
+  EmeraldDevices_VBE_print(string,gray);
+  EmeraldDevices_VBE_print(": ",gray);
+  EmeraldDevices_VBE_print("Initialized ",green);
+  EmeraldDevices_VBE_print(string,green);
+  EmeraldDevices_VBE_print("\n",gray);
+}
+void init(struct stivale2_struct *info)
+{
+    EmeraldDevices_VBE_init(info);
+    EmeraldDevices_VBE_clear_screen();
     EmeraldDevices_keyboard_Keyboard_init();
-    kprint_newline();
-    kprint_load("Keyboard", false);
+    print_load("Keyboard");
     EmeraldDevices_Serial_init_serial();
     EmeraldSys_GDT_gdt_init();
-    kprint_load("GDT", false);
+    print_load("GDT");
     EmeraldSys_IDT_idt_init();
-    kprint_load("IDT", false);
+    print_load("IDT");
     EmeraldMem_PMM_pmm_init(1096 * M);
-    kprint_load("PMM", false);
+    print_load("PMM");
     EmeraldDevices_RTC_read_rtc();
+    print_load("RTC");
+    EmeraldMem_VMM_initialize();
+    log(INFO, "Paging enabled");
+    print_load("VMM");
 }
 
 void kmain(struct stivale2_struct *info)
 {
-    EmeraldDevices_VBE_init(info);
-    init();
+    init(info);
     set_ascii();
-    EmeraldMem_VMM_initialize();
-
-    log(INFO, "Paging enabled");
     EmeraldSys_IDT_irq_remap();
-    EmeraldDevices_VGA_enable_cursor(10, 20);
-    EmeraldDevices_VGA_update_cursor(0, 0);
-    kprint("Welcome to ", 15);
-    kprint("EmeraldOS!", 10);
     thread_t thread;
     EmeraldProc_Task_create_process(10, 20, 0x297DE000, thread, "process1");
     EmeraldProc_Task_create_process(20, 92, 0xFFF, thread, "process2");
     EmeraldProc_Task_create_process(30, 30, 0xFFF, thread, "process3");
     EmeraldProc_Scheduler_schedule_task();
-    vbe_clear_screen();
+    EmeraldDevices_VBE_print("Welcome to ",white);
+    EmeraldDevices_VBE_print("EmeraldOS!\n",green);
     while (1);
 }
