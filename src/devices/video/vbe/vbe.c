@@ -1,15 +1,15 @@
 #include "vbe.h"
 #include <debug-utilities/logger.h>
 #include <mem/virtual/vmm.h>
+#include <inc/stivale2.h>
 #include <stddef.h>
 struct stivale2_struct_tag_framebuffer *fb_info;
-color_t bg_color = {52, 84, 94};
+color_t bg_color = {0,64,73};
 
 uint32_t get_color(color_t *color)
 {
     return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
-
 
 void EmeraldDevices_VBE_draw_pixel(size_t x, size_t y, uint32_t color)
 {
@@ -17,11 +17,10 @@ void EmeraldDevices_VBE_draw_pixel(size_t x, size_t y, uint32_t color)
     uint32_t *fb = (uint32_t *)fb_info->framebuffer_addr;
 
     fb[fb_i] = color;
-    log(DEBUG, "Drawing pixel with color %d", color);
 }
 void vbe_clear_screen()
 {
-  
+
     color_t *color;
     color = &bg_color;
     for (int i = 0; i < fb_info->framebuffer_width; i++)
@@ -32,15 +31,22 @@ void vbe_clear_screen()
         }
     }
 }
-void EmeraldDevices_VBE_init(struct stivale2_struct_tag_framebuffer *fb)
+void EmeraldDevices_VBE_init(struct stivale2_struct *info)
 {
-    size_t fb_size = fb->framebuffer_height * fb->framebuffer_pitch;
-    pagemap_t *pagemap = pagemap;
+	struct stivale2_tag *tag = (struct stivale2_tag *)info->tags;
+        struct stivale2_struct_tag_framebuffer *videoheader=videoheader;
+	while (tag != NULL) {
+		switch (tag->identifier) {
 
-    for (uint64_t i = fb->framebuffer_addr; i < fb->framebuffer_addr + fb_size; i += 4096)
-    {
-        log(DEBUG,"mapped");
-        EmeraldMem_VMM_map_page(pagemap, i, higher_half(i), 0b11);
-    }
-    log(DEBUG, "found a %dx%d display", fb->framebuffer_height, fb->framebuffer_height);
+		case STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID: {
+				videoheader = (struct stivale2_struct_tag_framebuffer *)tag;
+				fb_info = videoheader;
+				
+				break;
+			}
+		}
+
+		tag = (struct stivale2_tag *)tag->next;
+	}
+    log(DEBUG, "found a %dx%d display", fb_info->framebuffer_width,fb_info->framebuffer_height);
 }

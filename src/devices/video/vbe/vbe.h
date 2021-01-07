@@ -11,7 +11,7 @@ typedef struct
 {
     uint8_t r, g, b;
 } color_t;
-void EmeraldDevices_VBE_init(struct stivale2_struct_tag_framebuffer *fb);
+void EmeraldDevices_VBE_init(struct stivale2_struct *info);
 void EmeraldDevices_VBE_draw_pixel(size_t x, size_t y, uint32_t color);
 void vbe_clear_screen();
 #endif

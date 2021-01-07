@@ -25,9 +25,8 @@ struct stivale2_header_tag_framebuffer fb_request = {
     .tag = {
         .identifier = STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
         .next = 0},
-    .framebuffer_bpp = 32,
-    .framebuffer_height = 600,
-    .framebuffer_width = 800};
+    .framebuffer_height = 0,
+    .framebuffer_width = 0};
 struct stivale2_header_tag_smp smp_request = {
     .tag = {
         .identifier = STIVALE2_HEADER_TAG_SMP_ID,
@@ -57,11 +56,13 @@ void init()
     EmeraldDevices_RTC_read_rtc();
 }
 
-void kmain()
+void kmain(struct stivale2_struct *info)
 {
+    EmeraldDevices_VBE_init(info);
     init();
     set_ascii();
     EmeraldMem_VMM_initialize();
+
     log(INFO, "Paging enabled");
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VGA_enable_cursor(10, 20);
@@ -73,8 +74,6 @@ void kmain()
     EmeraldProc_Task_create_process(20, 92, 0xFFF, thread, "process2");
     EmeraldProc_Task_create_process(30, 30, 0xFFF, thread, "process3");
     EmeraldProc_Scheduler_schedule_task();
-    struct stivale2_struct_tag_framebuffer *fb = fb;
-    EmeraldDevices_VBE_init(fb);
     vbe_clear_screen();
     while (1);
 }
