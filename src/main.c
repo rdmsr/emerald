@@ -78,7 +78,6 @@ void print_load(char *string)
 void init(struct stivale2_struct *info)
 {
     EmeraldDevices_VBE_init(info);
-    boot_info* bootinfo = EmeraldBoot_Stivale_get_boot_info(info);
     EmeraldDevices_VBE_clear_screen();
     EmeraldDevices_keyboard_Keyboard_init();
     print_load("Keyboard");
