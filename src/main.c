@@ -36,13 +36,12 @@ SOFTWARE.
 #include <mem/physical/pmm.h>
 #include <mem/virtual/vmm.h>
 #include <proc/task.h>
+#include <boot/boot.h>
 #include <stdint.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
-#define K 1024
-#define M (1024 * K)
-#define MSIZE 48 * M
+#define M (1024 * 1024)
 void kmain();
 static uint8_t stack[4096] = {0};
 struct stivale2_header_tag_framebuffer fb_request = {
@@ -79,6 +78,7 @@ void print_load(char *string)
 void init(struct stivale2_struct *info)
 {
     EmeraldDevices_VBE_init(info);
+    boot_info* bootinfo = EmeraldBoot_Stivale_get_boot_info(info);
     EmeraldDevices_VBE_clear_screen();
     EmeraldDevices_keyboard_Keyboard_init();
     print_load("Keyboard");
@@ -95,7 +95,6 @@ void init(struct stivale2_struct *info)
     log(INFO, "Paging enabled");
     print_load("VMM");
 }
-
 void kmain(struct stivale2_struct *info)
 {
     init(info);
