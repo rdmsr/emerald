@@ -1,3 +1,4 @@
+#include <devices/video/vbe/vbe.h>
 #define VGA_BLACK 0c
 #define VGA_BLUE 1
 #define VGA_GREEN 2

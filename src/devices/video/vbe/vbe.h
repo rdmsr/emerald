@@ -13,5 +13,8 @@ typedef struct
 } color_t;
 void EmeraldDevices_VBE_init(struct stivale2_struct *info);
 void EmeraldDevices_VBE_draw_pixel(size_t x, size_t y, uint32_t color);
-void vbe_clear_screen();
+void EmeraldDevices_VBE_clear_screen();
+void EmeraldDevices_VBE_putchar(char character, int position_x, int position_y,color_t color);
+void EmeraldDevices_VBE_print(char* string,color_t color);
+void EmeraldDevices_VBE_put(char c,color_t color);
 #endif

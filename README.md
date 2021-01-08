@@ -25,5 +25,5 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [ ] Port libc
 ### Screenshots
 
-<img src="https://cdn.discordapp.com/attachments/745313714747605105/773343861526364171/unknown.png">
-<img src="https://media.discordapp.net/attachments/745313714747605105/773344029995040788/unknown.png">
+<img src="https://media.discordapp.net/attachments/732514859857739847/796840618541973514/unknown.png">
+<img src="https://media.discordapp.net/attachments/732514859857739847/796840878634958878/unknown.png">

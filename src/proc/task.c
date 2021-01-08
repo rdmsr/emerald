@@ -22,17 +22,9 @@ process_t EmeraldProc_Task_create_process(int id, uint8_t priority, uintptr_t vi
 
     process.pagemap = m_pagemap;
     EmeraldMem_VMM_map_page(m_pagemap, lower_half(virtual_adress), virtual_adress, 0b11);
-    int position = position;
-    for (int i = 0; i < size_of_queue - 1; i++)
-    {
-        if (process_queue[size_of_queue].name == name)
-        {
-            position = i;
-        }
-    }
     size_of_queue++;
     queue_append(process);
-    log(INFO, "Created process called: %s with id: %d, with virtual adress: %d and physical adress: %d, position in queue: %d", name, id, virtual_adress, lower_half(virtual_adress), position);
+    log(INFO, "Created process called: %s with id: %d, with virtual adress: %d and physical adress: %d", name, id, virtual_adress, lower_half(virtual_adress));
 
     return process;
 }
