@@ -12,7 +12,7 @@
 #define ENTER_KEY_CODE 0x1C
 unsigned char keyboard_map[128] = {
     0, 27, '1', '2', '3', '4', '5', '6', '7', '8',    /* 9 */
-    '9', '0', '-', '=', '\n',                         /* Backspace */
+    '9', '0', '-', '=', '\0',                         /* Backspace */
     '\t',                                             /* Tab */
     'q', 'w', 'e', 'r',                               /* 19 */
     't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',     /* Enter key */
@@ -67,6 +67,8 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
     EmeraldASM_outb(0x20, 0x20);
     EmeraldASM_inb(KEYBOARD_STATUS_PORT);
     keycode = EmeraldASM_inb(KEYBOARD_DATA_PORT);
+    color_t white = {255,255,255};
+
     if (keycode < 0)
     {
         PIC_sendEOI(0);
@@ -75,15 +77,14 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
 
     if (keycode == ENTER_KEY_CODE)
     {
-        kprint_newline();
+        EmeraldDevices_VBE_put('\n',white);
         return;
     }
     if (keycode == DELETE_KEY_CODE)
     {
-        kprint_newline();
+        EmeraldDevices_VBE_put('\0',white);
         return;
     }
-    color_t white = {255,255,255};
     EmeraldDevices_VBE_put(keyboard_map[(unsigned char)keycode],white);
     EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
 }
