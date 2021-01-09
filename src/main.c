@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) 2021 Abb1x
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include <ascii.h>
 #include <debug-utilities/logger.h>
 #include <devices/RTC/rtc.h>
@@ -12,13 +36,12 @@
 #include <mem/physical/pmm.h>
 #include <mem/virtual/vmm.h>
 #include <proc/task.h>
+#include <boot/boot.h>
 #include <stdint.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
 #include <sys/idt/idt.h>
-#define K 1024
-#define M (1024 * K)
-#define MSIZE 48 * M
+#define M (1024 * 1024)
 void kmain();
 static uint8_t stack[4096] = {0};
 struct stivale2_header_tag_framebuffer fb_request = {
@@ -40,15 +63,18 @@ __attribute__((section(".stivale2hdr"), used)) struct stivale2_header header2 = 
     .tags = (uint64_t)&smp_request,
 
 };
-color_t white = { 255,255,255}, green = {0,148,99}, gray = {94, 94, 94};
-void print_load(char* string)
+
+color_t white = {255, 255, 255}, green = {0, 148, 99}, gray = {94, 94, 94};
+
+void print_load(char *string)
 {
-  EmeraldDevices_VBE_print(string,gray);
-  EmeraldDevices_VBE_print(": ",gray);
-  EmeraldDevices_VBE_print("Initialized ",green);
-  EmeraldDevices_VBE_print(string,green);
-  EmeraldDevices_VBE_print("\n",gray);
+    EmeraldDevices_VBE_print(string, gray);
+    EmeraldDevices_VBE_print(": ", gray);
+    EmeraldDevices_VBE_print("Initialized ", green);
+    EmeraldDevices_VBE_print(string, green);
+    EmeraldDevices_VBE_print("\n", gray);
 }
+
 void init(struct stivale2_struct *info)
 {
     EmeraldDevices_VBE_init(info);
@@ -68,7 +94,6 @@ void init(struct stivale2_struct *info)
     log(INFO, "Paging enabled");
     print_load("VMM");
 }
-
 void kmain(struct stivale2_struct *info)
 {
     init(info);
@@ -79,7 +104,7 @@ void kmain(struct stivale2_struct *info)
     EmeraldProc_Task_create_process(20, 92, 0xFFF, thread, "process2");
     EmeraldProc_Task_create_process(30, 30, 0xFFF, thread, "process3");
     EmeraldProc_Scheduler_schedule_task();
-    EmeraldDevices_VBE_print("Welcome to ",white);
-    EmeraldDevices_VBE_print("EmeraldOS!\n",green);
+    EmeraldDevices_VBE_print("Welcome to ", white);
+    EmeraldDevices_VBE_print("EmeraldOS!\n", green);
     while (1);
 }

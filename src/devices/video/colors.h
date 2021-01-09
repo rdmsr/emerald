@@ -1,3 +1,5 @@
+#ifndef COLORS_H
+#define COLORS_H
 #include <devices/video/vbe/vbe.h>
 #define VGA_BLACK 0c
 #define VGA_BLUE 1
@@ -15,3 +17,4 @@
 #define VGA_LIGHT_PURPLE 13
 #define VGA_YELLOW 14
 #define VGA_WHITE 15
+#endif
