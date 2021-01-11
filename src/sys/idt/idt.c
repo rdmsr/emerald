@@ -26,9 +26,8 @@
 #include "idt.h"
 #include <debug-utilities/logger.h>
 #include <devices/keyboard/keyboard.h>
+#include <libasm/asm.h>
 #include <stdint.h>
-//unsigned int current_loc = 0;
-//char *vidptr = (char*)0xb8000;
 static struct idt_descriptor idt[256];
 static struct idt_pointer idtr = {.size = 256 * sizeof(struct idt_descriptor), .addr = (uint64_t)idt};
 
