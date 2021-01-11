@@ -79,7 +79,7 @@ void EmeraldDevices_keyboard_Keyboard_init(void)
 {
     EmeraldASM_outb(0x21, 0xFD);
 }
-void PIC_sendEOI(unsigned char irq)
+void EmeraldPIC_sendEOI(unsigned char irq)
 {
     if (irq >= 8)
         EmeraldASM_outb(PIC2_COMMAND, PIC_EOI);
@@ -96,7 +96,7 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
 
     if (keycode < 0)
     {
-        PIC_sendEOI(0);
+        EmeraldPIC_sendEOI(0);
         return;
     }
 
