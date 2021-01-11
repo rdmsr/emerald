@@ -25,9 +25,9 @@
  */
 #include "keyboard.h"
 #include <debug-utilities/logger.h>
-#include <devices/video/vbe/vbe.h>
-#include <devices/video/colors.h>
 #include <devices/RTC/rtc.h>
+#include <devices/video/colors.h>
+#include <devices/video/vbe/vbe.h>
 #include <libasm/asm.h>
 #include <libint/int.h>
 #include <stdarg.h>
@@ -92,7 +92,7 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
     EmeraldASM_outb(0x20, 0x20);
     EmeraldASM_inb(KEYBOARD_STATUS_PORT);
     keycode = EmeraldASM_inb(KEYBOARD_DATA_PORT);
-    color_t white = {255,255,255};
+    color_t white = {255, 255, 255};
 
     if (keycode < 0)
     {
@@ -102,14 +102,14 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
 
     if (keycode == ENTER_KEY_CODE)
     {
-        EmeraldDevices_VBE_put('\n',white);
+        EmeraldDevices_VBE_put('\n', white);
         return;
     }
     if (keycode == DELETE_KEY_CODE)
     {
-        EmeraldDevices_VBE_put('\0',white);
+        EmeraldDevices_VBE_put('\0', white);
         return;
     }
-    EmeraldDevices_VBE_put(keyboard_map[(unsigned char)keycode],white);
+    EmeraldDevices_VBE_put(keyboard_map[(unsigned char)keycode], white);
     EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
 }
