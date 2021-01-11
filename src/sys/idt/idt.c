@@ -56,16 +56,19 @@ void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_
     idt[idx] = (struct idt_descriptor){
         .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
 }
+
 void EmeraldSys_IDT_isr_init(void)
 {
-    for (int i = 0; i < 0x21; i++)
+
+    for (int i = 0; i < 0x22; i++)
     {
         EmeraldSys_IDT_idt_register(i, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
     }
     EmeraldSys_IDT_idt_register(0x20, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
+
     EmeraldSys_IDT_idt_register(0x21, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
 
-    for (int i = 0x22; i < 0x28; i++)
+    for (int i = 0x23; i < 0x28; i++)
     {
         EmeraldSys_IDT_idt_register(i, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
     }
@@ -73,10 +76,8 @@ void EmeraldSys_IDT_isr_init(void)
     {
         EmeraldSys_IDT_idt_register(i, isr_irq_slave, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
     }
-    for (int i = 0x30; i < 256; i++)
-    {
-        EmeraldSys_IDT_idt_register(i, EmeraldDevices_keyboard_Keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, /*0,*/ INTERRUPT_GATE);
-    }
+    /* Keyboard IRQ */
+    EmeraldSys_IDT_idt_register(0x31, EmeraldDevices_keyboard_Keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
 }
 
 void EmeraldSys_IDT_idt_load(void)
@@ -85,7 +86,6 @@ void EmeraldSys_IDT_idt_load(void)
                  :
                  : "m"(idtr));
 }
-
 void EmeraldSys_IDT_idt_init(void)
 {
     EmeraldSys_IDT_isr_init();

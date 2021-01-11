@@ -27,5 +27,5 @@
 #define PIT_H
 #include <stdint.h>
 void EmeraldProc_PIT_init(uint32_t frequency);
-
+void EmeraldProc_PIT_start_timer();
 #endif
