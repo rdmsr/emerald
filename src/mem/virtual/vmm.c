@@ -103,15 +103,12 @@ void EmeraldMem_VMM_initialize()
     EmeraldMem_VMM_create_pagemap(page_map);
 
     uint64_t *root = page_map->pml4;
-
     uintptr_t root_lower_half = lower_half(*root);
-
     /* Maps the first 4 gb */
     for (uint64_t i = 0; i < 0x100000000; i += 0x1000)
     {
         EmeraldMem_VMM_map_page(page_map, i, higher_half(i), 0b11);
     }
-    /* Enables Paging */
     asm volatile("mov %%cr3,%0" ::"r"(&root_lower_half)
                  : "memory");
     log(INFO, "Mapped Kernel");
