@@ -63,6 +63,7 @@ void EmeraldDevices_VBE_init(struct stivale2_struct *info)
 {
     struct stivale2_tag *tag = (struct stivale2_tag *)info->tags;
     struct stivale2_struct_tag_framebuffer *videoheader = videoheader;
+
     while (tag != NULL)
     {
         switch (tag->identifier)
@@ -106,11 +107,11 @@ void EmeraldDevices_VBE_put(char c, color_t color)
         cursor_x = 5;
         cursor_y += 20;
     }
-    if(c == '\0')
+    if (c == '\0')
     {
-      cursor_x -= 1;
-      EmeraldDevices_VBE_putchar(' ', cursor_x, cursor_y, color);
-      cursor_x++;
+        cursor_x -= 1;
+        EmeraldDevices_VBE_putchar(' ', cursor_x, cursor_y, color);
+        cursor_x++;
     }
     else
     {
