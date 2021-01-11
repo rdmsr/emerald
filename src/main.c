@@ -108,6 +108,5 @@ void kmain(struct stivale2_struct *info)
     EmeraldProc_Scheduler_schedule_task();
     EmeraldDevices_VBE_print("Welcome to ", white);
     EmeraldDevices_VBE_print("EmeraldOS!\n", green);
-    EmeraldProc_Scheduler_give_cpu();
     while (1);
 }
