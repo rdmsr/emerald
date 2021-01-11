@@ -6,7 +6,8 @@ global panic
 global isr_irq_master
 global isr_irq_slave
 global shutdown
-extern kmain 		
+extern kmain
+extern EmeraldProc_PIT_start_timer
 extern EmeraldDevices_keyboard_Keyboard_handler_main
 %macro pushaq 0
     push rax
@@ -42,7 +43,6 @@ extern EmeraldDevices_keyboard_Keyboard_handler_main
     pop rbx
     pop rax
 	%endmacro
-
 isr:
 	pushaq
 	cld
@@ -52,6 +52,7 @@ isr:
 	out 0x20, al
 	iretq
 isr_irq_master:
+	call EmeraldProc_PIT_start_timer
 	mov al, 0x20
 	out 0x20, al
 	iretq
@@ -62,8 +63,7 @@ isr_irq_slave:
 	out 0x20, al
 	iretq
 
- 
-  iretq
+
 start:
 	cli 				;block interrupts
 	mov rsp, stack_space
