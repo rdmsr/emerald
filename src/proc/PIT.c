@@ -40,5 +40,4 @@ void EmeraldProc_PIT_init(uint32_t frequency)
 void EmeraldProc_PIT_start_timer()
 {
     ticks++;
-    log(DEBUG,"%d seconds",ticks / 1000);
 }

@@ -28,6 +28,8 @@
 #include <debug-utilities/logger.h>
 #include <libk.h>
 struct process_struct *process_queue;
+process_t *running;
+process_t *idle;
 int size_of_queue = 0;
 void queue_append(process_t process)
 {
@@ -66,13 +68,30 @@ void EmeraldProc_Scheduler_schedule_task()
             process_queue[i] = process_queue[i + 1];
             process_queue[i + 1] = temp;
 
-            log(INFO, "Swapped process named %s with process named %s", process_queue[i].name, process_queue[i + 1].name);
+            log(INFO, "Swapped process named %s with process named %s, ID: %d", process_queue[i].name, process_queue[i + 1].name);
             kassert(process_queue[i].thread.priority > process_queue[i + 1].thread.priority);
         }
     }
 }
-
-void EmeraldProc_Scheduler_give_cpu(thread_t thread)
+void save_state(thread_t thread)
 {
-    log(INFO, "TODO: Implement EmeraldProc_Scheduler_give_cpu, thread's priority is %d", thread.priority);
+    asm("push %0"
+        : "=r"(thread.registers->rsp));
+}
+void EmeraldProc_Scheduler_give_cpu()
+{
+
+    for (int i = 0; i < size_of_queue; i++)
+    {
+        if (process_queue[i].state == RUNNING)
+        {
+            save_state(process_queue[i].thread);
+            asm("pop %rsp");
+            process_queue[i].state = IDLING;
+        }
+        if (i == size_of_queue)
+        {
+            i = 0;
+        }
+    }
 }

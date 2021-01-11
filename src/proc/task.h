@@ -28,7 +28,15 @@
 #pragma once
 #include <mem/virtual/vmm.h>
 #include <stdint.h>
-typedef struct
+enum state
+{
+    CANCELLED,
+    RUNNING,
+    STOPPED,
+    IDLING
+
+};
+typedef struct regs64_t
 {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp, r8, r9, r10, r11, r12, r13, r14, r15;
 } regs64_t;
@@ -37,7 +45,7 @@ typedef struct
 {
     uint8_t priority;
     uint32_t time_slice;
-    regs64_t registers;
+    struct regs64_t *registers;
 } thread_t;
 
 typedef struct process_struct
@@ -46,9 +54,10 @@ typedef struct process_struct
     thread_t thread;
     pagemap_t *pagemap;
     char *name;
+    int state;
 } process_t;
 
 process_t EmeraldProc_Task_create_process(int id, uint8_t priority, uintptr_t physical_adress, thread_t thread, char *name);
 void EmeraldProc_Scheduler_schedule_task();
-void EmeraldProc_Scheduler_give_cpu(thread_t thread);
+void EmeraldProc_Scheduler_give_cpu();
 #endif
