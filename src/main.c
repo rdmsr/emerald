@@ -101,12 +101,8 @@ void kmain(struct stivale2_struct *info)
     init(info);
     set_ascii();
     EmeraldSys_IDT_irq_remap();
-    thread_t thread;
-    EmeraldProc_Task_create_process(10, 20, 0x297DE000, thread, "process1");
-    EmeraldProc_Task_create_process(20, 92, 0xFFF, thread, "process2");
-    EmeraldProc_Task_create_process(30, 30, 0xFFF, thread, "process3");
-    EmeraldProc_Scheduler_schedule_task();
-    EmeraldDevices_VBE_print("Welcome to ", white);
-    EmeraldDevices_VBE_print("EmeraldOS!\n", green);
+    EmeraldProc_Scheduler_init();
+    EmeraldDevices_VBE_print("Welcome to ",white);
+    EmeraldDevices_VBE_print("EmeraldOS!\n",green);
     while (1);
 }
