@@ -26,32 +26,58 @@
 #include "task.h"
 #include "PIT.h"
 #include <debug-utilities/logger.h>
+#include <liballoc/alloc.h>
 #include <libk.h>
 struct process_struct *process_queue;
 process_t *running;
 process_t *idle;
 int size_of_queue = 0;
+regs64_t kernel_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x10, 0x8, 0, 0x202};
+regs64_t user_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x23, 0x1B, 0, 0x202};
+
 void queue_append(process_t process)
 {
     process_queue[size_of_queue - 1] = process;
 }
-process_t EmeraldProc_Task_create_process(int id, uint8_t priority, uintptr_t virtual_adress, thread_t thread, char *name)
+
+thread_t *create_thread(void (*function)(), uint64_t rsp, uint8_t ring)
+{
+    /* allocate the new thread */
+    thread_t *new_thread = kcalloc(sizeof(thread_t));
+    new_thread->kernel_stack = (void *)kcalloc(0x1000) + 0x1000;
+    /* If the ring is for userspace, give it the default registers for userspace threads*/
+    if (ring == 3)
+    {
+        new_thread->registers = user_registers;
+    }
+    else
+    {
+        new_thread->registers = kernel_registers;
+    }
+    new_thread->ring = ring;
+    new_thread->registers.rip = (uint64_t)function;
+    new_thread->registers.rsp = rsp;
+    return new_thread;
+}
+
+process_t EmeraldProc_Task_create_process(char *name, void (*function)(), int id, uint64_t priority, uint64_t rsp, uint8_t ring)
 {
     process_t process;
     pagemap_t *m_pagemap = m_pagemap;
-
+    thread_t *thread = create_thread(function, rsp, ring);
     EmeraldMem_VMM_create_pagemap(m_pagemap);
 
     process.name = name;
+    process.state = IDLING;
     process.id = id;
     process.thread = thread;
-    process.thread.priority = priority;
+    process.thread->priority = priority;
 
     process.pagemap = m_pagemap;
-    EmeraldMem_VMM_map_page(m_pagemap, lower_half(virtual_adress), virtual_adress, 0b11);
+    EmeraldMem_VMM_map_page(m_pagemap, lower_half(0x10000000000), 0x10000000000, 0b11);
     size_of_queue++;
     queue_append(process);
-    log(INFO, "Created process called: %s with id: %d, with virtual adress: %d and physical adress: %d", name, id, virtual_adress, lower_half(virtual_adress));
+    log(INFO, "Created process called: %s with id: %d", name, id);
 
     return process;
 }
@@ -62,36 +88,47 @@ void EmeraldProc_Scheduler_schedule_task()
     /* Puts the process with the highest priority at the start of the queue */
     for (int i = 0; i < size_of_queue - 1; i++)
     {
-        if (process_queue[i].thread.priority < process_queue[i + 1].thread.priority)
+        if (process_queue[i].thread->priority < process_queue[i + 1].thread->priority)
         {
             process_t temp = process_queue[i];
             process_queue[i] = process_queue[i + 1];
             process_queue[i + 1] = temp;
 
-            log(INFO, "Swapped process named %s with process named %s, ID: %d", process_queue[i].name, process_queue[i + 1].name);
-            kassert(process_queue[i].thread.priority > process_queue[i + 1].thread.priority);
+            log(INFO, "Swapped process named %s with process named %s", process_queue[i].name, process_queue[i + 1].name);
+            kassert(process_queue[i].thread->priority > process_queue[i + 1].thread->priority);
         }
     }
 }
-void save_state(thread_t thread)
+void save_state(thread_t *thread)
 {
     asm("push %0"
-        : "=r"(thread.registers->rsp));
+        : "=r"(thread->registers.rsp));
 }
 void EmeraldProc_Scheduler_give_cpu()
 {
-
     for (int i = 0; i < size_of_queue; i++)
     {
+        process_queue[i].state = RUNNING;
         if (process_queue[i].state == RUNNING)
         {
+
             save_state(process_queue[i].thread);
             asm("pop %rsp");
             process_queue[i].state = IDLING;
         }
-        if (i == size_of_queue)
-        {
-            i = 0;
-        }
     }
+}
+void test()
+{
+    log(INFO, "Function called!");
+}
+void EmeraldProc_Scheduler_init()
+{
+    EmeraldProc_Task_create_process("Kernel", test, 0, 10, (uint64_t)kmalloc(0x4000) + 0x4000, 0);
+    EmeraldProc_Task_create_process("2Kernel", test, 1, 20, (uint64_t)kmalloc(0x4000) + 0x4000, 0);
+    EmeraldProc_Scheduler_schedule_task();
+
+    //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
+
+    EmeraldProc_Scheduler_give_cpu();
 }

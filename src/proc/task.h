@@ -38,26 +38,32 @@ enum state
 };
 typedef struct regs64_t
 {
-    uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp, r8, r9, r10, r11, r12, r13, r14, r15;
+    uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, r8, r9, r10, r11, r12, r13, r14, r15;
+    uint64_t rsp, rip;
+    uint64_t ss, cs, fs;
+    uint64_t rflags;
 } regs64_t;
 
 typedef struct
 {
     uint8_t priority;
     uint32_t time_slice;
-    struct regs64_t *registers;
+    regs64_t registers;
+    int ring;
+    void *kernel_stack;
 } thread_t;
 
 typedef struct process_struct
 {
     int id;
-    thread_t thread;
+    thread_t* thread;
     pagemap_t *pagemap;
     char *name;
     int state;
 } process_t;
 
-process_t EmeraldProc_Task_create_process(int id, uint8_t priority, uintptr_t physical_adress, thread_t thread, char *name);
+process_t EmeraldProc_Task_create_process(char* name,void (*function)(),int id, uint64_t priority,uint64_t rsp, uint8_t ring);
 void EmeraldProc_Scheduler_schedule_task();
 void EmeraldProc_Scheduler_give_cpu();
+void EmeraldProc_Scheduler_init();
 #endif
