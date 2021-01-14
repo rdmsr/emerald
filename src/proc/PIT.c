@@ -25,6 +25,7 @@
  */
 #include "PIT.h"
 #include <debug-utilities/logger.h>
+#include <sys/idt/idt.h>
 #include <libasm/asm.h>
 #include <stdint.h>
 int ticks = 0;
@@ -34,8 +35,8 @@ void EmeraldProc_PIT_init(uint32_t frequency)
     EmeraldASM_outb(0x43, 0x36);
     EmeraldASM_outb(0x40, (uint8_t)divisor & 0xFF);
     EmeraldASM_outb(0x40, (uint8_t)(divisor >> 8) & 0xFF);
-
     log(INFO, "Initialized PIT, frequency: %d Hz",frequency);
+
 }
 void EmeraldProc_PIT_start_timer()
 {

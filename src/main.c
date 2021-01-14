@@ -38,6 +38,7 @@
 #include <mem/virtual/vmm.h>
 #include <proc/task.h>
 #include <boot/boot.h>
+#include <proc/PIT.h>
 #include <stdint.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
@@ -84,6 +85,7 @@ void init(struct stivale2_struct *info)
     EmeraldDevices_keyboard_Keyboard_init();
     print_load("Keyboard");
     EmeraldDevices_Serial_init_serial();
+    print_load("Serial");
     EmeraldSys_GDT_gdt_init();
     print_load("GDT");
     EmeraldSys_IDT_idt_init();
@@ -101,8 +103,8 @@ void kmain(struct stivale2_struct *info)
     init(info);
     set_ascii();
     EmeraldSys_IDT_irq_remap();
-    EmeraldProc_Scheduler_init();
     EmeraldDevices_VBE_print("Welcome to ",white);
     EmeraldDevices_VBE_print("EmeraldOS!\n",green);
+    //EmeraldProc_Scheduler_init();
     while (1);
 }

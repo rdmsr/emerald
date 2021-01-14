@@ -27,10 +27,10 @@
 #include <debug-utilities/logger.h>
 #include <devices/keyboard/keyboard.h>
 #include <libasm/asm.h>
+#include <proc/PIT.h>
 #include <stdint.h>
 static struct idt_descriptor idt[256];
 static struct idt_pointer idtr = {.size = 256 * sizeof(struct idt_descriptor), .addr = (uint64_t)idt};
-
 void EmeraldSys_IDT_irq_remap(void)
 {
     EmeraldASM_outb(0x20, 0x11);
@@ -64,6 +64,7 @@ void EmeraldSys_IDT_isr_init(void)
         EmeraldSys_IDT_idt_register(i, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
     }
     EmeraldSys_IDT_idt_register(0x20, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
+
 
     EmeraldSys_IDT_idt_register(0x21, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
 
