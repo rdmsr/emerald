@@ -9,6 +9,7 @@ global shutdown
 extern kmain
 extern EmeraldProc_PIT_start_timer
 extern EmeraldDevices_keyboard_Keyboard_handler_main
+extern init_context_switch
 %macro pushaq 0
     push rax
     push rbx
@@ -53,6 +54,7 @@ isr:
 	iretq
 isr_irq_master:
 	call EmeraldProc_PIT_start_timer
+	call    init_context_switch
 	mov al, 0x20
 	out 0x20, al
 	iretq

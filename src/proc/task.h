@@ -28,14 +28,14 @@
 #pragma once
 #include <mem/virtual/vmm.h>
 #include <stdint.h>
-enum state
-{
-    CANCELLED,
-    RUNNING,
-    STOPPED,
-    IDLING
 
-};
+typedef enum
+{
+    REALTIME,
+    NORMAL,
+    BACKGROUND
+} priority_t;
+
 typedef struct regs64_t
 {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, r8, r9, r10, r11, r12, r13, r14, r15;
@@ -44,25 +44,20 @@ typedef struct regs64_t
     uint64_t rflags;
 } regs64_t;
 
-typedef struct
-{
-    uint8_t priority;
-    uint32_t time_slice;
-    regs64_t registers;
-    int ring;
-    void *kernel_stack;
-} thread_t;
-
 typedef struct process_struct
 {
-    int id;
-    thread_t* thread;
-    pagemap_t *pagemap;
-    char *name;
-    int state;
+    void *stack_top;
+    uint16_t pid;
+    priority_t priority;
+    struct process_struct *next;
+    struct process_struct *previous;
 } process_t;
-
-process_t EmeraldProc_Task_create_process(char* name,void (*function)(),int id, uint64_t priority,uint64_t rsp, uint8_t ring);
+typedef struct
+{
+    process_t *head, *current, *tail;
+  int size;
+} processlist_t;
+uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priority, int ring);
 void EmeraldProc_Scheduler_schedule_task();
 void EmeraldProc_Scheduler_give_cpu();
 void EmeraldProc_Scheduler_init();

@@ -105,6 +105,6 @@ void kmain(struct stivale2_struct *info)
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VBE_print("Welcome to ",white);
     EmeraldDevices_VBE_print("EmeraldOS!\n",green);
-    //EmeraldProc_Scheduler_init();
+    EmeraldProc_Scheduler_init();
     while (1);
 }

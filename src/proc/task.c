@@ -25,98 +25,116 @@
  */
 #include "task.h"
 #include "PIT.h"
+#include "lock.h"
 #include <debug-utilities/logger.h>
+#include <devices/keyboard/keyboard.h>
 #include <liballoc/alloc.h>
 #include <libk.h>
-struct process_struct *process_queue;
-process_t *running;
-process_t *idle;
-int size_of_queue = 0;
-regs64_t kernel_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x10, 0x8, 0, 0x202};
-regs64_t user_registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x23, 0x1B, 0, 0x202};
+spinlock_t scheduler_lock = 0;
+uint16_t current_pid = 0;
 
-void queue_append(process_t process)
-{
-    process_queue[size_of_queue - 1] = process;
-}
+/* Creates 3 lists , one for each priority */
+static processlist_t task_lists[3] = {{.head = NULL, .current = NULL, .tail = NULL}};
+static process_t *current_task;
 
-thread_t *create_thread(void (*function)(), uint64_t rsp, uint8_t ring)
+extern void init_context_switch();
+extern void end_context_switch(process_t *next_task);
+
+uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priority, int ring)
 {
-    /* allocate the new thread */
-    thread_t *new_thread = kcalloc(sizeof(thread_t));
-    new_thread->kernel_stack = (void *)kcalloc(0x1000) + 0x1000;
-    /* If the ring is for userspace, give it the default registers for userspace threads*/
-    if (ring == 3)
+    spinlock_take(&scheduler_lock);
+
+    /* An error occured */
+    if (ring != 0)
     {
-        new_thread->registers = user_registers;
+        log(ERROR, "TODO: Implement ring support");
+        return -1;
     }
-    else
+    /* Allocate new task and its kernel stack */
+
+    process_t *new_task = kcalloc(sizeof(new_task));
+    void *new_stack = kmalloc(4096) + 4096;
+
+    /* Creates a new stack for the task */
+    regs64_t *registers = new_stack - sizeof(regs64_t);
+
+    /* Sets the value of cs,ss,rip,rsp and rdi */
+    registers->cs = 0x08;
+    registers->ss = 0x10;
+    registers->rip = (uint64_t)entrypoint;
+    registers->rsp = (uint64_t)new_stack;
+    registers->rdi = current_pid;
+
+    /* Initialize the new task */
+    new_task->stack_top = registers;
+    new_task->pid = current_pid;
+    new_task->priority = priority;
+
+    new_task->next = NULL;
+    new_task->previous = NULL;
+
+    /* Appends to the appropriate priority list */
+    if (task_lists[priority].tail != NULL) /* is the list empty? if no, append the task to it*/
     {
-        new_thread->registers = kernel_registers;
+        task_lists[priority].tail->next = new_task;
+        new_task->previous = task_lists[priority].tail;
     }
-    new_thread->ring = ring;
-    new_thread->registers.rip = (uint64_t)function;
-    new_thread->registers.rsp = rsp;
-    return new_thread;
-}
-
-process_t EmeraldProc_Task_create_process(char *name, void (*function)(), int id, uint64_t priority, uint64_t rsp, uint8_t ring)
-{
-    process_t process;
-    pagemap_t *m_pagemap = m_pagemap;
-    thread_t *thread = create_thread(function, rsp, ring);
-    EmeraldMem_VMM_create_pagemap(m_pagemap);
-
-    process.name = name;
-    process.state = IDLING;
-    process.id = id;
-    process.thread = thread;
-    process.thread->priority = priority;
-
-    process.pagemap = m_pagemap;
-    EmeraldMem_VMM_map_page(m_pagemap, lower_half(0x10000000000), 0x10000000000, 0b11);
-    size_of_queue++;
-    queue_append(process);
-    log(INFO, "Created process called: %s with id: %d", name, id);
-
-    return process;
-}
-/* This is probably not the best implementation but it works for now, bubble sort has a complexity of O(n2) which is not the best*/
-void EmeraldProc_Scheduler_schedule_task()
-{
-    EmeraldProc_PIT_init(1000);
-    /* Puts the process with the highest priority at the start of the queue */
-    for (int i = 0; i < size_of_queue - 1; i++)
+    else /* If yes, initialize it */
     {
-        if (process_queue[i].thread->priority < process_queue[i + 1].thread->priority)
-        {
-            process_t temp = process_queue[i];
-            process_queue[i] = process_queue[i + 1];
-            process_queue[i + 1] = temp;
-
-            log(INFO, "Swapped process named %s with process named %s", process_queue[i].name, process_queue[i + 1].name);
-            kassert(process_queue[i].thread->priority > process_queue[i + 1].thread->priority);
-        }
+        task_lists[priority].head = new_task;
+        task_lists[priority].current = new_task;
     }
+    task_lists[priority].tail = new_task;
+    task_lists[priority].size++;
+    current_pid++;
+
+    spinlock_release(&scheduler_lock);
+
+    log(INFO, "Created new task with pid %d", new_task->pid);
+    return new_task->pid;
 }
-void save_state(thread_t *thread)
+void execute_tasks(regs64_t *context)
 {
-    asm("push %0"
-        : "=r"(thread->registers.rsp));
-}
-void EmeraldProc_Scheduler_give_cpu()
-{
-    for (int i = 0; i < size_of_queue; i++)
+    if (!spinlock_try_take(&scheduler_lock))
+        return;
+
+    if (current_task)
+        current_task->stack_top = context;
+
+    if (task_lists[REALTIME].size != 0)
     {
-        process_queue[i].state = RUNNING;
-        if (process_queue[i].state == RUNNING)
-        {
+        if (task_lists[REALTIME].current == NULL)
+            task_lists[REALTIME].current = task_lists[REALTIME].head;
 
-            save_state(process_queue[i].thread);
-            asm("pop %rsp");
-            process_queue[i].state = IDLING;
-        }
+        if (task_lists[REALTIME].current)
+            task_lists[REALTIME].current = task_lists[REALTIME].current->next;
+
+        current_task = task_lists[REALTIME].current;
     }
+    if (task_lists[NORMAL].size != 0)
+    {
+        if (task_lists[NORMAL].current == NULL)
+            task_lists[NORMAL].current = task_lists[NORMAL].head;
+
+        if (task_lists[NORMAL].current)
+            task_lists[NORMAL].current = task_lists[NORMAL].current->next;
+
+        current_task = task_lists[NORMAL].current;
+    }
+    if (task_lists[BACKGROUND].size != 0)
+    {
+        if (task_lists[BACKGROUND].current == NULL)
+            task_lists[BACKGROUND].current = task_lists[BACKGROUND].head;
+
+        if (task_lists[BACKGROUND].current)
+            task_lists[BACKGROUND].current = task_lists[BACKGROUND].current->next;
+
+        current_task = task_lists[BACKGROUND].current;
+    }
+    spinlock_release(&scheduler_lock);
+
+    EmeraldPIC_sendEOI(0);
+    end_context_switch(current_task);
 }
 void test()
 {
@@ -124,11 +142,7 @@ void test()
 }
 void EmeraldProc_Scheduler_init()
 {
-    EmeraldProc_Task_create_process("Kernel", test, 0, 10, (uint64_t)kmalloc(0x4000) + 0x4000, 0);
-    EmeraldProc_Task_create_process("2Kernel", test, 1, 20, (uint64_t)kmalloc(0x4000) + 0x4000, 0);
-    EmeraldProc_Scheduler_schedule_task();
-
+    EmeraldProc_PIT_init(1000);
+    EmeraldProc_Task_create_process(test, REALTIME, 0);
     //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
-
-    EmeraldProc_Scheduler_give_cpu();
 }
