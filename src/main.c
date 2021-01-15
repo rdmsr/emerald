@@ -97,11 +97,13 @@ void init(struct stivale2_struct *info)
     EmeraldMem_VMM_initialize();
     log(INFO, "Paging enabled");
     print_load("VMM");
+
 }
 void kmain(struct stivale2_struct *info)
 {
     init(info);
     set_ascii();
+    
     EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VBE_print("Welcome to ",white);
     EmeraldDevices_VBE_print("EmeraldOS!\n",green);
