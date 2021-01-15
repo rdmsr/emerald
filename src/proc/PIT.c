@@ -42,3 +42,7 @@ void EmeraldProc_PIT_start_timer()
 {
     ticks++;
 }
+int EmeraldProc_PIT_get_ticks()
+{
+  return ticks;
+}

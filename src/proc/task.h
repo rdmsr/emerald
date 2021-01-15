@@ -36,13 +36,10 @@ typedef enum
     BACKGROUND
 } priority_t;
 
-typedef struct regs64_t
-{
-    uint64_t rax, rbx, rcx, rdx, rsi, rdi, rbp, r8, r9, r10, r11, r12, r13, r14, r15;
-    uint64_t rsp, rip;
-    uint64_t ss, cs, fs;
-    uint64_t rflags;
+typedef struct {
+  uint64_t r15,r14,r13,r12,r11,r10,r9,r8,rbp,rdi,rsi,rdx,rcx,rbx,rax,rip,cs,rflags,rsp,ss;
 } regs64_t;
+
 
 typedef struct process_struct
 {

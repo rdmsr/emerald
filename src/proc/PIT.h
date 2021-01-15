@@ -28,4 +28,5 @@
 #include <stdint.h>
 void EmeraldProc_PIT_init(uint32_t frequency);
 void EmeraldProc_PIT_start_timer();
+int EmeraldProc_PIT_get_ticks();
 #endif

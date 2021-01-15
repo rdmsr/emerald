@@ -30,6 +30,7 @@
 #include <devices/keyboard/keyboard.h>
 #include <liballoc/alloc.h>
 #include <libk.h>
+#include <sys/idt/idt.h>
 spinlock_t scheduler_lock = 0;
 uint16_t current_pid = 0;
 
@@ -81,6 +82,7 @@ uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priori
     }
     else /* If yes, initialize it */
     {
+        log(DEBUG, "list is empty");
         task_lists[priority].head = new_task;
         task_lists[priority].current = new_task;
     }
@@ -93,56 +95,54 @@ uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priori
     log(INFO, "Created new task with pid %d", new_task->pid);
     return new_task->pid;
 }
+
 void execute_tasks(regs64_t *context)
 {
+    /* scheduling algorithm by @chocabloc on github */
+
     if (!spinlock_try_take(&scheduler_lock))
         return;
+
+    static uint64_t ticks = 4;
+
+    processlist_t *list;
+
+    while (true)
+    {
+        if (ticks % 6 == 0)
+            list = &task_lists[BACKGROUND];
+        else if (ticks % 2 == 0)
+            list = &task_lists[REALTIME];
+        else
+            list = &task_lists[NORMAL];
+
+        ticks++;
+        if (list->current)
+            break;
+    }
 
     if (current_task)
         current_task->stack_top = context;
 
-    if (task_lists[REALTIME].size != 0)
-    {
-        if (task_lists[REALTIME].current == NULL)
-            task_lists[REALTIME].current = task_lists[REALTIME].head;
-
-        if (task_lists[REALTIME].current)
-            task_lists[REALTIME].current = task_lists[REALTIME].current->next;
-
-        current_task = task_lists[REALTIME].current;
-    }
-    if (task_lists[NORMAL].size != 0)
-    {
-        if (task_lists[NORMAL].current == NULL)
-            task_lists[NORMAL].current = task_lists[NORMAL].head;
-
-        if (task_lists[NORMAL].current)
-            task_lists[NORMAL].current = task_lists[NORMAL].current->next;
-
-        current_task = task_lists[NORMAL].current;
-    }
-    if (task_lists[BACKGROUND].size != 0)
-    {
-        if (task_lists[BACKGROUND].current == NULL)
-            task_lists[BACKGROUND].current = task_lists[BACKGROUND].head;
-
-        if (task_lists[BACKGROUND].current)
-            task_lists[BACKGROUND].current = task_lists[BACKGROUND].current->next;
-
-        current_task = task_lists[BACKGROUND].current;
-    }
-    spinlock_release(&scheduler_lock);
+    list->current = list->current->next;
+    if (!list->current)
+        list->current = list->head;
+    current_task = list->current;
 
     EmeraldPIC_sendEOI(0);
+    spinlock_release(&scheduler_lock);
+
     end_context_switch(current_task);
 }
 void test()
 {
-    log(INFO, "Function called!");
+    log(DEBUG, "Function called!");
 }
+
 void EmeraldProc_Scheduler_init()
 {
-    EmeraldProc_PIT_init(1000);
-    EmeraldProc_Task_create_process(test, REALTIME, 0);
+    EmeraldProc_PIT_init(200);
+    EmeraldProc_Task_create_process(test, BACKGROUND, 0);
+
     //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
 }

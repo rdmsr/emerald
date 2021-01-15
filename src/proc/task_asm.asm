@@ -7,9 +7,9 @@ extern execute_tasks
     push rbx
     push rcx
     push rdx
-    push rbp
-    push rdi
     push rsi
+    push rdi
+    push rbp
     push r8
     push r9
     push r10
@@ -28,9 +28,9 @@ extern execute_tasks
     pop r10
     pop r9
     pop r8
-    pop rsi
-    pop rdi
     pop rbp
+    pop rdi
+    pop rsi
     pop rdx
     pop rcx
     pop rbx
@@ -38,11 +38,13 @@ extern execute_tasks
 %endmacro
 
 init_context_switch:
-	pushaq
-	mov rdi,rsp
+        pushaq
+	mov rdi,rsp 		; arguments of the function
 	call execute_tasks
-
+	iretq
 end_context_switch:	
-	mov rsp,[rdi]
-	popaq
+	mov rsp,[rdi] 		;moves the adress of rdi into rsp
+	
+        popaq
+	
 	iretq

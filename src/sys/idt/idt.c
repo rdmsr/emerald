@@ -55,6 +55,40 @@ void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_
     idt[idx] = (struct idt_descriptor){
         .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
 }
+void EmeraldSys_IDT_irq_mask(unsigned char line)
+{
+    uint16_t port;
+    uint8_t value;
+
+    if (line < 8)
+    {
+        port = PIC1_DATA;
+    }
+    else
+    {
+        port = PIC2_DATA;
+        line -= 8;
+    }
+    value = EmeraldASM_inb(port) | (1 << line);
+    EmeraldASM_outb(port, value);
+}
+void EmeraldSys_IDT_irq_clear_mask(unsigned char line)
+{
+    uint16_t port;
+    uint8_t value;
+
+    if (line < 8)
+    {
+        port = PIC1_DATA;
+    }
+    else
+    {
+        port = PIC2_DATA;
+        line -= 8;
+    }
+    value = EmeraldASM_inb(port) & ~(1 << line);
+    EmeraldASM_outb(port, value);
+}
 
 void EmeraldSys_IDT_isr_init(void)
 {
@@ -64,7 +98,6 @@ void EmeraldSys_IDT_isr_init(void)
         EmeraldSys_IDT_idt_register(i, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
     }
     EmeraldSys_IDT_idt_register(0x20, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-
 
     EmeraldSys_IDT_idt_register(0x21, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
 

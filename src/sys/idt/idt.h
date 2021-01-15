@@ -55,4 +55,6 @@ void EmeraldSys_IDT_isr_init(void);
 void EmeraldSys_IDT_idt_load(void);
 void EmeraldASM_sti();
 void EmeraldSys_IDT_idt_init(void);
+void EmeraldSys_IDT_irq_mask(unsigned char line);
+void EmeraldSys_IDT_irq_clear_mask(unsigned char line);
 #endif
