@@ -82,7 +82,6 @@ uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priori
     }
     else /* If yes, initialize it */
     {
-        log(DEBUG, "list is empty");
         task_lists[priority].head = new_task;
         task_lists[priority].current = new_task;
     }
@@ -95,43 +94,44 @@ uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priori
     log(INFO, "Created new task with pid %d", new_task->pid);
     return new_task->pid;
 }
-
-void execute_tasks(regs64_t *context)
+process_t *get_task(int priority)
 {
-    /* scheduling algorithm by @chocabloc on github */
-
-    if (!spinlock_try_take(&scheduler_lock))
-        return;
-
-    static uint64_t ticks = 4;
-
-    processlist_t *list;
-
+    return task_lists[priority].head;
+}
+void execute_tasks()
+{
+    process_t *task;
     while (true)
     {
-        if (ticks % 6 == 0)
-            list = &task_lists[BACKGROUND];
-        else if (ticks % 2 == 0)
-            list = &task_lists[REALTIME];
-        else
-            list = &task_lists[NORMAL];
-
-        ticks++;
-        if (list->current)
+        task = get_task(REALTIME);
+        if (task != NULL)
+        {
+            task_lists[REALTIME].current = task_lists[REALTIME].current->next;
+            if (!task_lists[REALTIME].current)
+                task_lists[REALTIME].current = task_lists[REALTIME].head;
+            current_task = task_lists[REALTIME].current;
             break;
+        }
+        task = get_task(NORMAL);
+        if (task != NULL)
+        {
+            task_lists[BACKGROUND].current = task_lists[BACKGROUND].current->next;
+            if (!task_lists[BACKGROUND].current)
+                task_lists[BACKGROUND].current = task_lists[BACKGROUND].head;
+            current_task = task_lists[BACKGROUND].current;
+            break;
+        }
+        task = get_task(BACKGROUND);
+        if (task != NULL)
+        {
+            task_lists[BACKGROUND].current = task_lists[BACKGROUND].current->next;
+            if (!task_lists[BACKGROUND].current)
+                task_lists[BACKGROUND].current = task_lists[BACKGROUND].head;
+            current_task = task_lists[BACKGROUND].current;
+            break;
+        }
     }
-
-    if (current_task)
-        current_task->stack_top = context;
-
-    list->current = list->current->next;
-    if (!list->current)
-        list->current = list->head;
-    current_task = list->current;
-
-    EmeraldPIC_sendEOI(0);
-    spinlock_release(&scheduler_lock);
-
+    log(DEBUG, "%d", current_task->pid);
     end_context_switch(current_task);
 }
 void test()
@@ -141,8 +141,9 @@ void test()
 
 void EmeraldProc_Scheduler_init()
 {
-    EmeraldProc_PIT_init(200);
+    EmeraldProc_PIT_init(1000);
+    log(DEBUG, "Highest priority : %d,Middle %d,lowest %d", REALTIME, NORMAL, BACKGROUND);
     EmeraldProc_Task_create_process(test, BACKGROUND, 0);
-
+    execute_tasks();
     //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
 }

@@ -49,6 +49,7 @@ typedef struct process_struct
     struct process_struct *next;
     struct process_struct *previous;
 } process_t;
+/* Doubly linked list */
 typedef struct
 {
     process_t *head, *current, *tail;

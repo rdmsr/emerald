@@ -55,7 +55,6 @@ isr:
 	iretq
 isr_irq_master:
 	call EmeraldProc_PIT_start_timer
-	call init_context_switch
 	mov al, 0x20
 	out 0x20, al
 	iretq
