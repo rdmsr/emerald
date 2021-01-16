@@ -26,13 +26,11 @@
 #ifndef IDT_H
 #define IDT_H
 #include <stdint.h>
+#include "isr.h"
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #pragma once
-extern void isr(void);
-extern void isr_irq_master(void);
-extern void isr_irq_slave(void);
 struct idt_descriptor
 {
     uint16_t offset_lo;
@@ -50,10 +48,11 @@ struct idt_pointer
 } __attribute__((packed));
 
 void EmeraldSys_IDT_irq_remap(void);
-void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t attrib);
+void EmeraldSys_IDT_set_handler(uint8_t vector, void* handler);
 void EmeraldSys_IDT_isr_init(void);
 void EmeraldSys_IDT_idt_load(void);
 void EmeraldASM_sti();
+struct idt_descriptor EmeraldSys_IDT_make_entry(uint64_t offset);
 void EmeraldSys_IDT_idt_init(void);
 void EmeraldSys_IDT_irq_mask(unsigned char line);
 void EmeraldSys_IDT_irq_clear_mask(unsigned char line);

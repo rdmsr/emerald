@@ -55,6 +55,20 @@ void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_
     idt[idx] = (struct idt_descriptor){
         .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
 }
+
+struct idt_descriptor EmeraldSys_IDT_make_entry(uint64_t offset)
+{
+    return (struct idt_descriptor){
+        .cs = KERNEL_CODE_SEGMENT_OFFSET,
+        .attrib = INTERRUPT_GATE,
+        .offset_lo = offset & 0xFFFF,
+        .offset_mid = (offset >> 16) & 0xFFFF,
+        .offset_hi = (offset >> 32) & 0xFFFFFFFF};
+}
+void idt_set_handler(uint8_t vector, void *handler)
+{
+    idt[vector] = EmeraldSys_IDT_make_entry((uint64_t)handler);
+}
 void EmeraldSys_IDT_irq_mask(unsigned char line)
 {
     uint16_t port;
@@ -89,28 +103,30 @@ void EmeraldSys_IDT_irq_clear_mask(unsigned char line)
     value = EmeraldASM_inb(port) & ~(1 << line);
     EmeraldASM_outb(port, value);
 }
-
 void EmeraldSys_IDT_isr_init(void)
 {
-
-    for (int i = 0; i < 0x22; i++)
-    {
-        EmeraldSys_IDT_idt_register(i, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-    }
-    EmeraldSys_IDT_idt_register(0x20, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-
-    EmeraldSys_IDT_idt_register(0x21, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-
-    for (int i = 0x23; i < 0x28; i++)
-    {
-        EmeraldSys_IDT_idt_register(i, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-    }
-    for (int i = 0x28; i < 0x2F; i++)
-    {
-        EmeraldSys_IDT_idt_register(i, isr_irq_slave, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-    }
-    /* Keyboard IRQ */
-    EmeraldSys_IDT_idt_register(0x31, EmeraldDevices_keyboard_Keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
+    EmeraldSys_IDT_irq_remap();
+    idt[0] = EmeraldSys_IDT_make_entry((uint64_t)&isr0);
+    idt[1] = EmeraldSys_IDT_make_entry((uint64_t)&isr1);
+    idt[2] = EmeraldSys_IDT_make_entry((uint64_t)&isr2);
+    idt[3] = EmeraldSys_IDT_make_entry((uint64_t)&isr3);
+    idt[4] = EmeraldSys_IDT_make_entry((uint64_t)&isr4);
+    idt[5] = EmeraldSys_IDT_make_entry((uint64_t)&isr5);
+    idt[6] = EmeraldSys_IDT_make_entry((uint64_t)&isr6);
+    idt[7] = EmeraldSys_IDT_make_entry((uint64_t)&isr7);
+    idt[8] = EmeraldSys_IDT_make_entry((uint64_t)&isr8);
+    idt[10] = EmeraldSys_IDT_make_entry((uint64_t)&isr10);
+    idt[11] = EmeraldSys_IDT_make_entry((uint64_t)&isr11);
+    idt[12] = EmeraldSys_IDT_make_entry((uint64_t)&isr12);
+    idt[13] = EmeraldSys_IDT_make_entry((uint64_t)&isr13);
+    idt[14] = EmeraldSys_IDT_make_entry((uint64_t)&isr14);
+    idt[16] = EmeraldSys_IDT_make_entry((uint64_t)&isr16);
+    idt[17] = EmeraldSys_IDT_make_entry((uint64_t)&isr17);
+    idt[18] = EmeraldSys_IDT_make_entry((uint64_t)&isr18);
+    idt[19] = EmeraldSys_IDT_make_entry((uint64_t)&isr19);
+    idt[20] = EmeraldSys_IDT_make_entry((uint64_t)&isr20);
+    idt[30] = EmeraldSys_IDT_make_entry((uint64_t)&isr30);
+    idt_set_handler(0x21,EmeraldDevices_keyboard_Keyboard_handler_main);
 }
 
 void EmeraldSys_IDT_idt_load(void)
