@@ -27,6 +27,7 @@
 #include <debug-utilities/logger.h>
 #include <sys/idt/idt.h>
 #include <libasm/asm.h>
+#include "task.h"
 #include <stdint.h>
 
 extern void init_context_switch();
@@ -43,6 +44,11 @@ void EmeraldProc_PIT_init(uint32_t frequency)
 void EmeraldProc_PIT_start_timer()
 {
     ticks++;
+    if(ticks>50)
+    {
+      init_context_switch();
+    }
+    log(DEBUG,"%d",ticks);
 }
 int EmeraldProc_PIT_get_ticks()
 {
