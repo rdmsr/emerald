@@ -47,4 +47,12 @@ end_context_switch:
 	
         popaq
 	
+        pop rax ; rip
+        pop rbx ; cs
+        pop rcx ; rflags
+        pop rdx ; rsp
+        pop rsi ; ss
+      
+        jmp $
+	
 	iretq

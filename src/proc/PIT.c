@@ -28,6 +28,8 @@
 #include <sys/idt/idt.h>
 #include <libasm/asm.h>
 #include <stdint.h>
+
+extern void init_context_switch();
 int ticks = 0;
 void EmeraldProc_PIT_init(uint32_t frequency)
 {

@@ -24,6 +24,7 @@
  * SOFTWARE.
  */
 #include <ascii.h>
+#include <boot/boot.h>
 #include <debug-utilities/logger.h>
 #include <devices/RTC/rtc.h>
 #include <devices/keyboard/keyboard.h>
@@ -36,9 +37,8 @@
 #include <libstr/string.h>
 #include <mem/physical/pmm.h>
 #include <mem/virtual/vmm.h>
-#include <proc/task.h>
-#include <boot/boot.h>
 #include <proc/PIT.h>
+#include <proc/task.h>
 #include <stdint.h>
 #include <sys/firmware/legacy/bios.h>
 #include <sys/gdt/gdt.h>
@@ -97,16 +97,15 @@ void init(struct stivale2_struct *info)
     EmeraldMem_VMM_initialize();
     log(INFO, "Paging enabled");
     print_load("VMM");
-
 }
 void kmain(struct stivale2_struct *info)
 {
     init(info);
     set_ascii();
-    
     EmeraldSys_IDT_irq_remap();
-    EmeraldDevices_VBE_print("Welcome to ",white);
-    EmeraldDevices_VBE_print("EmeraldOS!\n",green);
+    EmeraldDevices_VBE_print("Welcome to ", white);
+    EmeraldDevices_VBE_print("EmeraldOS!\n", green);
     EmeraldProc_Scheduler_init();
+
     while (1);
 }

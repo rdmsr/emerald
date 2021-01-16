@@ -60,10 +60,11 @@ uint16_t EmeraldProc_Task_create_process(void (*entrypoint)(), priority_t priori
     regs64_t *registers = new_stack - sizeof(regs64_t);
 
     /* Sets the value of cs,ss,rip,rsp and rdi */
-    registers->cs = 0x08;
+    registers->cs = 0x8;
     registers->ss = 0x10;
     registers->rip = (uint64_t)entrypoint;
     registers->rsp = (uint64_t)new_stack;
+    registers->rflags = 0x202;
     registers->rdi = current_pid;
 
     /* Initialize the new task */
@@ -98,7 +99,7 @@ process_t *get_task(int priority)
 {
     return task_lists[priority].head;
 }
-void execute_tasks()
+void execute_tasks(regs64_t *context)
 {
     process_t *task;
     while (true)
@@ -130,8 +131,13 @@ void execute_tasks()
             current_task = task_lists[BACKGROUND].current;
             break;
         }
+        if (!task)
+        {
+            log(WARNING, "task is null");
+        }
     }
-    log(DEBUG, "%d", current_task->pid);
+    if (current_task)
+        current_task->stack_top = context;
     end_context_switch(current_task);
 }
 void test()
@@ -141,9 +147,9 @@ void test()
 
 void EmeraldProc_Scheduler_init()
 {
-    EmeraldProc_PIT_init(1000);
-    log(DEBUG, "Highest priority : %d,Middle %d,lowest %d", REALTIME, NORMAL, BACKGROUND);
     EmeraldProc_Task_create_process(test, BACKGROUND, 0);
-    execute_tasks();
+    init_context_switch();
+
+    log(DEBUG, "Highest priority : %d,Middle %d,lowest %d", REALTIME, NORMAL, BACKGROUND);
     //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
 }
