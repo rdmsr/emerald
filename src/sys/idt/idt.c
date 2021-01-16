@@ -30,31 +30,26 @@
 #include <proc/PIT.h>
 #include <stdint.h>
 static struct idt_descriptor idt[256];
-static struct idt_pointer idtr = {.size = 256 * sizeof(struct idt_descriptor), .addr = (uint64_t)idt};
+static struct idt_pointer idtr = {.size = sizeof(idt) - 1, .addr = (uint64_t)idt};
+#define io_wait() ({ EmeraldASM_outb(0x80, 0x00); })
 void EmeraldSys_IDT_irq_remap(void)
 {
+
     EmeraldASM_outb(0x20, 0x11);
-    EmeraldASM_outb(0xA0, 0x11);
-
+    EmeraldASM_outb(0xa0, 0x11);
     EmeraldASM_outb(0x21, 0x20);
-    EmeraldASM_outb(0xA1, 0x28);
-
-    EmeraldASM_outb(0x21, 0x04);
-    EmeraldASM_outb(0xA1, 0x02);
+    EmeraldASM_outb(0xa1, 0x28);
+    EmeraldASM_outb(0x21, 4);
+    EmeraldASM_outb(0xa1, 2);
 
     EmeraldASM_outb(0x21, 0x01);
-    EmeraldASM_outb(0xA1, 0x01);
+    EmeraldASM_outb(0xa1, 0x01);
+    EmeraldASM_outb(0x21, 0x00);
+    EmeraldASM_outb(0xa1, 0x00);
+    
+   log(INFO,"Remapped IRQs");
+}
 
-    EmeraldASM_outb(0x21, 0x0);
-    EmeraldASM_outb(0xA1, 0x0);
-    log(INFO, "IRQs Remapped");
-}
-void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t attrib)
-{
-    uint64_t ptr = (uint64_t)handler;
-    idt[idx] = (struct idt_descriptor){
-        .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
-}
 
 struct idt_descriptor EmeraldSys_IDT_make_entry(uint64_t offset)
 {
@@ -103,9 +98,9 @@ void EmeraldSys_IDT_irq_clear_mask(unsigned char line)
     value = EmeraldASM_inb(port) & ~(1 << line);
     EmeraldASM_outb(port, value);
 }
+
 void EmeraldSys_IDT_isr_init(void)
 {
-    EmeraldSys_IDT_irq_remap();
     idt[0] = EmeraldSys_IDT_make_entry((uint64_t)&isr0);
     idt[1] = EmeraldSys_IDT_make_entry((uint64_t)&isr1);
     idt[2] = EmeraldSys_IDT_make_entry((uint64_t)&isr2);
@@ -126,7 +121,6 @@ void EmeraldSys_IDT_isr_init(void)
     idt[19] = EmeraldSys_IDT_make_entry((uint64_t)&isr19);
     idt[20] = EmeraldSys_IDT_make_entry((uint64_t)&isr20);
     idt[30] = EmeraldSys_IDT_make_entry((uint64_t)&isr30);
-    idt_set_handler(0x21,EmeraldDevices_keyboard_Keyboard_handler_main);
 }
 
 void EmeraldSys_IDT_idt_load(void)
@@ -137,6 +131,8 @@ void EmeraldSys_IDT_idt_load(void)
 }
 void EmeraldSys_IDT_idt_init(void)
 {
+    EmeraldSys_IDT_irq_remap();
+
     EmeraldSys_IDT_isr_init();
     EmeraldSys_IDT_idt_load();
     EmeraldASM_sti();

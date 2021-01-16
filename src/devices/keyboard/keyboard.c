@@ -112,4 +112,5 @@ void EmeraldDevices_keyboard_Keyboard_handler_main()
     }
     EmeraldDevices_VBE_put(keyboard_map[(unsigned char)keycode], white);
     EmeraldDevices_VGA_update_cursor(current_location / 2, 0);
+    EmeraldPIC_sendEOI(0);
 }

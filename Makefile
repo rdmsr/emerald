@@ -8,7 +8,7 @@ KERNEL_ELF = kernel.elf
 NASMFLAGS := -felf64
 
 
-CFLAGS = -O2 -pipe -Wall -Werror -Wextra -std=gnu99    
+CFLAGS = -Og -pipe -Wall -Werror -Wextra -std=gnu99    
 
 CHARDFLAGS := $(CFLAGS)               \
 	-Wall							\
