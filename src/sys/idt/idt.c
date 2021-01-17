@@ -28,8 +28,11 @@
 #include <devices/keyboard/keyboard.h>
 #include <libasm/asm.h>
 #include <proc/PIT.h>
+#include <sys/exceptions.h>
 #include <stdint.h>
 static struct idt_descriptor idt[256];
+extern void kb_handler();
+extern void pit_handler();
 static struct idt_pointer idtr = {.size = 256 * sizeof(struct idt_descriptor), .addr = (uint64_t)idt};
 void EmeraldSys_IDT_irq_remap(void)
 {
@@ -49,12 +52,18 @@ void EmeraldSys_IDT_irq_remap(void)
     EmeraldASM_outb(0xA1, 0x0);
     log(INFO, "IRQs Remapped");
 }
-void EmeraldSys_IDT_idt_register(uint16_t idx, void *handler, uint8_t cs, uint8_t attrib)
+static struct idt_descriptor idt_make_entry(uint64_t offset)
 {
-    uint64_t ptr = (uint64_t)handler;
-    idt[idx] = (struct idt_descriptor){
-        .offset_lo = ptr, .cs = cs, .attrib = attrib, .offset_mid = ptr >> 16, .offset_hi = ptr >> 32};
+    return (struct idt_descriptor){
+        .selector = 0x08,
+        .offset_lo = offset & 0xFFFF,
+        .offset_mid = (offset >> 16) & 0xFFFF,
+        .offset_hi = (offset >> 32) & 0xFFFFFFFF,
+        .ist = 0,
+        .zero = 0,
+        .type_attr = 0x8e};
 }
+
 void EmeraldSys_IDT_irq_mask(unsigned char line)
 {
     uint16_t port;
@@ -89,28 +98,42 @@ void EmeraldSys_IDT_irq_clear_mask(unsigned char line)
     value = EmeraldASM_inb(port) & ~(1 << line);
     EmeraldASM_outb(port, value);
 }
-
 void EmeraldSys_IDT_isr_init(void)
 {
-
-    for (int i = 0; i < 0x22; i++)
-    {
-        EmeraldSys_IDT_idt_register(i, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-    }
-    EmeraldSys_IDT_idt_register(0x20, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
-
-    EmeraldSys_IDT_idt_register(0x21, isr, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
+    idt[0] = idt_make_entry((uint64_t)&exc_0);
+    idt[1] = idt_make_entry((uint64_t)&exc_1);
+    idt[2] = idt_make_entry((uint64_t)&exc_2);
+    idt[3] = idt_make_entry((uint64_t)&exc_3);
+    idt[4] = idt_make_entry((uint64_t)&exc_4);
+    idt[5] = idt_make_entry((uint64_t)&exc_5);
+    idt[6] = idt_make_entry((uint64_t)&exc_6);
+    idt[7] = idt_make_entry((uint64_t)&exc_7);
+    idt[8] = idt_make_entry((uint64_t)&exc_8);
+    idt[9] = idt_make_entry((uint64_t)&exc_9);
+    idt[10] = idt_make_entry((uint64_t)&exc_10);
+    idt[11] = idt_make_entry((uint64_t)&exc_11);
+    idt[12] = idt_make_entry((uint64_t)&exc_12);
+    idt[13] = idt_make_entry((uint64_t)&exc_13);
+    idt[14] = idt_make_entry((uint64_t)&exc_14);
+    idt[15] = idt_make_entry((uint64_t)&exc_15);
+    idt[16] = idt_make_entry((uint64_t)&exc_16);
+    idt[17] = idt_make_entry((uint64_t)&exc_17);
+    idt[18] = idt_make_entry((uint64_t)&exc_18);
+    idt[19] = idt_make_entry((uint64_t)&exc_19);
+    idt[20] = idt_make_entry((uint64_t)&exc_20);
+    idt[30] = idt_make_entry((uint64_t)&exc_30);
+    
+    idt[32] = idt_make_entry((uint64_t)&pit_handler);
+    idt[33] = idt_make_entry((uint64_t)&kb_handler);
 
     for (int i = 0x23; i < 0x28; i++)
     {
-        EmeraldSys_IDT_idt_register(i, isr_irq_master, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
+        idt[i] = idt_make_entry((uint64_t)&isr_irq_master);
     }
     for (int i = 0x28; i < 0x2F; i++)
     {
-        EmeraldSys_IDT_idt_register(i, isr_irq_slave, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
+        idt[i] = idt_make_entry((uint64_t)&isr_irq_slave);
     }
-    /* Keyboard IRQ */
-    EmeraldSys_IDT_idt_register(0x31, EmeraldDevices_keyboard_Keyboard_handler_main, KERNEL_CODE_SEGMENT_OFFSET, INTERRUPT_GATE);
 }
 
 void EmeraldSys_IDT_idt_load(void)
