@@ -37,7 +37,7 @@ disk: $(KERNEL_HDD)
 run: $(KERNEL_HDD)
 	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 512
 debug: $(KERNEL_HDD)
-	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -d int -serial stdio -rtc base=localtime -m 512
+	@qemu-system-x86_64 -d int -s -S -vga std -drive file=$(KERNEL_HDD),format=raw -serial stdio -rtc base=localtime -m 512
 
 %.o: %.c
 	@echo [ CC ] $<
