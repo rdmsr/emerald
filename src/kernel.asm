@@ -2,6 +2,7 @@ bits 64
 section .text
 global start
 global isr
+global kb_handler
 global panic
 global isr_irq_master
 global isr_irq_slave
@@ -9,8 +10,9 @@ global shutdown
 extern kmain
 extern EmeraldProc_PIT_start_timer
 extern EmeraldDevices_keyboard_Keyboard_handler_main
-	extern init_context_switch
-	extern execute_tasks
+extern init_context_switch
+extern execute_tasks
+global pit_handler
 %macro pushaq 0
     push rax
     push rbx
@@ -44,8 +46,8 @@ extern EmeraldDevices_keyboard_Keyboard_handler_main
     pop rcx
     pop rbx
     pop rax
-%endmacro
-isr:
+	%endmacro
+kb_handler:
 	pushaq
 	cld
 	call EmeraldDevices_keyboard_Keyboard_handler_main
@@ -53,8 +55,14 @@ isr:
 	mov al, 0x20
 	out 0x20, al
 	iretq
-isr_irq_master:
+pit_handler:
 	call EmeraldProc_PIT_start_timer
+	mov al, 0x20
+	out 0x20, al
+	iretq	
+isr:
+
+isr_irq_master:
 	mov al, 0x20
 	out 0x20, al
 	iretq
