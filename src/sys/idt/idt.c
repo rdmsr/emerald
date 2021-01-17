@@ -28,8 +28,8 @@
 #include <devices/keyboard/keyboard.h>
 #include <libasm/asm.h>
 #include <proc/PIT.h>
-#include <sys/exceptions.h>
 #include <stdint.h>
+#include <sys/exceptions.h>
 static struct idt_descriptor idt[256];
 extern void kb_handler();
 extern void pit_handler();
@@ -100,6 +100,8 @@ void EmeraldSys_IDT_irq_clear_mask(unsigned char line)
 }
 void EmeraldSys_IDT_isr_init(void)
 {
+    EmeraldSys_IDT_irq_remap();
+    /* Exception Handling */
     idt[0] = idt_make_entry((uint64_t)&exc_0);
     idt[1] = idt_make_entry((uint64_t)&exc_1);
     idt[2] = idt_make_entry((uint64_t)&exc_2);
@@ -122,7 +124,8 @@ void EmeraldSys_IDT_isr_init(void)
     idt[19] = idt_make_entry((uint64_t)&exc_19);
     idt[20] = idt_make_entry((uint64_t)&exc_20);
     idt[30] = idt_make_entry((uint64_t)&exc_30);
-    
+
+    /* PIT and keyboard handling */
     idt[32] = idt_make_entry((uint64_t)&pit_handler);
     idt[33] = idt_make_entry((uint64_t)&kb_handler);
 

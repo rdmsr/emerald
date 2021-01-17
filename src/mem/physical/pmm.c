@@ -59,6 +59,17 @@ uint32_t EmeraldMem_PMM_allocate_block()
     return free_block;
 }
 
+uint32_t EmeraldMem_PMM_allocz(size_t count) {
+  uint32_t ret = EmeraldMem_PMM_allocate_block(count * 4096);
+
+
+    uint64_t *ptr = (uint64_t *)(ret + 0xffffffff80000000);
+
+    for (size_t i = 0; i < count * (4096 / sizeof(uint64_t)); i++)
+        ptr[i] = 0;
+
+    return ret;
+}
 void EmeraldMem_PMM_free_block(uint32_t block_num)
 {
     CLEARBIT(block_num);

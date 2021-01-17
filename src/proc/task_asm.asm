@@ -39,7 +39,6 @@ extern execute_tasks
 
 init_context_switch:
         pushaq
-	mov rdi,rsp 		; arguments of the function
 	call execute_tasks
 	iretq
 end_context_switch:	

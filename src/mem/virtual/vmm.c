@@ -26,7 +26,6 @@
 #include "vmm.h"
 #include "../physical/pmm.h"
 #include <debug-utilities/logger.h>
-
 /*
 
 Virtual Memory Manager
@@ -46,12 +45,8 @@ These pages are then mapped on a pagemap (also called pagetable)
 void EmeraldMem_VMM_create_pagemap(pagemap_t *map)
 {
     /* We allocate the page */
-    uint64_t page = EmeraldMem_PMM_allocate_block(4096);
-
-    /* PML4 stands for page map level 4 */
-    uint64_t *pml4 = (uint64_t *)page;
-
-    memset(pml4, 0, 4096);
+    uint64_t page = EmeraldMem_PMM_allocz(1);
+    uint64_t *pml4 = (uint64_t*)page;
     map->pml4 = pml4;
 }
 uint64_t *walk_to_page_and_map(uint64_t *current, uint16_t index)
@@ -102,15 +97,21 @@ void EmeraldMem_VMM_initialize()
 
     EmeraldMem_VMM_create_pagemap(page_map);
 
-    uint64_t *root = page_map->pml4;
-    uintptr_t root_lower_half = lower_half(*root);
+    //    uint64_t *root = page_map->pml4;
+    // uintptr_t root_lower_half = lower_half(*root);
     /* Maps the first 4 gb */
     for (uint64_t i = 0; i < 0x100000000; i += 0x1000)
     {
         EmeraldMem_VMM_map_page(page_map, i, higher_half(i), 0b11);
     }
-    asm volatile("mov %%cr3,%0" ::"r"(&root_lower_half)
-                 : "memory");
+    uint64_t pml4_lower_half = lower_half(*page_map->pml4);
+
+    asm volatile (
+        "mov %0,%%cr3"
+        :
+        : "r" (pml4_lower_half)
+        : "memory"
+	);
     log(INFO, "Mapped Kernel");
 }
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)
