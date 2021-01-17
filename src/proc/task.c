@@ -99,7 +99,7 @@ process_t *get_task(int priority)
 {
     return task_lists[priority].head;
 }
-void execute_tasks(regs64_t *context)
+void execute_tasks()
 {
     process_t *task;
     while (true)
@@ -136,8 +136,6 @@ void execute_tasks(regs64_t *context)
             log(WARNING, "task is null");
         }
     }
-    if (current_task)
-        current_task->stack_top = context;
     end_context_switch(current_task);
 }
 void test()
@@ -147,9 +145,7 @@ void test()
 
 void EmeraldProc_Scheduler_init()
 {
+  EmeraldProc_PIT_init(1000);
     EmeraldProc_Task_create_process(test, BACKGROUND, 0);
-    init_context_switch();
-
-    log(DEBUG, "Highest priority : %d,Middle %d,lowest %d", REALTIME, NORMAL, BACKGROUND);
     //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
 }

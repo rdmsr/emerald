@@ -46,13 +46,4 @@ end_context_switch:
 	mov rsp,[rdi] 		;moves the adress of rdi into rsp
 	
         popaq
-	
-        pop rax ; rip
-        pop rbx ; cs
-        pop rcx ; rflags
-        pop rdx ; rsp
-        pop rsi ; ss
-      
-        jmp $
-	
 	iretq
