@@ -145,7 +145,7 @@ void test()
 
 void EmeraldProc_Scheduler_init()
 {
-  EmeraldProc_PIT_init(1000);
+    EmeraldProc_PIT_init(1000);
     EmeraldProc_Task_create_process(test, BACKGROUND, 0);
     //EmeraldProc_Task_create_process(1, 30, 0xFFF, thread, "garbage");
 }

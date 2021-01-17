@@ -102,7 +102,6 @@ void kmain(struct stivale2_struct *info)
 {
     init(info);
     set_ascii();
-    EmeraldSys_IDT_irq_remap();
     EmeraldDevices_VBE_print("Welcome to ", white);
     EmeraldDevices_VBE_print("EmeraldOS!\n", green);
     EmeraldProc_Scheduler_init();
