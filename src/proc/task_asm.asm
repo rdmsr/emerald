@@ -38,9 +38,10 @@ extern execute_tasks
 %endmacro
 
 init_context_switch:
+	cld
         pushaq
+	mov rdi,rsp
 	call execute_tasks
-	iretq
 end_context_switch:	
 	mov rsp,[rdi] 		;moves the adress of rdi into rsp
 	

@@ -47,15 +47,20 @@ boot_info *EmeraldBoot_Stivale_get_boot_info(struct stivale2_struct *info)
         case STIVALE2_STRUCT_TAG_MEMMAP_ID:
         {
             memory_map = (struct stivale2_struct_tag_memmap *)tag;
+            bootinfo->memory_entries = memory_map->entries;
+            bootinfo->memory_map = memory_map;
             for (size_t i = 0; i < memory_map->entries; i++)
             {
                 struct stivale2_mmap_entry *entry = &memory_map->memmap[i];
                 total_mem += entry->length;
                 if (entry->type == STIVALE2_MMAP_USABLE)
+                {
                     usable_mem += entry->length;
+                    bootinfo->memory_top = entry->base + entry->length;
+                }
             }
             bootinfo->memory_usable = usable_mem;
-	    bootinfo->total_memory = total_mem;
+            bootinfo->total_memory = total_mem;
             break;
         }
         }

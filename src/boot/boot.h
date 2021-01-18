@@ -38,6 +38,9 @@ typedef struct
   uint16_t framebuffer_height;
   uint16_t framebuffer_pitch;
   uint16_t framebuffer_bpp;
+  size_t memory_entries;
+  uintptr_t memory_top;
+  struct stivale2_struct_tag_memmap *memory_map;
 } boot_info;
 
 boot_info* EmeraldBoot_Stivale_get_boot_info(struct stivale2_struct *info);

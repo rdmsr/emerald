@@ -45,15 +45,15 @@ These pages are then mapped on a pagemap (also called pagetable)
 void EmeraldMem_VMM_create_pagemap(pagemap_t *map)
 {
     /* We allocate the page */
-    uint64_t page = EmeraldMem_PMM_allocz(1);
-    uint64_t *pml4 = (uint64_t*)page;
-    map->pml4 = pml4;
+    uint64_t pml4 = EmeraldMem_PMM_allocz(1);
+    map->pml4 = &pml4;
+
 }
 uint64_t *walk_to_page_and_map(uint64_t *current, uint16_t index)
 {
     if (current[index] == 0)
     {
-        current[index] = EmeraldMem_PMM_allocate_block(4096);
+        current[index] = EmeraldMem_PMM_allocate_block(1);
         current[index] |= 0b11;
     }
 
@@ -97,21 +97,17 @@ void EmeraldMem_VMM_initialize()
 
     EmeraldMem_VMM_create_pagemap(page_map);
 
-    //    uint64_t *root = page_map->pml4;
-    // uintptr_t root_lower_half = lower_half(*root);
+
     /* Maps the first 4 gb */
     for (uint64_t i = 0; i < 0x100000000; i += 0x1000)
     {
         EmeraldMem_VMM_map_page(page_map, i, higher_half(i), 0b11);
-    }
-    uint64_t pml4_lower_half = lower_half(*page_map->pml4);
-
-    asm volatile (
-        "mov %0,%%cr3"
+	}
+    asm volatile(
+        "mov %%cr3,%0"
         :
-        : "r" (pml4_lower_half)
-        : "memory"
-	);
+        : "r"(page_map->pml4)
+        : "memory");
     log(INFO, "Mapped Kernel");
 }
 void EmeraldMem_VMM_unmap_page(pagemap_t *page_map, uint64_t virtual_adress)

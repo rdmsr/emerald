@@ -76,11 +76,10 @@ void print_load(char *string)
     EmeraldDevices_VBE_print(string, green);
     EmeraldDevices_VBE_print("\n", gray);
 }
-
 void init(struct stivale2_struct *info)
 {
     EmeraldDevices_VBE_init(info);
-    EmeraldBoot_Stivale_get_boot_info(info);
+    boot_info* mem_info = EmeraldBoot_Stivale_get_boot_info(info);
     EmeraldDevices_VBE_clear_screen();
     EmeraldDevices_keyboard_Keyboard_init();
     print_load("Keyboard");
@@ -90,7 +89,7 @@ void init(struct stivale2_struct *info)
     print_load("GDT");
     EmeraldSys_IDT_idt_init();
     print_load("IDT");
-    EmeraldMem_PMM_pmm_init(1096 * M);
+    EmeraldMem_PMM_pmm_init(mem_info->memory_usable);
     print_load("PMM");
     EmeraldDevices_RTC_read_rtc();
     print_load("RTC");

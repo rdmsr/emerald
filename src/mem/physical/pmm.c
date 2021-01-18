@@ -60,7 +60,7 @@ uint32_t EmeraldMem_PMM_allocate_block()
 }
 
 uint32_t EmeraldMem_PMM_allocz(size_t count) {
-  uint32_t ret = EmeraldMem_PMM_allocate_block(count * 4096);
+  uint32_t ret = EmeraldMem_PMM_allocate_block(count);
 
 
     uint64_t *ptr = (uint64_t *)(ret + 0xffffffff80000000);
