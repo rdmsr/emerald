@@ -23,6 +23,23 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [ ] EXT2 filesystem
 - [ ] Userspace
 - [ ] Port libc
+- [ ] Reading from disk
+- [ ] Rewrite
+# NOTE: The project is under a major rewrite, the new rewrite will feature:
+
+- ANSI C
+- Cleaner code
+- New project architecture
+- Refactor of memory managers and other non-homemade code (stealing code is bad!)
+
+## Things left to do in the rewrite:
+
+- [ ] descriptor tables (IDT,GDT)
+- [ ] Logging
+- [ ] Drivers 
+- [ ] Memory management
+
+*Thank you for your patience :heart: !*
 ### Screenshots
 
 <img src="https://media.discordapp.net/attachments/732514859857739847/796840618541973514/unknown.png">

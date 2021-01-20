@@ -38,15 +38,14 @@ void EmeraldProc_PIT_init(uint32_t frequency)
     EmeraldASM_outb(0x40, (uint8_t)divisor & 0xFF);
     EmeraldASM_outb(0x40, (uint8_t)(divisor >> 8) & 0xFF);
     log(INFO, "Initialized PIT, frequency: %d Hz",frequency);
-
 }
 void EmeraldProc_PIT_start_timer()
 {
     ticks++;
-    /*  if(ticks > 10)
+    if(ticks > 10)
     {
       init_context_switch();
-      }*/
+      }
 }
 int EmeraldProc_PIT_get_ticks()
 {
