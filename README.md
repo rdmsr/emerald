@@ -35,8 +35,8 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 ## Things left to do in the rewrite:
 
 - [ ] descriptor tables (IDT,GDT)
-- [ ] Logging
-- [ ] Drivers 
+- [ ] Logging
+- [ ] Drivers 
 - [ ] Memory management
 
 *Thank you for your patience :heart: !*
