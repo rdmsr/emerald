@@ -29,6 +29,8 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 
 - ANSI C
 - Cleaner code
+- Clang
+- Meson with ninja
 - New project architecture
 - Refactor of memory managers and other non-homemade code (stealing code is bad!)
 
