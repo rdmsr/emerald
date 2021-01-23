@@ -42,10 +42,6 @@ void EmeraldProc_PIT_init(uint32_t frequency)
 void EmeraldProc_PIT_start_timer()
 {
     ticks++;
-    if(ticks > 10)
-    {
-      init_context_switch();
-      }
 }
 int EmeraldProc_PIT_get_ticks()
 {

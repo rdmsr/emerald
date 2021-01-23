@@ -39,7 +39,7 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [x] descriptor tables (IDT,GDT)
 - [ ] Multitasking
 - [x] Logging
-- [ ] Drivers 
+- [x] Drivers 
 - [ ] Memory management
 
 **Thank you for your patience :heart: !**
