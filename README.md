@@ -8,38 +8,28 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Abb1x/emerald)
 
 ## ⚙️ How to build
-get x86_64-elf-gcc [here](https://wiki.osdev.org/GCC_Cross-Compiler)
+
+install clang from your distro's repository
 <br>
 Clone the repo and submodules:
 `git clone https://github.com/Abb1x/emerald.git --recursive`
-Now you need to compile the source code using the cross-compiler, modify the Makefile if needed
+
+To build, run `make`
+<br>
+To run, run `make run`
 
 ### Prebuilt images
 You can use prebuilt .hdd images in the releases tab, I suggest you run them using qemu
 ## :heavy_check_mark: TODO
 
-- [x] VMM
+- [ ] Fix VMM
 - [ ] Multitasking
 - [ ] EXT2 filesystem
 - [ ] Userspace
 - [ ] Port libc
 - [ ] Reading from disk
-- [ ] Rewrite
-# NOTE: The project is under a major rewrite, the new rewrite will feature:
+- [x] Rewrite
 
-- ANSI C
-- Cleaner code
-- New project architecture
-- Refactor of memory managers and other non-homemade code (stealing code is bad!)
-
-## Things left to do in the rewrite:
-
-- [ ] descriptor tables (IDT,GDT)
-- [ ] Logging
-- [ ] Drivers 
-- [ ] Memory management
-
-**Thank you for your patience :heart: !**
 ### Screenshots
 
 <img src="https://media.discordapp.net/attachments/732514859857739847/796840618541973514/unknown.png">
