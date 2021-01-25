@@ -9,7 +9,7 @@
 
 ## ⚙️ How to build
 
-Please look at the [Build guide](https://github.com/Abb1x/emerald/blob/master/manual/build-guide.md)
+Please look at the [Build guide](https://github.com/Abb1x/emerald/blob/master/docs/build-guide.md)
 ### Prebuilt images
 You can use prebuilt .hdd images in the releases tab, I suggest you run them using qemu
 ## :heavy_check_mark: TODO
