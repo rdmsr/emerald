@@ -1,7 +1,7 @@
 # Build guide
 
 ## Table of contents
-- Building EmeraldOS
+- Building emeraldOS
     -   [Dependencies](#dependencies)
     -   [Getting the source code](#getting-the-source-code)
     -   [Building](#building)
