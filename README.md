@@ -9,15 +9,7 @@
 
 ## ⚙️ How to build
 
-install clang from your distro's repository
-<br>
-Clone the repo and submodules:
-`git clone https://github.com/Abb1x/emerald.git --recursive`
-
-To build, run `make`
-<br>
-To run, run `make run`
-
+Please look at the [Build guide](https://github.com/Abb1x/emerald/blob/master/manual/build-guide.md)
 ### Prebuilt images
 You can use prebuilt .hdd images in the releases tab, I suggest you run them using qemu
 ## :heavy_check_mark: TODO
