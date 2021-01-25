@@ -62,10 +62,10 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
 {
 
     /* Paging levels */
-    uintptr_t level4 = ((uintptr_t)virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
-    uintptr_t level3 = ((uintptr_t)virtual_address & ((uintptr_t)0x1ff << 30)) >> 30;
-    uintptr_t level2 = ((uintptr_t)virtual_address & ((uintptr_t)0x1ff << 21)) >> 21;
-    uintptr_t level1 = ((uintptr_t)virtual_address & ((uintptr_t)0x1ff << 12)) >> 12;
+    uintptr_t level4 = (virtual_address >> 39) & 0x1FF;
+    uintptr_t level3 = (virtual_address >> 30) & 0x1FF;
+    uintptr_t level2 = (virtual_address >> 21) & 0x1FF;
+    uintptr_t level1 =  (virtual_address >> 12) & 0x1FF;;
 
     uint64_t *pml4 = page_map->pml4;
 

@@ -27,18 +27,25 @@
 #ifndef VMM_H
 #define VMM_H
 
+#include <libk/logging.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <libk/logging.h>
 
 typedef struct
 {
     uintptr_t *pml4;
 } Pagemap __attribute__((aligned(4096)));
 
+typedef struct
+{
+    uint64_t pml4_index, pml3_index, pml2_index, pml1_index;
+    uint64_t *pml3, *pml2, *pml1;
+
+} PageIndex;
+
 void VMM_init();
-void VMM_switch_pagemap(Pagemap* map);
+void VMM_switch_pagemap(Pagemap *map);
 void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags);
 
-Pagemap* VMM_new_pagemap();
+Pagemap *VMM_new_pagemap();
 #endif
