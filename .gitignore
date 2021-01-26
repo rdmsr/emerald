@@ -6,3 +6,4 @@
 .cxxflags
 .files
 .includes
+build/
