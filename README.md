@@ -19,7 +19,8 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [ ] EXT2 filesystem
 - [ ] Userspace
 - [ ] Port libc
-- [ ] Reading from disk
+- [ ] AHCI/Sata (would be nice)
+- [ ] Implement a font parser (PSF or TTF)
 - [x] Rewrite
 
 ### Screenshots
