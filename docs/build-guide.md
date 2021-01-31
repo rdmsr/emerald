@@ -20,6 +20,7 @@ Building emeraldOS requires:
 - Meson (build system)
 - Ninja (build system used with meson)
 - QEMU or any other virtualization software
+- echfs (get it [here](https://github.com/echfs/echfs))
 
 ```sh
 # On debian-based distributions
