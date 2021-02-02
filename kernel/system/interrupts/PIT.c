@@ -36,5 +36,5 @@ void PIT_init(uint32_t frequency)
     IO_outb(0x40, (uint8_t)divisor & 0xFF);
     IO_outb(0x40, (uint8_t)(divisor >> 8) & 0xFF);
 
-    log(INFO, "Initialized PIT, frequency: %d Hz", frequency);
+    log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
 }

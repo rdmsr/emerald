@@ -58,6 +58,7 @@ void kmain(struct stivale2_struct *info)
     VBE_clear_screen();
 
     info = (void *)info + MEM_OFFSET;
+    
     PCI_init();
     
     BootInfo *boot_info = Boot_get_info(info);

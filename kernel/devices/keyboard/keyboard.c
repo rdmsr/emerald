@@ -64,6 +64,7 @@ unsigned char keyboard_map[128] = {
     0,
     0,
     0};
+
 unsigned int current_location = 0;
 
 void Keyboard_init(void)

@@ -66,6 +66,7 @@ void VBE_clear_screen()
             VBE_draw_pixel(position, get_color(color));
         }
     }
+
     VBE_putf("Framebuffer info:");
     VBE_putf("\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
     VBE_putf("\t Pitch: %d", fb_info->framebuffer_pitch);
