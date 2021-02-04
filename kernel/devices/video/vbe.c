@@ -112,6 +112,15 @@ void VBE_scroll(int lines)
             VBE_draw_pixel(position, VBE_read_pixel_offset(position, lines));
         }
     }
+    for (i = h - lines; i < h; i++)
+    {
+        for (j = 0; j < w; j++)
+        {
+            position.x = j;
+            position.y = i;
+            VBE_draw_pixel(position, get_color(color));
+        }
+    }
 }
 
 void VBE_init(struct stivale2_struct *info)

@@ -26,4 +26,3 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 ### Screenshots
 
 <img src="/docs/images/Screenshot_1.png">
-

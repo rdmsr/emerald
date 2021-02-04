@@ -40,7 +40,7 @@ bool n_lock = false;
 bool c_lock = false;
 bool kbKey[128] = {0};
 uint8_t lastKey = 0;
-uint8_t c = 0;
+uint8_t c;
 bool rsk = false;
 
 bool xor(uint8_t bool1, uint8_t bool2) {return (bool1 == true || bool2 == true) && (bool1 != bool2);}
