@@ -224,8 +224,8 @@ void VBE_put(char c, color_t color)
     else if (c == '\b') 
     {
         cursor_x -= 8;
-        if (cursor_x < 0 || cursor_x >= (size_t)fb_info->framebuffer_width) {cursor_x = (size_t)(fb_info->framebuffer_width - 8); cursor_y -= 8;}
-        if (cursor_y < 0 || cursor_y >= (size_t)fb_info->framebuffer_width) {cursor_y = 0; cursor_x = 0;}
+        if (/*cursor_x < 0 || */cursor_x >= (size_t)fb_info->framebuffer_width) {cursor_x = (size_t)(fb_info->framebuffer_width - 8); cursor_y -= 8;}
+        if (/*cursor_y < 0 || */cursor_y >= (size_t)fb_info->framebuffer_width) {cursor_y = 0; cursor_x = 0;}
         VBE_putchar('\xDB', cursor_x, cursor_y, bg_color);
     }
     else
