@@ -140,7 +140,7 @@ unsigned char getKey() {
     if (rsk) {
         if (ctrl && c > 96 && c < 123) {c -= 96;}
         uint8_t tc = c;    
-        c = 0;
+        /*c = 0;*/
         rsk = false;
         return tc;
     } else {return 0;}
