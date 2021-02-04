@@ -33,12 +33,12 @@ char ascii_art[] = "\e[0;32m  _____                         _     _ \n"
                    " | |__ _ __ ___   ___ _ __ __ _| | __| |\n"
                    " |  __| '_ ` _ \\ / _ \\ '__/ _` | |/ _` |\n"
                    " | |__| | | | | |  __/ | | (_| | | (_| |\n"
-                   " \\____/_| |_| |_|\\___|_|  \\__,_|_|\\__,_|\n\e[0m"
-                   " ─────────────────────────────────────────────────\n"
-                   "Copyright (c) 2020-2021 EmeraldOS contributors\n"
-                   "                                               \n";
+                   " |____\\_| |_| |_|\\___|_|  \\__,_|_|\\__,_|\n\e[0m"
+                   " ───────────────────────────────────────\n"
+                   "  Made 2020-2021 EmeraldOS contributors\n"
+                   "\n";
 
-static char *strcpy(char *destination, const char *source)
+char *strcpy(char *destination, const char *source)
 {
     if (!destination)
         return NULL;
@@ -61,19 +61,18 @@ static char *strcpy(char *destination, const char *source)
 
 void set_ascii()
 {
-
-  if (RTC_get_hours() < 12)
+  Serial_write_string(ascii_art);
+  if (RTC_get_hours() < 12)    
     {
-        strcpy(&ascii_art[453], "Good Morning!\n");
+        Serial_write_string("Good Morning!\n");
     }
     if (RTC_get_hours() >= 12 && RTC_get_hours() < 18)
     {
-        strcpy(&ascii_art[453], "Good Afternoon!\n");
+        Serial_write_string("Good Afternoon!\n");
     }
     if (RTC_get_hours() >= 18)
     {
-        strcpy(&ascii_art[453], "Good Evening!\n");
+        Serial_write_string("Good Evening!\n");
     }
-    Serial_write_string(ascii_art);
 }
 #endif

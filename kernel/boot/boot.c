@@ -83,8 +83,8 @@ BootInfo *Boot_get_info(struct stivale2_struct *info)
       bootinfo->total_memory = total_mem;
 
 
-VBE_putf("Memory info:");
-VBE_putf("\t Total size: %d mb", convert_to_mb(bootinfo->total_memory) + 1);
+VBE_putf("Memory info:\n");
+VBE_putf("\t Total size: %d mb\n", convert_to_mb(bootinfo->total_memory) + 1);
 VBE_putf("\t Usable: %d mb\n", convert_to_mb(usable_mem) + 1);
 log(INFO, "Memory Size is %d mb", convert_to_mb(bootinfo->total_memory) + 1);
 return bootinfo;

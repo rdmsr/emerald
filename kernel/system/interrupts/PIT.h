@@ -26,9 +26,12 @@
 #ifndef PIT_H
 #define PIT_H
 #include <stdint.h>
+#include <stddef.h>
+#include <stdint.h>
 
+void addTick();
+uint64_t tick;
 void PIT_init(uint32_t frequency);
-
-
+void delay(uint64_t ticks);
 
 #endif

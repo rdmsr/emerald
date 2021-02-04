@@ -8,6 +8,7 @@ global pit_handler
 global keyboard_handler
 
 extern Keyboard_main
+extern addTick
 	
 %macro pushaq 0
     push rax
@@ -59,6 +60,10 @@ isr_irq_slave:
 	iretq
 
 pit_handler:
+    pushaq
+    cld
+    call addTick
+    popaq
 	mov al, 0x20
 	out 0x20, al
 	iretq	

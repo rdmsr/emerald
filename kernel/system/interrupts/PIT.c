@@ -27,9 +27,26 @@
 #include "PIT.h"
 #include <libk/io.h>
 #include <libk/logging.h>
+#include <devices/video/vbe.h>
+#include <devices/serial/serial.h>
+
+uint64_t tick = 0;
+
+void addTick() {
+    tick++;
+}
+
+void delay(uint64_t ticks) {
+    ticks += tick;
+    while (ticks > tick) {
+        __asm__ volatile("nop");
+    }
+}
 
 void PIT_init(uint32_t frequency)
 {
+    module("PIT");
+    /*
     uint16_t divisor = 1193182 / frequency;
 
     IO_outb(0x43, 0x36);
@@ -37,4 +54,14 @@ void PIT_init(uint32_t frequency)
     IO_outb(0x40, (uint8_t)(divisor >> 8) & 0xFF);
 
     log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
+    */
+    uint32_t divisor = 1193181 / frequency;
+    uint8_t low  = (uint8_t)(divisor & 0xFF);
+    uint8_t high = (uint8_t)( (divisor >> 8) & 0xFF);
+    /* Send the command */
+    IO_outb(0x43, 0x36); /* Command port */
+    IO_outb(0x40, low);
+    IO_outb(0x40, high);
 }
+
+

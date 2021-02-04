@@ -26,6 +26,56 @@
 
 #include "string.h"
 #include <devices/serial/serial.h>
+#include <stddef.h>
+
+static char *numToStr_sub(char *dest, int32_t n, int32_t x) {
+    if (n == 0) {
+        return 0;
+    }
+    if (x <= -10) {
+        dest = numToStr_sub(dest, n - 1, x / 10);
+        if (dest == 0) {return 0;}
+    }
+    *dest = (char) ('0' - x % 10);
+    return dest + 1;
+}
+
+char *numToStr(char *dest, int32_t n, int32_t x) {
+    char *p = dest;
+    if (n == 0) {return 0;}
+    n--;
+    if (x < 0) {
+        if (n == 0) {return 0;}
+        n--;
+        *p++ = '-';
+    } else {
+        x = -x;
+    }
+    p = numToStr_sub(p, n, x);
+    if (p == 0) {return 0;}
+    *p = 0;
+    return dest;
+}
+
+char *numStr(long num) {
+    char *str[16] = {0};
+    numToStr(*str, sizeof(str) / sizeof(str[0]), num);
+    return *str;
+}
+
+char* itoa(int val, int base){
+
+    static char buf[32] = {0};
+
+    int i = 30;
+
+    for(; val && i ; --i, val /= base)
+
+        buf[i] = "0123456789abcdef"[val % base];
+
+    return &buf[i+1];
+
+}
 
 char *string_convert(unsigned int num, int base)
 {

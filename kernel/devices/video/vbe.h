@@ -44,6 +44,7 @@ typedef struct
 } position_t;
 
 void VBE_init(struct stivale2_struct *info);
+void VBE_move_cursor(int cx, int cy);
 void VBE_clear_screen();
 void VBE_putchar(char character, int position_x, int position_y, color_t color);
 void VBE_puts(char* string, color_t color);

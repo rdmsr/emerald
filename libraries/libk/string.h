@@ -30,6 +30,6 @@
 
 void printf(char *format, ...);
 char *string_convert(unsigned int num, int base);
-
+char *numStr(long num);
 
 #endif

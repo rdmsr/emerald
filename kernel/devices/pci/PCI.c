@@ -134,6 +134,6 @@ void PCI_init()
 	
         log(INFO,"Found device with vendor %x, device id: %x",pci_devices[device].vendor_id,pci_devices[device].device_id);
 	
-        VBE_putf("[PCI] 00:%x.%d %s: %s %s",device,pci_devices[device].function, PCI_id_to_string(&pci_devices[device]), PCI_vendor_to_string(&pci_devices[device]), PCI_device_id_to_string(&pci_devices[device]));
+        VBE_putf("[PCI] 00:%x.%d %s: %s %s\n",device,pci_devices[device].function, PCI_id_to_string(&pci_devices[device]), PCI_vendor_to_string(&pci_devices[device]), PCI_device_id_to_string(&pci_devices[device]));
     }
 }

@@ -32,10 +32,10 @@
 struct stivale2_struct_tag_framebuffer *fb_info;
 
 color_t bg_color = {0, 64, 73};
-color_t fg_color = {0, 111, 92};
+color_t fg_color = {0, 127, 127};
 
-size_t cursor_x = 5;
-size_t cursor_y = 5;
+size_t cursor_x = 0;
+size_t cursor_y = 0;
 
 uint32_t get_color(color_t *color)
 {
@@ -49,36 +49,78 @@ void VBE_draw_pixel(position_t pos, uint32_t color)
 
     fb[fb_i] = color;
 }
+
+uint32_t VBE_read_pixel(position_t pos)
+{
+    size_t fb_i = pos.x + (fb_info->framebuffer_pitch / sizeof(uint32_t)) * pos.y;
+    uint32_t *fb = (uint32_t *)fb_info->framebuffer_addr;
+
+    return fb[fb_i];
+}
+
+uint32_t VBE_read_pixel_offset(position_t pos, int offset)
+{
+    size_t fb_i = pos.x + (fb_info->framebuffer_pitch / sizeof(uint32_t)) * (pos.y + offset);
+    uint32_t *fb = (uint32_t *)fb_info->framebuffer_addr;
+
+    return fb[fb_i];
+}
+
 void VBE_clear_screen()
 {
 
     color_t *color;
     color = &bg_color;
-
+    int h = fb_info->framebuffer_height;
+    int w = fb_info->framebuffer_width;
     int i, j;
     position_t position;
-    for (i = 0; i < fb_info->framebuffer_width; i++)
+    for (i = 0; i < h; i++)
     {
-        for (j = 0; j < fb_info->framebuffer_height; j++)
+        for (j = 0; j < w; j++)
         {
-            position.x = i;
-            position.y = j;
+            position.x = j;
+            position.y = i;
+            VBE_draw_pixel(position, 0);
+        }
+    }
+    for (i = 0; i < h; i++)
+    {
+        for (j = 0; j < w; j++)
+        {
+            position.x = j;
+            position.y = i;
             VBE_draw_pixel(position, get_color(color));
         }
     }
-
-    VBE_putf("Framebuffer info:");
-    VBE_putf("\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
-    VBE_putf("\t Pitch: %d", fb_info->framebuffer_pitch);
-    VBE_putf("\t BPP: %x\n", fb_info->framebuffer_bpp);
 }
+
+void VBE_scroll(int lines)
+{
+    color_t *color;
+    color = &bg_color;
+    int h = fb_info->framebuffer_height;
+    int w = fb_info->framebuffer_width;
+    position_t position;
+    int i, j;
+    for (i = 0; i < h; i++)
+    {
+        for (j = 0; j < w; j++)
+        {
+            position.x = j;
+            position.y = i;
+            VBE_draw_pixel(position, VBE_read_pixel_offset(position, lines));
+        }
+    }
+}
+
 void VBE_init(struct stivale2_struct *info)
 {
     module("VBE");
     struct stivale2_tag *tag = (struct stivale2_tag *)info->tags;
     struct stivale2_struct_tag_framebuffer *videoheader = videoheader;
 
-    while (tag != NULL)
+    while (tag != 0)
     {
         switch (tag->identifier)
         {
@@ -98,6 +140,11 @@ void VBE_init(struct stivale2_struct *info)
     log(INFO, "\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
     log(INFO, "\t Pitch: %d", fb_info->framebuffer_pitch);
     log(INFO, "\t BPP: %x", fb_info->framebuffer_bpp);
+    VBE_clear_screen();
+    VBE_putf("Framebuffer info:\n");
+    VBE_putf("\t Resolution: %dx%d\n", fb_info->framebuffer_width, fb_info->framebuffer_height);
+    VBE_putf("\t Pitch: %d\n", fb_info->framebuffer_pitch);
+    VBE_putf("\t BPP: %x\n", fb_info->framebuffer_bpp);
 }
 
 void VBE_putchar(char character, int position_x, int position_y, color_t color)
@@ -107,7 +154,7 @@ void VBE_putchar(char character, int position_x, int position_y, color_t color)
     {
         for (ix = 0; ix < 8; ix++)
         {
-            if ((font[(uint8_t)character][iy] >> ix) & 1)
+            if ((font[(uint8_t)character][iy] >> (7 - ix)) & 1)
             {
                 uint64_t offset = ((iy + position_y) * fb_info->framebuffer_pitch) + ((ix + position_x) * 4);
                 *(uint32_t *)((uint64_t)fb_info->framebuffer_addr + offset) = get_color(&color);
@@ -115,14 +162,34 @@ void VBE_putchar(char character, int position_x, int position_y, color_t color)
         }
     }
 }
+
+void VBE_move_cursor(int cx, int cy)
+/*avoids a implicit declaration error*/
+{
+    cursor_x = cx;
+    cursor_y = cy;
+}
+
+void VBE_put_nf(char c, color_t color)
+{
+    VBE_putchar(c, cursor_x, cursor_y, color);
+    cursor_x += 8;
+
+    if (cursor_x >= (size_t)fb_info->framebuffer_width)
+    {
+        cursor_x = 0;
+        cursor_y += 8;
+    }
+}
+
 void VBE_put(char c, color_t color)
 {
     if (c == '\n')
     {
-        cursor_x = 5;
-        cursor_y += 20;
+        cursor_x = 0;
+        cursor_y += 8;
     }
-    if (c == '\0')
+    else if (c == '\0')
     {
         cursor_x -= 1;
         VBE_putchar(' ', cursor_x, cursor_y, color);
@@ -132,13 +199,13 @@ void VBE_put(char c, color_t color)
     {
         VBE_putchar(c, cursor_x, cursor_y, color);
         cursor_x += 8;
-
-        if (cursor_x >= (size_t)fb_info->framebuffer_width - 5)
-        {
-            cursor_x = 5;
-            cursor_y += 10;
-        }
     }
+    if (cursor_x >= (size_t)fb_info->framebuffer_width)
+    {
+        cursor_x = 0;
+        cursor_y += 8;
+    }
+    if (cursor_y >= (size_t)fb_info->framebuffer_height) {VBE_scroll(8); cursor_y -= 8;}
 }
 
 void VBE_puts(char *string, color_t color)
@@ -203,12 +270,25 @@ void VBE_putf(char *format, ...)
         }
         else
         {
-            VBE_put(*format, fg_color);
+            if (*format == '\\') {
+                format++;
+                if (*format == 'n') {
+                    VBE_put('\n', fg_color);
+                } else if (*format == '\\') {
+                    VBE_put('\\', fg_color);
+                }
+            } else {
+                if (*format == '\t') {
+                    VBE_puts("    ", fg_color);
+                } else {
+                    VBE_put(*format, fg_color);
+                }
+            }
         }
         format++;
     }
 
     va_end(arg);
 
-    VBE_put('\n', fg_color);
+    /*VBE_put('\n', fg_color);*/
 }

@@ -33,7 +33,11 @@
 #include <stdint.h>
 
 
-void Keyboard_main();
 void Keyboard_init();
+void kpb();
+unsigned char getKey();
+unsigned char getKeyAsc(unsigned char keyCode);
+uint8_t getKeyCode();
+
 
 #endif

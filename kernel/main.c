@@ -24,6 +24,7 @@
  * SOFTWARE.
  */
 
+#include <stdbool.h>
 #include "boot/stivale2.h"
 #include "system/GDT.h"
 #include <ascii.h>
@@ -48,16 +49,16 @@ void kmain(struct stivale2_struct *info)
 
     module("main");
 
+    PIT_init(1000);
+    log(INFO, "Ticks %d", tick);
     GDT_init();
     IDT_init();
 
     Serial_init();
-    Keyboard_init();
-
-    VBE_init(info);
-    VBE_clear_screen();
 
     info = (void *)info + MEM_OFFSET;
+
+    VBE_init(info);
     
     PCI_init();
     
@@ -65,11 +66,23 @@ void kmain(struct stivale2_struct *info)
 
     PMM_init((void *)boot_info->memory_map, boot_info->memory_map->entries);
 
-    VMM_init();
+    /*VMM_init();*/
+
+    Keyboard_init();
+
+    module("main");
 
     VBE_puts("\nWelcome to ", white);
-    VBE_puts("EmeraldOS!\n", green);
+    VBE_puts("EmeraldOS!\n\n", green);
+
+    log(INFO, "Ticks %d", tick);
+
+    VBE_putf("Took %dms to boot\n\n", tick);
 
     set_ascii();
-    while (1);
+
+    while (1)
+    {
+        VBE_put(getKey(), white);
+    };
 }
