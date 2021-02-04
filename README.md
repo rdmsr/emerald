@@ -1,4 +1,4 @@
-<img src="https://media.discordapp.net/attachments/711643709753655350/779708791066984489/logo.png" align="center">
+<img src="/docs/images/logo.png" align="center">
 <p> An operating system kernel written for fun in C</p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c01428b7b3864d1f86eb1753c6c8deaf)](https://app.codacy.com/gh/Abb1x/emerald?utm_source=github.com&utm_medium=referral&utm_content=Abb1x/emerald&utm_campaign=Badge_Grade)
@@ -25,5 +25,5 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 
 ### Screenshots
 
-<img src="https://media.discordapp.net/attachments/732514859857739847/796840618541973514/unknown.png">
-<img src="https://media.discordapp.net/attachments/732514859857739847/796840878634958878/unknown.png">
+<img src="/docs/images/Screenshot_1.png">
+
