@@ -28,6 +28,7 @@
 #include "font.h"
 #include <libk/logging.h>
 #include <stddef.h>
+#include <devices/serial/serial.h>
 
 struct stivale2_struct_tag_framebuffer *fb_info;
 
@@ -40,6 +41,16 @@ size_t cursor_y = 0;
 uint32_t get_color(color_t *color)
 {
     return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
+}
+
+void VBE_set_fgc(color_t color)
+{
+    fg_color = color;
+}
+
+void VBE_set_bgc(color_t color)
+{
+    bg_color = color;
 }
 
 void VBE_draw_pixel(position_t pos, uint32_t color)
@@ -75,22 +86,27 @@ void VBE_clear_screen()
     int w = fb_info->framebuffer_width;
     int i, j;
     position_t position;
-    for (i = 0; i < h; i++)
-    {
-        for (j = 0; j < w; j++)
+    int c_err = 1;
+    while (c_err != 0) {
+        c_err = 0;
+        for (i = 0; i < h; i++)
         {
-            position.x = j;
-            position.y = i;
-            VBE_draw_pixel(position, 0);
+            for (j = 0; j < w; j++)
+            {
+                position.x = j;
+                position.y = i;
+                VBE_draw_pixel(position, get_color(color));
+            }
         }
-    }
-    for (i = 0; i < h; i++)
-    {
-        for (j = 0; j < w; j++)
+        /* Workaround for QEMU's weird display buffer glitches */
+        for (i = 0; i < h; i++)
         {
-            position.x = j;
-            position.y = i;
-            VBE_draw_pixel(position, get_color(color));
+            for (j = 0; j < w; j++)
+            {
+                position.x = j;
+                position.y = i;
+                if (VBE_read_pixel(position) != get_color(color)) {c_err++; VBE_draw_pixel(position, get_color(color));}
+            }
         }
     }
 }
@@ -168,6 +184,11 @@ void VBE_putchar(char character, int position_x, int position_y, color_t color)
                 uint64_t offset = ((iy + position_y) * fb_info->framebuffer_pitch) + ((ix + position_x) * 4);
                 *(uint32_t *)((uint64_t)fb_info->framebuffer_addr + offset) = get_color(&color);
             }
+            else /* More QEMU workarounds */
+            {
+                uint64_t offset = ((iy + position_y) * fb_info->framebuffer_pitch) + ((ix + position_x) * 4);
+                *(uint32_t *)((uint64_t)fb_info->framebuffer_addr + offset) = get_color(&bg_color);
+            }
         }
     }
 }
@@ -189,6 +210,7 @@ void VBE_put_nf(char c, color_t color)
         cursor_x = 0;
         cursor_y += 8;
     }
+    if (cursor_y >= (size_t)fb_info->framebuffer_height - 7) {VBE_scroll(8); cursor_y -= 8;}
 }
 
 void VBE_put(char c, color_t color)
@@ -198,11 +220,13 @@ void VBE_put(char c, color_t color)
         cursor_x = 0;
         cursor_y += 8;
     }
-    else if (c == '\0')
+    else if (c == '\0') {}
+    else if (c == '\b') 
     {
-        cursor_x -= 1;
-        VBE_putchar(' ', cursor_x, cursor_y, color);
-        cursor_x++;
+        cursor_x -= 8;
+        if (cursor_x < 0 || cursor_x >= (size_t)fb_info->framebuffer_width) {cursor_x = (size_t)(fb_info->framebuffer_width - 8); cursor_y -= 8;}
+        if (cursor_y < 0 || cursor_y >= (size_t)fb_info->framebuffer_width) {cursor_y = 0; cursor_x = 0;}
+        VBE_putchar('\xDB', cursor_x, cursor_y, bg_color);
     }
     else
     {
@@ -214,7 +238,7 @@ void VBE_put(char c, color_t color)
         cursor_x = 0;
         cursor_y += 8;
     }
-    if (cursor_y >= (size_t)fb_info->framebuffer_height) {VBE_scroll(8); cursor_y -= 8;}
+    if (cursor_y >= (size_t)fb_info->framebuffer_height - 7) {VBE_scroll(8); cursor_y -= 8; cursor_x = 0;}
 }
 
 void VBE_puts(char *string, color_t color)

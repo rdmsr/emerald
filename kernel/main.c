@@ -42,14 +42,18 @@
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
 
-color_t white = {255, 255, 255}, green = {0, 148, 99}, gray = {94, 94, 94};
+color_t white = {255, 255, 255}, green = {0, 148, 99}, grey = {127, 127, 127};
 
 void kmain(struct stivale2_struct *info)
 {
 
     module("main");
-
+    
+    char VER[] = "0.0.2";
+    char REV[] = "5";
+    
     PIT_init(1000);
+
     log(INFO, "Ticks %d", tick);
     GDT_init();
     IDT_init();
@@ -73,13 +77,19 @@ void kmain(struct stivale2_struct *info)
     module("main");
 
     VBE_puts("\nWelcome to ", white);
-    VBE_puts("EmeraldOS!\n\n", green);
-
+    VBE_puts(" EmeraldOS", green);
+    VBE_puts(" Version ", grey); VBE_puts(VER, grey);
+    VBE_puts(" Revision ", grey); VBE_puts(REV, grey);
+    VBE_puts("\n\n", white);
     log(INFO, "Ticks %d", tick);
 
     VBE_putf("Took %dms to boot\n\n", tick);
 
     set_ascii();
+    
+    randByte();
+    
+    VBE_set_fgc(white);
 
     while (1)
     {

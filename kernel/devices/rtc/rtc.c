@@ -26,7 +26,7 @@
 
 #include "rtc.h"
 #include <libk/io.h>
-
+#include <system/interrupts/PIT.h>
 
 /* Check if RTC is updating */
 static int is_updating()
@@ -64,4 +64,13 @@ unsigned char RTC_get_hours()
     unsigned char hour = ((hours & 0x0F) + (((hours & 0x70) / 16) * 10)) | (hours & 0x80);
     return hour;
 }
+
+uint32_t lastRandVal = 0;
+
+uint8_t randByte() {
+    uint32_t rtcVal = tick - lastRandVal;
+    rtcVal += lastRandVal += RTC_get_seconds();
+    return (uint8_t)(lastRandVal = lastRandVal * rtcVal / 2);
+}
+
 

@@ -27,10 +27,13 @@
 #ifndef RTC_H
 #define RTC_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 void RTC_init();
 unsigned char RTC_get_seconds();
 unsigned char RTC_get_minutes();
 unsigned char RTC_get_hours();
-
+uint8_t randByte();
 
 #endif

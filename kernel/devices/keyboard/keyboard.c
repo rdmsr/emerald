@@ -45,13 +45,31 @@ bool rsk = false;
 
 bool xor(uint8_t bool1, uint8_t bool2) {return (bool1 == true || bool2 == true) && (bool1 != bool2);}
 
+void rfKbLeds() {
+    IO_outb(0x60, 0xED);
+    IO_outb(0x60, (s_lock * 1) + (n_lock * 2) + (c_lock * 4));
+    return;
+}
+
+void setKbLeds(bool tn_lock, bool tc_lock, bool ts_lock) {
+    s_lock = ts_lock;
+    n_lock = tn_lock;
+    c_lock = tc_lock;
+    rfKbLeds();
+    return;
+}
+
 void Keyboard_init(void)
 {
     module("Keyboard");
-    IO_outb(0x21, 0xFD);
+    IO_outb(0x60, 0xF4);
     IO_outb(0x60, 0xF0);
     IO_outb(0x60, 0x03);
     IO_outb(0x60, 0xF7);
+    /*IO_outb(0x60, 0xFD);
+    IO_outb(0x60, 0xF0);
+    IO_outb(0x60, 0x03);
+    IO_outb(0x60, 0xF7);*/
     log(INFO, "Keyboard initialized!");
 }
 
@@ -139,7 +157,7 @@ unsigned char getKey() {
     unsigned char c = getKeyAsc(getKeyCode());
     if (rsk) {
         if (ctrl && c > 96 && c < 123) {c -= 96;}
-        uint8_t tc = c;    
+        uint8_t tc = c;
         /*c = 0;*/
         rsk = false;
         return tc;
@@ -148,11 +166,11 @@ unsigned char getKey() {
 
 void Keyboard_main()
 {
-    IO_inb(KEYBOARD_DATA_PORT);
+    /*IO_inb(KEYBOARD_DATA_PORT);*/
 
     c = IO_inb(0x60);
 
     rsk = true;
 
-    IO_outb(0x20, 0x20);
+    /*IO_outb(0x20, 0x20);*/
 }
