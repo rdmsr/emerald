@@ -30,11 +30,6 @@
 #include <stddef.h>
 #include <devices/serial/serial.h>
 
-struct stivale2_struct_tag_framebuffer *fb_info;
-
-color_t bg_color = {0, 64, 73};
-color_t fg_color = {0, 127, 127};
-
 size_t cursor_x = 0;
 size_t cursor_y = 0;
 
@@ -77,36 +72,19 @@ uint32_t VBE_read_pixel_offset(position_t pos, int offset)
     return fb[fb_i];
 }
 
-void VBE_clear_screen()
+void VBE_clear_screen(color_t *color)
 {
-
-    color_t *color;
-    color = &bg_color;
     int h = fb_info->framebuffer_height;
     int w = fb_info->framebuffer_width;
     int i, j;
     position_t position;
-    int c_err = 1;
-    while (c_err != 0) {
-        c_err = 0;
-        for (i = 0; i < h; i++)
+    for (i = 0; i < h; i++)
+    {
+        for (j = 0; j < w; j++)
         {
-            for (j = 0; j < w; j++)
-            {
-                position.x = j;
-                position.y = i;
-                VBE_draw_pixel(position, get_color(color));
-            }
-        }
-        /* Workaround for QEMU's weird display buffer glitches */
-        for (i = 0; i < h; i++)
-        {
-            for (j = 0; j < w; j++)
-            {
-                position.x = j;
-                position.y = i;
-                if (VBE_read_pixel(position) != get_color(color)) {c_err++; VBE_draw_pixel(position, get_color(color));}
-            }
+            position.x = j;
+            position.y = i;
+            while (VBE_read_pixel(position) != get_color(color)) {VBE_draw_pixel(position, get_color(color));}
         }
     }
 }
@@ -125,7 +103,7 @@ void VBE_scroll(int lines)
         {
             position.x = j;
             position.y = i;
-            VBE_draw_pixel(position, VBE_read_pixel_offset(position, lines));
+            while(VBE_read_pixel_offset(position, lines) != VBE_read_pixel(position)) {VBE_draw_pixel(position, VBE_read_pixel_offset(position, lines));}
         }
     }
     for (i = h - lines; i < h; i++)
@@ -134,7 +112,7 @@ void VBE_scroll(int lines)
         {
             position.x = j;
             position.y = i;
-            VBE_draw_pixel(position, get_color(color));
+            while(VBE_read_pixel(position) != get_color(color)) {VBE_draw_pixel(position, get_color(color));}
         }
     }
 }
@@ -161,11 +139,15 @@ void VBE_init(struct stivale2_struct *info)
 
         tag = (struct stivale2_tag *)tag->next;
     }
+    color_t tmp_fg_color = {0, 192, 192};
+    color_t tmp_bg_color = {0, 69, 73};
+    fg_color = tmp_fg_color;
+    bg_color = tmp_bg_color;
     log(INFO, "Framebuffer info:");
     log(INFO, "\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
     log(INFO, "\t Pitch: %d", fb_info->framebuffer_pitch);
     log(INFO, "\t BPP: %x", fb_info->framebuffer_bpp);
-    VBE_clear_screen();
+    VBE_clear_screen(&bg_color);
     VBE_putf("Framebuffer info:\n");
     VBE_putf("\t Resolution: %dx%d\n", fb_info->framebuffer_width, fb_info->framebuffer_height);
     VBE_putf("\t Pitch: %d\n", fb_info->framebuffer_pitch);
@@ -225,7 +207,7 @@ void VBE_put(char c, color_t color)
     {
         cursor_x -= 8;
         if (/*cursor_x < 0 || */cursor_x >= (size_t)fb_info->framebuffer_width) {cursor_x = (size_t)(fb_info->framebuffer_width - 8); cursor_y -= 8;}
-        if (/*cursor_y < 0 || */cursor_y >= (size_t)fb_info->framebuffer_width) {cursor_y = 0; cursor_x = 0;}
+        if (/*cursor_y < 0 || */cursor_y >= (size_t)fb_info->framebuffer_height) {cursor_y = 0; cursor_x = 0;}
         VBE_putchar('\xDB', cursor_x, cursor_y, bg_color);
     }
     else
@@ -325,3 +307,4 @@ void VBE_putf(char *format, ...)
 
     /*VBE_put('\n', fg_color);*/
 }
+

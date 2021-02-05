@@ -41,16 +41,16 @@
 #include <stdint.h>
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
+#include <libegl/egl.h> /* Graphics Library */
 
-color_t white = {255, 255, 255}, green = {0, 148, 99}, grey = {127, 127, 127};
+color_t white = {255, 255, 255}, green = {0, 192, 99}, grey = {157, 157, 157};
 
 void kmain(struct stivale2_struct *info)
 {
-
     module("main");
     
-    char VER[] = "0.0.2";
-    char REV[] = "5";
+    char VER[] = "0.0.3";
+    char REV[] = "1";
     
     PIT_init(1000);
 
@@ -76,23 +76,38 @@ void kmain(struct stivale2_struct *info)
 
     module("main");
 
+    #ifdef EGL_H
+    VBE_putf("EGL version: "); VBE_putf(EGL_VER); VBE_put('\n', white);
+    #endif
+
     VBE_puts("\nWelcome to ", white);
-    VBE_puts(" EmeraldOS", green);
+    VBE_puts("\x04 EmeraldOS", green);
     VBE_puts(" Version ", grey); VBE_puts(VER, grey);
     VBE_puts(" Revision ", grey); VBE_puts(REV, grey);
     VBE_puts("\n\n", white);
+
     log(INFO, "Ticks %d", tick);
 
     VBE_putf("Took %dms to boot\n\n", tick);
 
     set_ascii();
     
-    randByte();
+    randByte(); /* Seed random number generator */
     
     VBE_set_fgc(white);
+    EGL_randFill(255, 255, 512, 512);
+    EGL_drawFCircle(384, 384, randByte() >> 1, EGL_randColor());
+    EGL_drawCircle(384, 384, randByte() >> 1, EGL_randColor());
+    EGL_drawFTriangle(randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, EGL_randColor());
+    EGL_drawTriangle(randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, EGL_randColor());
+    EGL_drawFRectangle(randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, EGL_randColor());
+    EGL_drawRectangle(randByte() + 256, randByte() + 256, randByte() + 256, randByte() + 256, EGL_randColor());
 
     while (1)
     {
-        VBE_put(getKey(), white);
+        VBE_put(getKey(), white);/*
+        color_t tmpcolor = {randByte(), randByte(), randByte()};
+        EGL_drawCircle(randByte(), randByte(), randByte(), get_color(&tmpcolor));
+        EGL_drawLine(randByte(), randByte(), randByte(), randByte(), get_color(&tmpcolor));*/
     };
 }

@@ -43,6 +43,8 @@ typedef struct
     size_t x, y;
 } position_t;
 
+struct stivale2_struct_tag_framebuffer *fb_info;
+
 void VBE_init(struct stivale2_struct *info);
 void VBE_move_cursor(int cx, int cy);
 void VBE_clear_screen();
@@ -53,5 +55,12 @@ void VBE_put_nf(char c,color_t color);
 void VBE_putf(char *format, ...); 
 void VBE_set_fgc(color_t color);
 void VBE_set_bgc(color_t color);
+void VBE_draw_pixel(position_t pos, uint32_t color);
+uint32_t VBE_read_pixel_offset(position_t pos, int offset);
+uint32_t VBE_read_pixel(position_t pos);
+uint32_t get_color(color_t *color);
+
+color_t fg_color;
+color_t bg_color;
 
 #endif

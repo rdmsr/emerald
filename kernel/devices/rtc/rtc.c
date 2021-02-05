@@ -69,8 +69,8 @@ uint32_t lastRandVal = 0;
 
 uint8_t randByte() {
     uint32_t rtcVal = tick - lastRandVal;
-    rtcVal += lastRandVal += RTC_get_seconds();
-    return (uint8_t)(lastRandVal = lastRandVal * rtcVal / 2);
+    rtcVal += lastRandVal += 5624 * IO_inb(0x71) + tick + lastRandVal * 4 / (lastRandVal + 2359);
+    return (uint8_t)(lastRandVal = lastRandVal * rtcVal / 2) + tick;
 }
 
 

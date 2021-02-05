@@ -153,13 +153,15 @@ unsigned char getKeyAsc(unsigned char keyCode) {
 }
 
 unsigned char getKey() {
+    int i;
+    for (i = 0; i <= 15; i++) {IO_inb(0x60);}
     IO_inb(0x60);
     unsigned char c = getKeyAsc(getKeyCode());
     if (rsk) {
+        rsk = false;
         if (ctrl && c > 96 && c < 123) {c -= 96;}
         uint8_t tc = c;
         /*c = 0;*/
-        rsk = false;
         return tc;
     } else {return 0;}
 }
