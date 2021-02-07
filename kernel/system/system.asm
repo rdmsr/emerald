@@ -6,7 +6,7 @@ global isr_irq_master
 global isr_irq_slave
 global pit_handler
 global keyboard_handler
-
+extern PIT_add_ticks
 extern Keyboard_main
 	
 %macro pushaq 0
@@ -59,6 +59,7 @@ isr_irq_slave:
 	iretq
 
 pit_handler:
+	call PIT_add_ticks
 	mov al, 0x20
 	out 0x20, al
 	iretq	

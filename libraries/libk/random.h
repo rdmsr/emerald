@@ -24,26 +24,12 @@
  * SOFTWARE.
  */
 
-#include "PIT.h"
-#include <libk/io.h>
-#include <libk/logging.h>
+#ifndef RANDOM_H
+#define RANDOM_H
 
-int ticks = 0;
 
-void PIT_init(uint32_t frequency)
-{
-    module("PIT");
-    uint16_t divisor = 1193182 / frequency;
 
-    IO_outb(0x43, 0x36);
-    IO_outb(0x40, (uint8_t)divisor & 0xFF);
-    IO_outb(0x40, (uint8_t)(divisor >> 8) & 0xFF);
+int rand();
+void srand(unsigned int seed);
 
-    log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
-}
-
-void PIT_add_ticks()
-{
-    ticks++;
-    IO_outb(0x20, 0x20);
-}
+#endif

@@ -34,6 +34,7 @@
 #include <devices/video/vbe.h>
 #include <libk/logging.h>
 #include <libk/module.h>
+#include <libk/random.h>
 #include <memory/pmm.h>
 #include <memory/vmm.h>
 #include <stddef.h>
@@ -58,11 +59,13 @@ void kmain(struct stivale2_struct *info)
     VBE_clear_screen();
 
     info = (void *)info + MEM_OFFSET;
-    
+
     PCI_init();
-    
+
     BootInfo *boot_info = Boot_get_info(info);
 
+    srand(RTC_get_seconds());
+    
     PMM_init((void *)boot_info->memory_map, boot_info->memory_map->entries);
 
     /*VMM_init();*/
@@ -70,7 +73,19 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
-    VBE_display_circle(200,500,120);
+
+    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+
+    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+
+    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+
+    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+
+    VBE_draw_line(40,40,600,600);
+    
     set_ascii();
-    while (1);
+
+    while (1)
+        ;
 }

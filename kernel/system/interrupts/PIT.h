@@ -29,6 +29,6 @@
 
 void PIT_init(uint32_t frequency);
 
-
+extern int ticks;
 
 #endif
