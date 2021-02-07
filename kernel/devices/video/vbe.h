@@ -26,9 +26,9 @@
 
 #ifndef VBE_H
 #define VBE_H
-#define RED_SHIFT   16
+#define RED_SHIFT 16
 #define GREEN_SHIFT 8
-#define BLUE_SHIFT  0
+#define BLUE_SHIFT 0
 
 #include <boot/stivale2.h>
 #include <stddef.h>
@@ -43,12 +43,20 @@ typedef struct
     size_t x, y;
 } position_t;
 
+enum shapes
+{
+    RECTANGLE,
+    RHOMBUS,
+    TRIANGLE
+};
+
 void VBE_init(struct stivale2_struct *info);
 void VBE_clear_screen();
 void VBE_putchar(char character, int position_x, int position_y, color_t color);
-void VBE_puts(char* string, color_t color);
-void VBE_put(char c,color_t color);
-void VBE_putf(char *format, ...); 
+void VBE_puts(char *string, color_t color);
+void VBE_put(char c, color_t color);
+void VBE_putf(char *format, ...);
 void VBE_display_circle(int xc, int yc, int radius);
-void VBE_draw_line(int x1, int y1, int x2, int y2);
+void VBE_draw_line(int x0, int y0, int x1, int y1);
+void VBE_draw_shape(int shape, int width, int height, int x, int y);
 #endif

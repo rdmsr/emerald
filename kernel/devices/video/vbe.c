@@ -257,35 +257,73 @@ void VBE_display_circle(int xc, int yc, int radius)
     }
 }
 
+static int abs(int i)
+{
+    return i < 0 ? -i : i;
+}
 /* Bresenham's line algorithm */
 
-void VBE_draw_line(int x1, int y1, int x2, int y2)
+void VBE_draw_line(int x0, int y0, int x1, int y1)
 {
 
-    int dx, dy, p, x, y;
+    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+    int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
 
-    dx = x2 - x1;
-    dy = y2 - y1;
+    int err = (dx > dy ? dx : -dy) / 2, e2;
 
-    x = x1;
-    y = x1;
-
-    p = 2 * dy - dx;
-
-    while (x < x2)
+    for (;;)
     {
-        if (p >= 0)
+        VBE_draw_pixel(x0, y0, get_color(&white));
+
+        if (x0 == x1 && y0 == y1)
         {
-            VBE_draw_pixel(x, y, get_color(&white));
-            y++;
-            p = p + 2 * dy - 2 * dx;
+            break;
         }
 
-        else
+        e2 = err;
+
+        if (e2 > -dx)
         {
-            VBE_draw_pixel(x, y, get_color(&white));
-            p = p + 2 * dy;
+            err -= dy;
+            x0 += sx;
         }
-	x++;
+
+        if (e2 < dy)
+        {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
+void VBE_draw_shape(int shape, int width, int height, int x, int y)
+{
+    module("VBE");
+    switch (shape)
+    {
+    case RECTANGLE:
+    {
+        VBE_draw_line(x, y, width, y);
+
+        VBE_draw_line(x, y, x, y + height);
+
+        VBE_draw_line(width, y, width, y + height);
+
+        VBE_draw_line(x, y + height, width, y + height);
+        break;
+    }
+
+    case TRIANGLE:
+    {
+        VBE_draw_line(width, y, width * 3, y);
+
+        VBE_draw_line(width, y, width * 2, y * 2);
+
+        VBE_draw_line(width * 3, y, width * 2, y * 2);
+        break;
+    }
+    default:
+        log(ERROR, "Invalid shape!");
+        break;
     }
 }
