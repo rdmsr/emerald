@@ -50,4 +50,5 @@ void VBE_puts(char* string, color_t color);
 void VBE_put(char c,color_t color);
 void VBE_putf(char *format, ...); 
 void VBE_display_circle(int xc, int yc, int radius);
+void VBE_draw_line(int x1, int y1, int x2, int y2);
 #endif

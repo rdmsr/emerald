@@ -210,7 +210,7 @@ void VBE_putf(char *format, ...)
     VBE_put('\n', fg_color);
 }
 
-/* Bresenham's algorithm */
+/* Bresenham's circle algorithm */
 
 void draw_circle(int xc, int yc, position_t position)
 {
@@ -254,5 +254,38 @@ void VBE_display_circle(int xc, int yc, int radius)
 
         position_t n_position = {x, y};
         draw_circle(xc, yc, n_position);
+    }
+}
+
+/* Bresenham's line algorithm */
+
+void VBE_draw_line(int x1, int y1, int x2, int y2)
+{
+
+    int dx, dy, p, x, y;
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+
+    x = x1;
+    y = x1;
+
+    p = 2 * dy - dx;
+
+    while (x < x2)
+    {
+        if (p >= 0)
+        {
+            VBE_draw_pixel(x, y, get_color(&white));
+            y++;
+            p = p + 2 * dy - 2 * dx;
+        }
+
+        else
+        {
+            VBE_draw_pixel(x, y, get_color(&white));
+            p = p + 2 * dy;
+        }
+	x++;
     }
 }
