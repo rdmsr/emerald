@@ -33,7 +33,7 @@ struct stivale2_struct_tag_framebuffer *fb_info;
 
 color_t bg_color = {0, 64, 73};
 color_t fg_color = {0, 111, 92};
-
+static color_t white = {255, 255, 255};
 size_t cursor_x = 5;
 size_t cursor_y = 5;
 
@@ -42,9 +42,9 @@ uint32_t get_color(color_t *color)
     return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
 
-void VBE_draw_pixel(position_t pos, uint32_t color)
+void VBE_draw_pixel(int x, int y, uint32_t color)
 {
-    size_t fb_i = pos.x + (fb_info->framebuffer_pitch / sizeof(uint32_t)) * pos.y;
+    size_t fb_i = x + (fb_info->framebuffer_pitch / sizeof(uint32_t)) * y;
     uint32_t *fb = (uint32_t *)fb_info->framebuffer_addr;
 
     fb[fb_i] = color;
@@ -56,14 +56,11 @@ void VBE_clear_screen()
     color = &bg_color;
 
     int i, j;
-    position_t position;
     for (i = 0; i < fb_info->framebuffer_width; i++)
     {
         for (j = 0; j < fb_info->framebuffer_height; j++)
         {
-            position.x = i;
-            position.y = j;
-            VBE_draw_pixel(position, get_color(color));
+            VBE_draw_pixel(i, j, get_color(color));
         }
     }
 
@@ -211,4 +208,51 @@ void VBE_putf(char *format, ...)
     va_end(arg);
 
     VBE_put('\n', fg_color);
+}
+
+/* Bresenham's algorithm */
+
+void draw_circle(int xc, int yc, position_t position)
+{
+    int y = position.y;
+    int x = position.x;
+
+    VBE_draw_pixel(xc + x, yc + y, get_color(&white));
+    VBE_draw_pixel(xc - x, yc + y, get_color(&white));
+    VBE_draw_pixel(xc + x, yc - y, get_color(&white));
+    VBE_draw_pixel(xc - x, yc - y, get_color(&white));
+    VBE_draw_pixel(xc + y, yc + x, get_color(&white));
+    VBE_draw_pixel(xc - y, yc + x, get_color(&white));
+    VBE_draw_pixel(xc + y, yc - x, get_color(&white));
+    VBE_draw_pixel(xc - y, yc - x, get_color(&white));
+}
+
+void VBE_display_circle(int xc, int yc, int radius)
+{
+
+    int x = 0;
+    int y = radius;
+    int d = 3 - 2 * radius;
+
+    position_t position = {x, y};
+
+    draw_circle(xc, yc, position);
+
+    while (y >= x)
+    {
+        x++;
+
+        if (d > 0)
+        {
+            y--;
+            d = d + 4 * (x - y) + 10;
+        }
+        else
+        {
+            d = d + 4 * x + 6;
+        }
+
+        position_t n_position = {x, y};
+        draw_circle(xc, yc, n_position);
+    }
 }

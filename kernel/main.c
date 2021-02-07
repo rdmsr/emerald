@@ -65,11 +65,12 @@ void kmain(struct stivale2_struct *info)
 
     PMM_init((void *)boot_info->memory_map, boot_info->memory_map->entries);
 
-    VMM_init();
+    /*VMM_init();*/
 
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
+    VBE_display_circle(200,500,120);
     set_ascii();
     while (1);
 }

@@ -49,5 +49,5 @@ void VBE_putchar(char character, int position_x, int position_y, color_t color);
 void VBE_puts(char* string, color_t color);
 void VBE_put(char c,color_t color);
 void VBE_putf(char *format, ...); 
-
+void VBE_display_circle(int xc, int yc, int radius);
 #endif
