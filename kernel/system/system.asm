@@ -59,7 +59,10 @@ isr_irq_slave:
 	iretq
 
 pit_handler:
+	pushaq
+	cld
 	call PIT_add_ticks
+	popaq
 	mov al, 0x20
 	out 0x20, al
 	iretq	

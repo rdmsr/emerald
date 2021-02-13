@@ -28,12 +28,11 @@
 #include <libk/io.h>
 #include <libk/logging.h>
 
-int ticks = 0;
-
 void PIT_init(uint32_t frequency)
 {
     module("PIT");
-    uint16_t divisor = 1193182 / frequency;
+
+    uint32_t divisor = 1193181 / frequency;
 
     IO_outb(0x43, 0x36);
     IO_outb(0x40, (uint8_t)divisor & 0xFF);
@@ -41,9 +40,15 @@ void PIT_init(uint32_t frequency)
 
     log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
 }
+uint64_t ticks = 0;
 
 void PIT_add_ticks()
 {
-    ticks++;
-    IO_outb(0x20, 0x20);
+  ticks++;
+
+}
+
+uint64_t PIT_get_ticks()
+{
+    return ticks;
 }

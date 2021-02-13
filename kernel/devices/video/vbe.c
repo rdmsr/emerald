@@ -320,6 +320,7 @@ void VBE_draw_shape(int shape, int width, int height, int x, int y)
         VBE_draw_line(width, y, width * 2, y * 2);
 
         VBE_draw_line(width * 3, y, width * 2, y * 2);
+
         break;
     }
     default:

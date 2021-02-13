@@ -28,7 +28,6 @@
 #include <stdint.h>
 
 void PIT_init(uint32_t frequency);
-
-extern int ticks;
+uint64_t PIT_get_ticks();
 
 #endif

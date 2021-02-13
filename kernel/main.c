@@ -52,6 +52,8 @@ void kmain(struct stivale2_struct *info)
     GDT_init();
     IDT_init();
 
+    /*PIT_init(1000);*/
+
     Serial_init();
     Keyboard_init();
 
@@ -61,7 +63,6 @@ void kmain(struct stivale2_struct *info)
     info = (void *)info + MEM_OFFSET;
 
     PCI_init();
-
     BootInfo *boot_info = Boot_get_info(info);
 
     srand(RTC_get_seconds());
@@ -73,20 +74,23 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
-    /* VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+    /* Random circle: */
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
-    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);*/
+    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
-    VBE_draw_shape(RECTANGLE, 200, 200, 10, 10);
+    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
-    VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
+    VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);
+
+    /* VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
 
     VBE_display_circle(300, 400, 50);
     VBE_display_circle(300, 400, 25);
+    */
 
     set_ascii();
 
