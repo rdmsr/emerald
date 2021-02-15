@@ -59,14 +59,14 @@ BootInfo *Boot_get_info(struct stivale2_struct *info)
     struct stivale2_struct_tag_framebuffer *videoheader = videoheader;
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-    BootInfo *bootinfo = 0;
-    uint64_t usable_mem = 0;
+    BootInfo *bootinfo = NULL;
+    size_t usable_mem = 0;
     uint64_t total_mem = 0;
 
     bootinfo->memory_entries = memory_map->entries;
     bootinfo->memory_map = memory_map;
     size_t i;
-    
+
     for (i = 0; i < memory_map->entries; i++)
     {
         struct stivale2_mmap_entry *entry = &memory_map->memmap[i];
@@ -79,13 +79,12 @@ BootInfo *Boot_get_info(struct stivale2_struct *info)
     }
     /* FIXME: this is broken, idk why 
      */
-    /*bootinfo->memory_usable = usable_mem;*/
-      bootinfo->total_memory = total_mem;
+    /* bootinfo->memory_usable = usable_mem;*/
+    bootinfo->total_memory = total_mem;
 
-
-VBE_putf("Memory info:");
-VBE_putf("\t Total size: %d mb", convert_to_mb(bootinfo->total_memory) + 1);
-VBE_putf("\t Usable: %d mb\n", convert_to_mb(usable_mem) + 1);
-log(INFO, "Memory Size is %d mb", convert_to_mb(bootinfo->total_memory) + 1);
-return bootinfo;
+    VBE_putf("Memory info:");
+    VBE_putf("\t Total size: %d mb", convert_to_mb(bootinfo->total_memory) + 1);
+    VBE_putf("\t Usable: %d mb\n", convert_to_mb(usable_mem) + 1);
+    log(INFO, "Memory Size is %d mb", convert_to_mb(bootinfo->total_memory) + 1);
+    return bootinfo;
 }
