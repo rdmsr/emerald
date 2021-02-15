@@ -10,6 +10,7 @@ x86_64-unknown-none-elf
 -mno-sse
 -mno-sse2
 -mno-mmx
+-mno-avx
 -g
 -mno-80387
 -mno-red-zone
