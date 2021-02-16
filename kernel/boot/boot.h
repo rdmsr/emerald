@@ -47,5 +47,5 @@ typedef struct
 } BootInfo;
 
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id);
-BootInfo *Boot_get_info(struct stivale2_struct *info);
+BootInfo Boot_get_info(struct stivale2_struct *info);
 #endif
