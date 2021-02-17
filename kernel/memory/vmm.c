@@ -39,23 +39,28 @@ Pagemap *VMM_new_pagemap()
 uintptr_t lower_half(uintptr_t arg)
 {
     /* offset is defined in link.ld */
-    return arg - 0xffffffff80000000;
+    return arg - MEM_OFFSET;
 }
 uintptr_t higher_half(uintptr_t arg)
 {
     /* offset is defined in link.ld */
-    return arg + 0xffffffff80000000;
+    return arg + MEM_OFFSET;
 }
 
-uint64_t *walk_to_page_and_map(uint64_t *current, uint16_t index)
+static uintptr_t *get_next_level(uint64_t *current, uint16_t index)
 {
-    if (current[index] == 0)
+    uintptr_t ret;
+    if (current[index] & 0x1)
     {
-        current[index] = (uint64_t)PMM_callocate_page();
-        current[index] |= 0b11;
+        ret = current[index] & ~((uintptr_t)0xfff);
+    }
+    else
+    {
+        ret = (uintptr_t)PMM_callocate_page();
+        current[index] = ret | 0b11;
     }
 
-    return (uint64_t *)current[index];
+    return (void *)ret + MEM_OFFSET;
 }
 
 void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags)
@@ -65,31 +70,34 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
     uintptr_t level4 = (virtual_address >> 39) & 0x1FF;
     uintptr_t level3 = (virtual_address >> 30) & 0x1FF;
     uintptr_t level2 = (virtual_address >> 21) & 0x1FF;
-    uintptr_t level1 =  (virtual_address >> 12) & 0x1FF;
+    uintptr_t level1 = (virtual_address >> 12) & 0x1FF;
 
-    uint64_t *pml4 = page_map->pml4;
+    uintptr_t *pml4, *pml3, *pml2, *pml1;
 
-    uint64_t *pml3 = walk_to_page_and_map(pml4, level4);
+    pml4 = (void *)page_map->pml4 + MEM_OFFSET;
+
+    pml3 = get_next_level(pml4, level4);
     if (!pml3)
     {
         log(ERROR, "Pml3 is null");
         return;
     }
 
-    uint64_t *pml2 = walk_to_page_and_map(pml3, level3);
+    pml2 = get_next_level(pml3, level3);
     if (!pml2)
     {
         log(ERROR, "pml2 is null");
         return;
     }
 
-    uint64_t *pml1 = walk_to_page_and_map(pml2, level2);
+    pml1 = get_next_level(pml2, level2);
 
     if (!pml1)
     {
         log(ERROR, "pml1 is null");
         return;
     }
+
     pml1[level1] = physical_address | flags;
 }
 void VMM_switch_pagemap(Pagemap *map)
@@ -108,7 +116,7 @@ void VMM_init()
     uint64_t i;
     for (i = 0; i < 0x100000000; i += PAGE_SIZE)
     {
-        VMM_map_page(kernel_map, i, i + 0xffffffff80000000, 0b11);
+        VMM_map_page(kernel_map, i + MEM_OFFSET, i, 0b11);
     }
 
     log(INFO, "Mapped kernel");

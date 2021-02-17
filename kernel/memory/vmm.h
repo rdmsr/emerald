@@ -36,12 +36,6 @@ typedef struct
     uintptr_t *pml4;
 } Pagemap __attribute__((aligned(4096)));
 
-typedef struct
-{
-    uint64_t pml4_index, pml3_index, pml2_index, pml1_index;
-    uint64_t *pml3, *pml2, *pml1;
-
-} PageIndex;
 
 void VMM_init();
 void VMM_switch_pagemap(Pagemap *map);

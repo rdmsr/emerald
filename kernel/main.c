@@ -85,7 +85,7 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);
-    
+
     /* VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
 
     VBE_display_circle(300, 400, 50);
