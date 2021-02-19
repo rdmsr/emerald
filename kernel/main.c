@@ -55,7 +55,6 @@ void kmain(struct stivale2_struct *info)
     PIT_init(1000);
 
     Serial_init();
-    Keyboard_init();
 
     VBE_init(info);
     VBE_clear_screen(1);
@@ -71,19 +70,22 @@ void kmain(struct stivale2_struct *info)
 
     /*VMM_init();*/
 
+    Keyboard_init();
+
+    VBE_putf("System booted in %dms", PIT_get_ticks());
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
-    /* Random circle: */
+    /* Random circles: */
+
+    /* VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
+    */
     VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);
 
     /*VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
@@ -92,6 +94,7 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(300, 400, 25);*/
 
     set_ascii();
+
     while (1)
         ;
 }
