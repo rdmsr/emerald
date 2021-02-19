@@ -33,7 +33,9 @@ struct stivale2_struct_tag_framebuffer *fb_info;
 
 color_t bg_color = {0, 64, 73};
 color_t fg_color = {0, 111, 92};
+
 static color_t white = {255, 255, 255};
+
 size_t cursor_x = 5;
 size_t cursor_y = 5;
 
@@ -49,9 +51,11 @@ void VBE_draw_pixel(int x, int y, uint32_t color)
 
     fb[fb_i] = color;
 }
-void VBE_clear_screen()
+
+void VBE_clear_screen(int info)
 {
 
+    cursor_y = 5;
     color_t *color;
     color = &bg_color;
 
@@ -64,11 +68,15 @@ void VBE_clear_screen()
         }
     }
 
-    VBE_putf("Framebuffer info:");
-    VBE_putf("\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
-    VBE_putf("\t Pitch: %d", fb_info->framebuffer_pitch);
-    VBE_putf("\t BPP: %x\n", fb_info->framebuffer_bpp);
+    if (info == 1)
+    {
+        VBE_putf("Framebuffer info:");
+        VBE_putf("\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
+        VBE_putf("\t Pitch: %d", fb_info->framebuffer_pitch);
+        VBE_putf("\t BPP: %x\n", fb_info->framebuffer_bpp);
+    }
 }
+
 void VBE_init(struct stivale2_struct *info)
 {
     module("VBE");
@@ -210,6 +218,69 @@ void VBE_putf(char *format, ...)
     VBE_put('\n', fg_color);
 }
 
+void VBE_cputf(color_t color, char *format, ...)
+{
+
+    unsigned int i;
+    unsigned int ZERO = 0;
+    char *s;
+
+    va_list arg;
+    va_start(arg, format);
+
+    while (*format)
+    {
+
+        if (*format == '%')
+        {
+            format++;
+            switch (*format)
+            {
+            case 'c':
+                i = va_arg(arg, int);
+                VBE_put(i, color);
+                break;
+
+            case 'd':
+                i = va_arg(arg, int);
+                if (i < ZERO)
+                {
+                    i = -i;
+                    VBE_put('-', color);
+                }
+                VBE_puts(string_convert(i, 10), color);
+                break;
+
+            case 'o':
+                i = va_arg(arg, unsigned int);
+                VBE_puts(string_convert(i, 8), color);
+                break;
+
+            case 's':
+                s = va_arg(arg, char *);
+                VBE_puts(s, color);
+                break;
+
+            case 'x':
+                i = va_arg(arg, unsigned int);
+                VBE_puts(string_convert(i, 16), color);
+                break;
+            default:
+                VBE_put('%', color);
+                break;
+            }
+        }
+        else
+        {
+            VBE_put(*format, color);
+        }
+        format++;
+    }
+
+    va_end(arg);
+
+    VBE_put('\n', color);
+}
 /* Bresenham's circle algorithm */
 
 void draw_circle(int xc, int yc, position_t position)

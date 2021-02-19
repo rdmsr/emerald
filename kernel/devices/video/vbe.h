@@ -51,11 +51,12 @@ enum shapes
 };
 
 void VBE_init(struct stivale2_struct *info);
-void VBE_clear_screen();
+void VBE_clear_screen(int info);
 void VBE_putchar(char character, int position_x, int position_y, color_t color);
 void VBE_puts(char *string, color_t color);
 void VBE_put(char c, color_t color);
 void VBE_putf(char *format, ...);
+void VBE_cputf(color_t color, char *format, ...);
 void VBE_display_circle(int xc, int yc, int radius);
 void VBE_draw_line(int x0, int y0, int x1, int y1);
 void VBE_draw_shape(int shape, int width, int height, int x, int y);

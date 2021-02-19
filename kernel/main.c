@@ -58,7 +58,7 @@ void kmain(struct stivale2_struct *info)
     Keyboard_init();
 
     VBE_init(info);
-    VBE_clear_screen();
+    VBE_clear_screen(1);
 
     info = (void *)info + MEM_OFFSET;
 
@@ -92,7 +92,6 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(300, 400, 25);*/
 
     set_ascii();
-
     while (1)
         ;
 }
