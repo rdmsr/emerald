@@ -40,6 +40,8 @@ void *memset(void *bufptr, int value, size_t size)
     return bufptr;
 }
 
+
+
 void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
 {
     module("PMM");

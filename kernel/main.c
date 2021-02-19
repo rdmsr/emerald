@@ -52,7 +52,7 @@ void kmain(struct stivale2_struct *info)
     GDT_init();
     IDT_init();
 
-    /*PIT_init(1000);*/
+    PIT_init(1000);
 
     Serial_init();
     Keyboard_init();
@@ -69,7 +69,7 @@ void kmain(struct stivale2_struct *info)
 
     PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries);
 
-    VMM_init();
+    /*VMM_init();*/
 
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
@@ -86,11 +86,10 @@ void kmain(struct stivale2_struct *info)
 
     VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);
 
-    /* VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
+    /*VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
 
     VBE_display_circle(300, 400, 50);
-    VBE_display_circle(300, 400, 25);
-    */
+    VBE_display_circle(300, 400, 25);*/
 
     set_ascii();
 
