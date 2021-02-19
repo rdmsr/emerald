@@ -1,4 +1,5 @@
 #include "exceptions.h"
+#include <system/panic.h>
 #include <stdint.h>
 static char *exceptions[] = {
     [0] = "Division by Zero",
@@ -21,10 +22,15 @@ static char *exceptions[] = {
     [19] = "SIMD floating point Exception",
     [20] = "Virtualization Exception",
     [30] = "Security Exception"};
+
 void exception_handler(uint64_t irq)
 {
+  __asm__("cli");
   log(PANIC, "Oh no! Unhandled exception: %s", exceptions[irq]);
+  panic((char*)exceptions[irq]);
+  while(1);
 }
+
 void exc_0()
 {
     exception_handler(0);
