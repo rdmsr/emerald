@@ -28,9 +28,9 @@
 
 void *malloc(size_t size)
 {
-    size_t pageCount = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
+    size_t page_count = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
 
-    void *ptr = (char *)PMM_callocate_pages(pageCount + 1);
+    void *ptr = (char *)PMM_callocate_pages(page_count + 1);
 
     if (!ptr)
         return NULL;
@@ -40,7 +40,7 @@ void *malloc(size_t size)
     heap_data *metadata = (heap_data *)ptr;
     ptr = (void *)((uint64_t)ptr + PAGE_SIZE);
 
-    metadata->pages = pageCount;
+    metadata->pages = page_count;
     metadata->size = size;
 
     return ptr;

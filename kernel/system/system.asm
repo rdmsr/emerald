@@ -60,17 +60,12 @@ isr_irq_slave:
 
 pit_handler:
 	pushaq
-	cld
 	call PIT_add_ticks
 	popaq
-	mov al, 0x20
-	out 0x20, al
 	iretq	
 keyboard_handler:
 	pushaq
 	cld
 	call Keyboard_main
 	popaq
-	mov al, 0x20
-	out 0x20, al
 	iretq

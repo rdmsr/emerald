@@ -32,7 +32,7 @@ Pagemap *VMM_new_pagemap()
 {
     Pagemap *pagemap = (Pagemap *)malloc(sizeof(Pagemap));
 
-    pagemap->pml4 = PMM_allocate_page();
+    pagemap->pml4 = MEM_OFFSET + PMM_callocate_page();
     return pagemap;
 }
 
@@ -65,7 +65,6 @@ static uintptr_t *get_next_level(uint64_t *current, uint16_t index)
 
 void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags)
 {
-
     /* Paging levels */
     uintptr_t level4 = (virtual_address >> 39) & 0x1FF;
     uintptr_t level3 = (virtual_address >> 30) & 0x1FF;
@@ -74,7 +73,7 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
 
     uintptr_t *pml4, *pml3, *pml2, *pml1;
 
-    pml4 = (void *)page_map->pml4 + MEM_OFFSET;
+    pml4 = (void *)page_map->pml4;
 
     pml3 = get_next_level(pml4, level4);
     if (!pml3)
@@ -102,8 +101,8 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
 }
 void VMM_switch_pagemap(Pagemap *map)
 {
-    __asm__("mov %0, %%cr3" ::"r"(map->pml4)
-            : "memory");
+    __asm__ volatile("mov %0, %%cr3" ::"r"(map->pml4 - MEM_OFFSET)
+                     : "memory");
 }
 void VMM_init()
 {
@@ -116,7 +115,7 @@ void VMM_init()
     uint64_t i;
     for (i = 0; i < 0x100000000; i += PAGE_SIZE)
     {
-        VMM_map_page(kernel_map, i + MEM_OFFSET, i, 0b11);
+        VMM_map_page(kernel_map, i, i + MEM_OFFSET, 0b11);
     }
 
     log(INFO, "Mapped kernel");

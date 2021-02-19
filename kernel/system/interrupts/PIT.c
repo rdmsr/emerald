@@ -45,6 +45,7 @@ uint64_t ticks = 0;
 void PIT_add_ticks()
 {
   ticks++;
+  IO_outb(0x20,0x20);
 
 }
 
