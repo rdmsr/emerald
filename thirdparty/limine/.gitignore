@@ -1,0 +1,17 @@
+/**/*.gen
+/**/*.map
+/**/*.o
+/**/*.d
+/**/*.a
+/**/*.bin
+/**/*.bin.gz
+/**/*.elf
+/**/*.hdd
+/bochsout.txt
+/bx_enh_dbg.ini
+.vscode
+/limine-install
+!/limine.bin
+!/limine-pxe.bin
+!/stage2.map
+/stivale
