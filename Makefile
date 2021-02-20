@@ -14,7 +14,7 @@ limine/limine-install:
 
 echfs/echfs-utils:
 	$(MAKE) -C thirdparty/echfs echfs-utils
-$(KERNEL_HDD): build/kernel.elf limine/limine-install
+$(KERNEL_HDD): build/kernel.elf limine/limine-install echfs/echfs-utils
 	@echo [ LIMINE ] build/kernel.elf
 	@rm -f $(KERNEL_HDD)
 	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD)

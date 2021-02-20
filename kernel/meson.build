@@ -1,7 +1,7 @@
 project('emerald','c')
 
-asm = run_command('../../scripts/meson/./asmfiles.sh')
-c = run_command('../../scripts/meson/./cfiles.sh')
+asm = run_command('../scripts/meson/./asmfiles.sh')
+c = run_command('../scripts/meson/./cfiles.sh')
 sources = c.stdout().strip().split('\n')
 asm_files = asm.stdout().strip().split('\n')
 nasm = find_program('nasm')
