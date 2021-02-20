@@ -26,5 +26,4 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 
 ### Screenshots
 
-<img src="https://media.discordapp.net/attachments/732514859857739847/796840618541973514/unknown.png">
-<img src="https://media.discordapp.net/attachments/732514859857739847/796840878634958878/unknown.png">
+<img src="screenshots/main.png">
