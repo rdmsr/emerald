@@ -2,7 +2,7 @@ KERNEL_HDD = build/disk.hdd
 JOBS := $(shell nproc)
 .PHONY: all clean
 all:
-	CC=clang meson setup kernel/meson/ build/ && ninja -j$(JOBS) -C build/
+	CC=clang meson setup kernel/ build/ && ninja -j$(JOBS) -C build/
 disk: $(KERNEL_HDD)
 run: $(KERNEL_HDD)
 	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 256
