@@ -27,3 +27,4 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 ### Screenshots
 
 <img src="screenshots/main.png">
+<img src="screenshots/random_circles.png">
