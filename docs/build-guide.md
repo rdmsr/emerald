@@ -19,7 +19,7 @@ Building emeraldOS requires:
 - GNU/Make (build system)
 - Meson (build system)
 - Ninja (build system used with meson)
-- QEMU or any other virtualization software
+- QEMU or any other virtualization softwarei
 - echfs (get it [here](https://github.com/echfs/echfs))
 
 ```sh
@@ -73,6 +73,12 @@ $ make run
 ```
 
 To run in VirtualBox,  create a new machine with the following properties:
+
+Make sure to run 
+```sh
+$ make disk
+```
+to generate the disk image
 
 - Name: emerald (optional)
 - Type: other
