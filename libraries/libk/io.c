@@ -51,7 +51,7 @@ uint32_t IO_inl(uint16_t port)
 {
     uint32_t ret;
     __asm__ volatile("in %%dx,%%eax"
-                 : "=a"(ret)
-                 : "d"(port));
+                     : "=a"(ret)
+                     : "d"(port));
     return ret;
 }

@@ -1,6 +1,6 @@
 #include "exceptions.h"
-#include <system/panic.h>
 #include <stdint.h>
+#include <system/panic.h>
 static char *exceptions[] = {
     [0] = "Division by Zero",
     [1] = "Debug",
@@ -25,10 +25,11 @@ static char *exceptions[] = {
 
 void exception_handler(uint64_t irq)
 {
-  __asm__("cli");
-  log(PANIC, "Oh no! Unhandled exception: %s", exceptions[irq]);
-  panic((char*)exceptions[irq]);
-  while(1);
+    __asm__("cli");
+    log(PANIC, "Oh no! Unhandled exception: %s", exceptions[irq]);
+    panic((char *)exceptions[irq]);
+    while (1)
+        ;
 }
 
 void exc_0()
@@ -45,11 +46,11 @@ void exc_2()
 };
 void exc_3()
 {
-   exception_handler(3);
+    exception_handler(3);
 };
 void exc_4()
 {
-   exception_handler(4);
+    exception_handler(4);
 };
 void exc_5()
 {
@@ -61,7 +62,7 @@ void exc_6()
 };
 void exc_7()
 {
-   exception_handler(7);
+    exception_handler(7);
 };
 void exc_8()
 {
@@ -77,7 +78,7 @@ void exc_11()
 };
 void exc_12()
 {
-   exception_handler(12);
+    exception_handler(12);
 };
 void exc_13()
 {
@@ -93,11 +94,11 @@ void exc_15()
 };
 void exc_16()
 {
-   exception_handler(16);
+    exception_handler(16);
 };
 void exc_17()
 {
-   exception_handler(17);
+    exception_handler(17);
 };
 void exc_18()
 {
@@ -105,7 +106,7 @@ void exc_18()
 };
 void exc_19()
 {
-   exception_handler(19);
+    exception_handler(19);
 };
 void exc_20()
 {

@@ -1,6 +1,6 @@
+#include "stivale2.h"
 #include <main.h>
 #include <stdint.h>
-#include "stivale2.h"
 
 static uint8_t stack[4096] = {0};
 struct stivale2_header_tag_framebuffer fb_request = {

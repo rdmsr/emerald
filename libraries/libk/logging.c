@@ -27,8 +27,8 @@
 #include <devices/rtc/rtc.h>
 #include <devices/serial/serial.h>
 
-char* current_module = "";
-void log(int status,char *format, ...)
+char *current_module = "";
+void log(int status, char *format, ...)
 {
     char *string;
     switch (status)
@@ -42,7 +42,7 @@ void log(int status,char *format, ...)
     case WARNING:
         string = "%d:%d:%d [\033[1;33m WARNING \033[1;33m\033[0m]\033[1;33m %s:\033[0m%s";
         break;
-	/*31*/
+    /*31*/
     case ERROR:
         string = "%d:%d:%d [\033[1;31m ERROR \033[1;31m\033[0m]\033[1;31m %s:\033[0m%s";
         break;
@@ -53,7 +53,7 @@ void log(int status,char *format, ...)
         string = " string";
     };
 
-    printf(string, RTC_get_hours(), RTC_get_minutes(), RTC_get_seconds(), current_module," ");
+    printf(string, RTC_get_hours(), RTC_get_minutes(), RTC_get_seconds(), current_module, " ");
 
     unsigned int i;
     unsigned int ZERO = 0;

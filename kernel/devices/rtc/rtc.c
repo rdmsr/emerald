@@ -27,7 +27,6 @@
 #include "rtc.h"
 #include <libk/io.h>
 
-
 /* Check if RTC is updating */
 static int is_updating()
 {
@@ -64,4 +63,3 @@ unsigned char RTC_get_hours()
     unsigned char hour = ((hours & 0x0F) + (((hours & 0x70) / 16) * 10)) | (hours & 0x80);
     return hour;
 }
-
