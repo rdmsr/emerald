@@ -30,7 +30,7 @@
 #include <libk/logging.h>
 #include <stdbool.h>
 #include <stdint.h>
-#define HIGH_OFFSET 0xffff800000000000
+#define KERNEL_OFFSET 0xffffffff80000000
 typedef struct
 {
     uintptr_t *pml4;

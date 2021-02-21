@@ -78,6 +78,7 @@ void kmain(struct stivale2_struct *info)
 
     /* Random circles: */
 
+    /*
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
@@ -85,6 +86,7 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+    */
     
     /*VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);*/
 

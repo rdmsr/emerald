@@ -1,7 +1,7 @@
 #include "panic.h"
 #include <devices/video/vbe.h>
 #include <libk/random.h>
-
+#include <libk/logging.h>
 char *comments_lol[] =
     {
         "Something happened.",
