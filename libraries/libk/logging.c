@@ -42,7 +42,6 @@ void log(int status, char *format, ...)
     case WARNING:
         string = "%d:%d:%d [\033[1;33m WARNING \033[1;33m\033[0m]\033[1;33m %s:\033[0m%s";
         break;
-    /*31*/
     case ERROR:
         string = "%d:%d:%d [\033[1;31m ERROR \033[1;31m\033[0m]\033[1;31m %s:\033[0m%s";
         break;

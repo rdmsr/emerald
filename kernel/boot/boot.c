@@ -56,7 +56,6 @@ void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)
 BootInfo Boot_get_info(struct stivale2_struct *info)
 {
     module("Boot");
-    struct stivale2_struct_tag_framebuffer *videoheader = videoheader;
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
     BootInfo bootinfo;

@@ -46,56 +46,62 @@ char *string_convert(unsigned int num, int base)
 
 void printf(char *format, ...)
 {
-    const char *traverse;
     unsigned int i;
+    unsigned int ZERO = 0;
     char *s;
-    static const unsigned ZERO = 0;
+
     va_list arg;
     va_start(arg, format);
 
-    for (traverse = format; *traverse != '\0'; traverse++)
+    while (*format)
     {
-        while (*traverse != '%')
+
+        if (*format == '%')
         {
-            Serial_write(*traverse);
-            traverse++;
-        }
-
-        traverse++;
-
-        switch (*traverse)
-        {
-        case 'c':
-            i = va_arg(arg, int);
-            Serial_write(i);
-            break;
-
-        case 'd':
-            i = va_arg(arg, int);
-            if (i < ZERO)
+            format++;
+            switch (*format)
             {
-                i = -i;
-                Serial_write('-');
+            case 'c':
+                i = va_arg(arg, int);
+                Serial_write(i);
+                break;
+
+            case 'd':
+                i = va_arg(arg, int);
+                if (i < ZERO)
+                {
+                    i = -i;
+                    Serial_write('-');
+                }
+                Serial_write_string(string_convert(i, 10));
+                break;
+
+            case 'o':
+                i = va_arg(arg, unsigned int);
+                Serial_write_string(string_convert(i, 8));
+                break;
+
+            case 's':
+                s = va_arg(arg, char *);
+                Serial_write_string(s);
+                break;
+
+            case 'x':
+                i = va_arg(arg, unsigned int);
+                Serial_write_string(string_convert(i, 16));
+                break;
+            default:
+                Serial_write('%');
+                break;
             }
-            Serial_write_string(string_convert(i, 10));
-            break;
-
-        case 'o':
-            i = va_arg(arg, unsigned int);
-            Serial_write_string(string_convert(i, 8));
-            break;
-
-        case 's':
-            s = va_arg(arg, char *);
-            Serial_write_string(s);
-            break;
-
-        case 'x':
-            i = va_arg(arg, unsigned int);
-            Serial_write_string(string_convert(i, 16));
-            break;
         }
+        else
+        {
+            Serial_write(*format);
+        }
+        format++;
     }
 
     va_end(arg);
+
 }
