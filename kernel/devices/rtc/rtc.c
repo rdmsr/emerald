@@ -63,3 +63,26 @@ unsigned char RTC_get_hours()
     unsigned char hour = ((hours & 0x0F) + (((hours & 0x70) / 16) * 10)) | (hours & 0x80);
     return hour;
 }
+
+Time RTC_get_time()
+{
+  Time time;
+  time.hour = RTC_get_hours();
+  time.minute = RTC_get_minutes();
+  time.second = RTC_get_seconds();
+  return time;
+}
+
+DateTime RTC_get_date_time()
+{
+  DateTime date_time;
+  
+  date_time.day = read(0x7);
+  date_time.month = read(0x8);
+  date_time.year = read(0x9);
+
+  date_time.time = RTC_get_time();
+
+  return date_time;
+  
+}

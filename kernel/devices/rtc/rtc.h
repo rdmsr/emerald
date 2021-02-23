@@ -26,11 +26,28 @@
 
 #ifndef RTC_H
 #define RTC_H
+#include <stdint.h>
+
+typedef struct
+{
+    uint32_t hour;
+    uint32_t second;
+    uint32_t minute;
+
+} Time;
+
+typedef struct
+{
+  uint32_t day;
+  uint32_t month;
+  uint32_t year;
+  Time time;
+} DateTime;
 
 void RTC_init();
 unsigned char RTC_get_seconds();
 unsigned char RTC_get_minutes();
 unsigned char RTC_get_hours();
-
-
+Time RTC_get_time();
+DateTime RTC_get_date_time();
 #endif

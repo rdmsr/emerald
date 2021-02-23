@@ -64,6 +64,12 @@ void kmain(struct stivale2_struct *info)
     PCI_init();
     BootInfo boot_info = Boot_get_info(info);
 
+    DateTime date = RTC_get_date_time();
+
+    VBE_putf("Time Info:");
+    VBE_putf("\tDate: %x/%x/20%x", date.month, date.day, date.year);
+    VBE_putf("\tTime: %x:%d:%d\n", date.time.hour, date.time.minute, date.time.second);
+    
     srand(RTC_get_seconds());
 
     PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries);
@@ -71,7 +77,7 @@ void kmain(struct stivale2_struct *info)
     /* VMM_init();*/
 
     Keyboard_init();
-    
+
     VBE_putf("System booted in %dms", PIT_get_ticks());
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
@@ -87,7 +93,7 @@ void kmain(struct stivale2_struct *info)
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
     */
-    
+
     /*VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);*/
 
     /*VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
