@@ -42,7 +42,7 @@
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
 
-color_t white = {255, 255, 255}, green = {0, 148, 99}, gray = {94, 94, 94};
+Color white = {255, 255, 255}, green = {0, 148, 99}, gray = {94, 94, 94};
 
 void kmain(struct stivale2_struct *info)
 {

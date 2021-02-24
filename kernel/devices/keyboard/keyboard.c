@@ -78,7 +78,7 @@ void Keyboard_main()
 {
     char keycode = IO_inb(0x60);
 
-    color_t white = {255, 255, 255};
+    Color white = {255, 255, 255};
     VBE_put(keyboard_map[(unsigned char)keycode], white);
 
     IO_outb(0x20, 0x20);

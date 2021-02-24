@@ -29,7 +29,7 @@ void __panic(char *file, const char function[20], int line, char *message)
 
     __asm__("cli");
 
-    color_t red = {245, 49, 0}, gray = {105, 100, 99}, blue = {19, 144, 194};
+    Color red = {245, 49, 0}, gray = {105, 100, 99}, blue = {19, 144, 194};
 
     VBE_puts("------------------------------------------------------------------------\n", red);
     VBE_puts("KERNEL PANIC\n", red);

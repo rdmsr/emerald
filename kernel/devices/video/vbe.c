@@ -31,15 +31,15 @@
 
 struct stivale2_struct_tag_framebuffer *fb_info;
 
-color_t bg_color = {0, 64, 73};
-color_t fg_color = {0, 111, 92};
+Color bg_color = {0, 64, 73};
+Color fg_color = {0, 111, 92};
 
-static color_t white = {255, 255, 255};
+static Color white = {255, 255, 255};
 
 size_t cursor_x = 5;
 size_t cursor_y = 5;
 
-uint32_t get_color(color_t *color)
+uint32_t get_color(Color *color)
 {
     return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
@@ -56,7 +56,7 @@ void VBE_clear_screen(int info)
 {
 
     cursor_y = 5;
-    color_t *color;
+    Color *color;
     color = &bg_color;
 
     int i, j;
@@ -105,7 +105,7 @@ void VBE_init(struct stivale2_struct *info)
     log(INFO, "\t BPP: %x", fb_info->framebuffer_bpp);
 }
 
-void VBE_putchar(char character, int position_x, int position_y, color_t color)
+void VBE_putchar(char character, int position_x, int position_y, Color color)
 {
     uint8_t iy, ix;
     for (iy = 0; iy < 8; iy++)
@@ -120,7 +120,7 @@ void VBE_putchar(char character, int position_x, int position_y, color_t color)
         }
     }
 }
-void VBE_put(char c, color_t color)
+void VBE_put(char c, Color color)
 {
     if (c == '\n')
     {
@@ -146,7 +146,7 @@ void VBE_put(char c, color_t color)
     }
 }
 
-void VBE_puts(char *string, color_t color)
+void VBE_puts(char *string, Color color)
 {
     while (*string)
     {
@@ -218,7 +218,7 @@ void VBE_putf(char *format, ...)
     VBE_put('\n', fg_color);
 }
 
-void VBE_cputf(color_t color, char *format, ...)
+void VBE_cputf(Color color, char *format, ...)
 {
 
     unsigned int i;
@@ -283,7 +283,7 @@ void VBE_cputf(color_t color, char *format, ...)
 }
 /* Bresenham's circle algorithm */
 
-void draw_circle(int xc, int yc, position_t position)
+void draw_circle(int xc, int yc, Position position)
 {
     int y = position.y;
     int x = position.x;
@@ -305,7 +305,7 @@ void VBE_display_circle(int xc, int yc, int radius)
     int y = radius;
     int d = 3 - 2 * radius;
 
-    position_t position = {x, y};
+    Position position = {x, y};
 
     draw_circle(xc, yc, position);
 
@@ -323,7 +323,7 @@ void VBE_display_circle(int xc, int yc, int radius)
             d = d + 4 * x + 6;
         }
 
-        position_t n_position = {x, y};
+        Position n_position = {x, y};
         draw_circle(xc, yc, n_position);
     }
 }
