@@ -25,6 +25,9 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [ ] Implement a font parser (PSF or TTF)
 - [x] Rewrite
 
+## :question_mark: Questions?
+
+Please join the [discord server](https://discord.gg/VMGVJcgVcR) or contact me at abb1x@protonmail.com
 ### Screenshots
 
 <img src="screenshots/main.png">
