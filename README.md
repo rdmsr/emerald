@@ -6,7 +6,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/Abb1x/emerald)
 ![GitHub issues](https://img.shields.io/github/issues-raw/Abb1x/emerald)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Abb1x/emerald)
- <a href="https://discord.gg/VMGVJcgVcR"> [Discord](https://img.shields.io/discord/813937669407113226) </a>
+ <a href="https://discord.gg/VMGVJcgVcR"> <img src="https://img.shields.io/discord/813937669407113226"> </a>
 
 ## ⚙️ How to build
 
