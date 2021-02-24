@@ -28,8 +28,8 @@
 #define PCI_ID_H
 #include "PCI.h"
 
-char *PCI_id_to_string(PCI_Device *device);
-char *PCI_vendor_to_string(PCI_Device *device);
-char *PCI_device_id_to_string(PCI_Device *device);
+char *PCI_id_to_string(PCIDevice *device);
+char *PCI_vendor_to_string(PCIDevice *device);
+char *PCI_device_id_to_string(PCIDevice *device);
 
 #endif

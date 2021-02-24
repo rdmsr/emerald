@@ -26,7 +26,7 @@
 
 #include "pci_id.h"
 #include <libk/logging.h>
-char *PCI_id_to_string(PCI_Device *device)
+char *PCI_id_to_string(PCIDevice *device)
 {
     switch (device->class)
     {
@@ -292,7 +292,7 @@ char *PCI_id_to_string(PCI_Device *device)
     }
 }
 
-char *PCI_vendor_to_string(PCI_Device *device)
+char *PCI_vendor_to_string(PCIDevice *device)
 {
     switch (device->vendor_id)
     {
@@ -326,7 +326,7 @@ char *PCI_vendor_to_string(PCI_Device *device)
     }
 }
 
-char *PCI_device_id_to_string(PCI_Device *device)
+char *PCI_device_id_to_string(PCIDevice *device)
 {
     switch (device->vendor_id)
     {

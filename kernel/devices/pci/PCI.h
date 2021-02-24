@@ -36,7 +36,7 @@ typedef struct
     uint8_t bus, device, function, class, subclass;
     uint16_t device_id, vendor_id;
 
-} PCI_Device;
+} PCIDevice;
 
 void PCI_init();
 #endif

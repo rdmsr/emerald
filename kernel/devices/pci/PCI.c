@@ -27,9 +27,9 @@
 #include "PCI.h"
 #include "pci_id.h"
 #include <libk/logging.h>
-PCI_Device *pci_devices;
+PCIDevice *pci_devices;
 
-uint32_t PCI_read_dword(PCI_Device *device, uint8_t reg)
+uint32_t PCI_read_dword(PCIDevice *device, uint8_t reg)
 {
     uint32_t bus32 = (uint32_t)device->bus;
     uint32_t device32 = (uint32_t)device->device;
@@ -44,41 +44,41 @@ uint32_t PCI_read_dword(PCI_Device *device, uint8_t reg)
 
 /* Get stuff from device */
 
-uint16_t get_vendor(PCI_Device *device)
+uint16_t get_vendor(PCIDevice *device)
 {
     return (uint16_t)(PCI_read_dword(device, 0));
 }
 
-uint16_t get_device_id(PCI_Device *device)
+uint16_t get_device_id(PCIDevice *device)
 {
     return (uint16_t)(((uint32_t)PCI_read_dword(device, 0)) >> 16);
 }
 
-uint8_t get_class(PCI_Device *device)
+uint8_t get_class(PCIDevice *device)
 {
     uint8_t class = (uint8_t)(PCI_read_dword(device, 0x8) >> 24);
     return class;
 }
 
-uint8_t get_subclass(PCI_Device *device)
+uint8_t get_subclass(PCIDevice *device)
 {
     uint8_t subclass = (uint8_t)(PCI_read_dword(device, 0x8) >> 16);
 
     return subclass;
 }
 
-uint8_t get_header_type(PCI_Device *device)
+uint8_t get_header_type(PCIDevice *device)
 {
     uint8_t header_type = (uint8_t)(PCI_read_dword(device, 0xC) >> 16);
     return header_type & ~(1 << 7);
 }
 
-uint8_t get_secondary_bus(PCI_Device *device)
+uint8_t get_secondary_bus(PCIDevice *device)
 {
     return (uint8_t)(PCI_read_dword(device, 0x18) >> 8);
 }
 
-uint8_t is_bridge(PCI_Device *device)
+uint8_t is_bridge(PCIDevice *device)
 {
     if (get_header_type(device) != 0x1)
         return 0;
