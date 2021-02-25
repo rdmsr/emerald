@@ -27,7 +27,6 @@
 #include <libk/alloc.h>
 #include <memory/pmm.h>
 #include <memory/vmm.h>
-
 Pagemap *VMM_new_pagemap()
 {
     Pagemap *pagemap = (Pagemap *)malloc(sizeof(Pagemap));

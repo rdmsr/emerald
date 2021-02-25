@@ -54,7 +54,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
 
         log(INFO, "[Entry %d] [%x - %x]: size: %x, type: %d", i_entry, entry.base, entry.base + entry.length, entry.length, entry.type);
 
-        if (entry.type != STIVALE2_MMAP_USABLE)
+        if (entry.type != STIVALE2_MMAP_USABLE && entry.type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE && entry.type != STIVALE2_MMAP_KERNEL_AND_MODULES)
             continue;
 
         uintptr_t top = entry.base + entry.length;
@@ -98,7 +98,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
     log(INFO, "PMM initialized!");
 }
 
-void *PMM_innerAllocate(size_t count, size_t limit)
+void *PMM_inner_allocate(size_t count, size_t limit)
 {
     size_t p = 0;
     size_t i;
@@ -133,12 +133,12 @@ void *PMM_allocate_pages(size_t count)
 {
     size_t length = last_used_index;
 
-    void *address = PMM_innerAllocate(count, highest_page / PAGE_SIZE);
+    void *address = PMM_inner_allocate(count, highest_page / PAGE_SIZE);
 
     if (address == NULL)
     {
         last_used_index = 0;
-        address = PMM_innerAllocate(count, length);
+        address = PMM_inner_allocate(count, length);
     }
 
     return address;
