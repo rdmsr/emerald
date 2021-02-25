@@ -29,16 +29,14 @@
 void *malloc(size_t size)
 {
     size_t page_count = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
-
     void *ptr = (char *)PMM_callocate_pages(page_count + 1);
 
     if (!ptr)
         return NULL;
 
-    ptr = (void *)((uint64_t)ptr + MEM_OFFSET);
-
-    heap_data *metadata = (heap_data *)ptr;
-    ptr = (void *)((uint64_t)ptr + PAGE_SIZE);
+    ptr += MEM_OFFSET;
+    heap_data *metadata = ptr;
+    ptr += PAGE_SIZE;
 
     metadata->pages = page_count;
     metadata->size = size;
