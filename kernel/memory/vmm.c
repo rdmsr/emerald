@@ -56,6 +56,10 @@ static uintptr_t *get_next_level(uint64_t *current, uint16_t index)
     else
     {
         ret = (uintptr_t)PMM_callocate_page();
+        if (ret == 0)
+        {
+	  return NULL;
+        }
         current[index] = ret | 0b11;
     }
 
@@ -69,12 +73,13 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
     uintptr_t level3 = (virtual_address >> 30) & 0x1FF;
     uintptr_t level2 = (virtual_address >> 21) & 0x1FF;
     uintptr_t level1 = (virtual_address >> 12) & 0x1FF;
-    
+
     uintptr_t *pml4, *pml3, *pml2, *pml1;
 
     pml4 = (void *)page_map->pml4;
 
     pml3 = get_next_level(pml4, level4);
+
     if (!pml3)
     {
         log(ERROR, "Pml3 is null");
@@ -82,6 +87,7 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
     }
 
     pml2 = get_next_level(pml3, level3);
+
     if (!pml2)
     {
         log(ERROR, "pml2 is null");
@@ -98,6 +104,7 @@ void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtua
 
     pml1[level1] = physical_address | flags;
 }
+
 void VMM_switch_pagemap(Pagemap *map)
 {
     __asm__ volatile("mov %0, %%cr3" ::"r"(map->pml4 - MEM_OFFSET)

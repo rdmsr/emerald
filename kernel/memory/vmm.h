@@ -31,6 +31,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 #define KERNEL_OFFSET 0xffffffff80000000
+
+#define VIRT_TO_PHYS(a) ((uint64_t)(a)-MEM_OFFSET)
+#define PHYS_TO_VIRT(a) ((uint64_t)(a) + MEM_OFFSET)
+
 typedef struct
 {
     uintptr_t *pml4;
