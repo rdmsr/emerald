@@ -99,6 +99,7 @@ void VBE_init(struct stivale2_struct *info)
 
         tag = (struct stivale2_tag *)tag->next;
     }
+    
     log(INFO, "Framebuffer info:");
     log(INFO, "\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
     log(INFO, "\t Pitch: %d", fb_info->framebuffer_pitch);
