@@ -127,7 +127,7 @@ static void puts(char *string, Framebuffer *self)
 {
     while (*string)
     {
-        putchar(*string++, (Position){i++, 1}, self);
+        putchar(*string++, (Position){1, 1}, self);
     }
 }
 
@@ -144,7 +144,7 @@ Framebuffer _Framebuffer()
     new.init = init;
     new.clear_screen = clear_screen;
     new.puts = puts;
-    
+
     new.font = fb_font;
 
     /* Colors */
