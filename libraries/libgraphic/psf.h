@@ -23,37 +23,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifndef PSF_H
+#define PSF_H
 
-#ifndef FRAMEBUFFER_H
-#define FRAMEBUFFER_H
-#include <devices/video/vbe.h>
-#include <libgraphic/psf.h>
-#include <stdint.h>
-
-/* OOP C */
-typedef struct framebuffer_struct
+typedef struct
 {
+    uint32_t magic;
+    uint32_t version;
+    uint32_t headersize;
+    uint32_t flags;
 
-    /* Functions */
-    void (*init)(struct stivale2_struct *, struct framebuffer_struct *);
-    void (*clear_screen)(struct framebuffer_struct *);
-    void (*scroll)();
-    void (*puts)(char *, struct framebuffer_struct *);
+    uint32_t numglyph;
+    uint32_t glyph_size;
+    uint32_t height;
+    uint32_t width;
 
-    /* Framebuffer info */
-    int width, height;
-    uint64_t address;
-    uint16_t pitch;
-    uint16_t bpp;
+    uint8_t data[];
 
-    /* Colors */
-    Color fg_color, bg_color;
-
-    /* Font */
-    PSF font;
-} Framebuffer;
-
-Framebuffer _Framebuffer();
-Framebuffer Framebuffer_get_current();
+} PSF;
 
 #endif

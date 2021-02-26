@@ -88,6 +88,7 @@ void kmain(struct stivale2_struct *info)
     Framebuffer fb = _Framebuffer();
     fb.init(info, &fb);
     fb.clear_screen(&fb);
+    fb.puts("Hello",&fb);
     /* Random circles: */
 
     /*
