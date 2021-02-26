@@ -23,17 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+#ifndef FRAMEBUFFER_H
+#define FRAMEBUFFER_H
 #include <devices/video/vbe.h>
 #include <stdint.h>
 
 /* OOP C */
 typedef struct framebuffer_struct
 {
-    void (*init)(struct stivale2_struct *);
+
+    /* Functions */
+    void (*init)(struct stivale2_struct *, struct framebuffer_struct *);
     void (*clear_screen)(struct framebuffer_struct *);
     void (*scroll)();
+
+    /* Framebuffer info */
     int width, height;
+    uint64_t address;
+    uint16_t pitch;
+    uint16_t bpp;
+
+    /* Colors */
     Color fg_color, bg_color;
 } Framebuffer;
 
 Framebuffer _Framebuffer();
+Framebuffer Framebuffer_get_current();
+
+#endif

@@ -27,15 +27,29 @@
 #include <libgraphic/framebuffer.h>
 #include <libk/logging.h>
 
-/* OOP C cause I wanted to try */
+/* OOP C because I wanted to try */
 
+struct stivale2_struct_tag_framebuffer *Framebuffer_get_info();
+
+/* Initializing the framebuffer */
+static Framebuffer current_framebuffer;
 static Color bg_color = {0, 64, 73}, fg_color = {238, 232, 213};
 
-static void init(struct stivale2_struct *info)
+static void init(struct stivale2_struct *info, Framebuffer* self)
 {
+    /* Setting the logging module */
     module("Framebuffer");
-    VBE_init(info);
 
+    /* Getting info */
+    struct stivale2_struct_tag_framebuffer *fb_info = Framebuffer_get_info(info);
+
+    self->width = fb_info->framebuffer_width;
+    self->height = fb_info->framebuffer_height;
+    self->bpp = fb_info->framebuffer_bpp;
+    self->pitch = fb_info->framebuffer_pitch;
+    self->address = fb_info->framebuffer_addr;
+    /* Initializing the VBE driver */
+    VBE_init(info);
 }
 
 static void clear_screen(Framebuffer *self)
@@ -43,6 +57,33 @@ static void clear_screen(Framebuffer *self)
     VBE_clear_screen(0, self->bg_color);
 }
 
+struct stivale2_struct_tag_framebuffer *Framebuffer_get_info(struct stivale2_struct *info)
+{
+    struct stivale2_tag *tag = (struct stivale2_tag *)info->tags;
+    struct stivale2_struct_tag_framebuffer *fb_info = NULL;
+
+    while (tag != NULL)
+    {
+        switch (tag->identifier)
+        {
+
+        case STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID:
+        {
+            fb_info = (struct stivale2_struct_tag_framebuffer *)tag;
+
+            break;
+        }
+        }
+
+        tag = (struct stivale2_tag *)tag->next;
+    }
+    return fb_info;
+}
+
+Framebuffer Framebuffer_get_current()
+{
+    return current_framebuffer;
+}
 Framebuffer _Framebuffer()
 {
     Framebuffer new;
@@ -50,5 +91,6 @@ Framebuffer _Framebuffer()
     new.clear_screen = clear_screen;
     new.bg_color = bg_color;
     new.fg_color = fg_color;
+    current_framebuffer = new;
     return new;
 }

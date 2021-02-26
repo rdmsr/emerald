@@ -58,6 +58,7 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
     module("Boot");
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
+    struct stivale2_struct_tag_framebuffer *fb_info = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
     BootInfo bootinfo;
     size_t usable_mem = 0;
     uint64_t total_mem = 0;
@@ -78,6 +79,12 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
     }
     bootinfo.memory_usable = usable_mem;
     bootinfo.total_memory = total_mem;
+
+    bootinfo.framebuffer_width = fb_info->framebuffer_width;
+    bootinfo.framebuffer_height = fb_info->framebuffer_height;
+
+    bootinfo.framebuffer_bpp = fb_info->framebuffer_bpp;
+    bootinfo.framebuffer_pitch = fb_info->framebuffer_pitch;
 
     VBE_putf("Memory info:");
     VBE_putf("\t Total size: %d mb", convert_to_mb(bootinfo.total_memory) + 1);

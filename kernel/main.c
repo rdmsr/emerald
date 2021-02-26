@@ -58,8 +58,9 @@ void kmain(struct stivale2_struct *info)
     Serial_init();
 
     static Color bg_color = {0, 64, 73};
+
     VBE_init(info);
-    VBE_clear_screen(1,bg_color);
+    VBE_clear_screen(1, bg_color);
 
     info = (void *)info + MEM_OFFSET;
 
@@ -85,8 +86,8 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("EmeraldOS!\n", green);
 
     Framebuffer fb = _Framebuffer();
-    fb.init(info);
-    /*fb.clear_screen(&fb);*/
+    fb.init(info, &fb);
+    fb.clear_screen(&fb);
     /* Random circles: */
 
     /*
