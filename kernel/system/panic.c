@@ -1,7 +1,7 @@
 #include "panic.h"
 #include <devices/video/vbe.h>
-#include <libk/random.h>
 #include <libk/logging.h>
+#include <libk/random.h>
 char *comments_lol[] =
     {
         "Something happened.",
@@ -25,7 +25,9 @@ char *comments_lol[] =
 
 void __panic(char *file, const char function[20], int line, char *message)
 {
-    VBE_clear_screen(0);
+    static Color bg_color = {0, 64, 73};
+
+    VBE_clear_screen(0,bg_color);
 
     __asm__("cli");
 

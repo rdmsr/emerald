@@ -3,7 +3,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2020 Abb1x
+ * Copyright (c) 2021 Abb1x
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,41 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include <devices/video/vbe.h>
+#include <stdint.h>
 
-#ifndef VBE_H
-#define VBE_H
-#define RED_SHIFT 16
-#define GREEN_SHIFT 8
-#define BLUE_SHIFT 0
-
-#include <boot/stivale2.h>
-#include <stddef.h>
-
-typedef struct
+/* OOP C */
+typedef struct framebuffer_struct
 {
-    uint8_t r, g, b;
-} Color;
+    void (*init)(struct stivale2_struct *);
+    void (*clear_screen)(struct framebuffer_struct *);
+    void (*scroll)();
+    int width, height;
+    Color fg_color, bg_color;
+} Framebuffer;
 
-typedef struct
-{
-    size_t x, y;
-} Position;
-
-enum shapes
-{
-    RECTANGLE,
-    RHOMBUS,
-    TRIANGLE
-};
-void VBE_init(struct stivale2_struct *info);
-void VBE_clear_screen(int info, Color color);
-void VBE_putchar(char character, int position_x, int position_y, Color color);
-void VBE_puts(char *string, Color color);
-void VBE_put(char c, Color color);
-void VBE_putf(char *format, ...);
-void VBE_cputf(Color color, char *format, ...);
-void VBE_display_circle(int xc, int yc, int radius);
-void VBE_draw_line(int x0, int y0, int x1, int y1);
-void VBE_draw_shape(int shape, int width, int height, int x, int y);
-struct stivale2_struct_tag_framebuffer* VBE_get_fb_info();
-#endif
+Framebuffer _Framebuffer();

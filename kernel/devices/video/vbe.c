@@ -52,19 +52,21 @@ void VBE_draw_pixel(int x, int y, uint32_t color)
     fb[fb_i] = color;
 }
 
-void VBE_clear_screen(int info)
+struct stivale2_struct_tag_framebuffer* VBE_get_fb_info()
+{
+  return fb_info;
+}
+void VBE_clear_screen(int info, Color color)
 {
 
     cursor_y = 5;
-    Color *color;
-    color = &bg_color;
 
     int i, j;
     for (i = 0; i < fb_info->framebuffer_width; i++)
     {
         for (j = 0; j < fb_info->framebuffer_height; j++)
         {
-            VBE_draw_pixel(i, j, get_color(color));
+            VBE_draw_pixel(i, j, get_color(&color));
         }
     }
 

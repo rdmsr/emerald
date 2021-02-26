@@ -32,6 +32,7 @@
 #include <devices/pci/PCI.h>
 #include <devices/serial/serial.h>
 #include <devices/video/vbe.h>
+#include <libgraphic/framebuffer.h>
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <libk/random.h>
@@ -56,8 +57,9 @@ void kmain(struct stivale2_struct *info)
 
     Serial_init();
 
+    static Color bg_color = {0, 64, 73};
     VBE_init(info);
-    VBE_clear_screen(1);
+    VBE_clear_screen(1,bg_color);
 
     info = (void *)info + MEM_OFFSET;
 
@@ -82,6 +84,9 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
+    Framebuffer fb = _Framebuffer();
+    fb.init(info);
+    /*fb.clear_screen(&fb);*/
     /* Random circles: */
 
     /*

@@ -3,7 +3,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2020 Abb1x
+ * Copyright (c) 2021 Abb1x
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,31 @@
  * SOFTWARE.
  */
 
-#ifndef VBE_H
-#define VBE_H
-#define RED_SHIFT 16
-#define GREEN_SHIFT 8
-#define BLUE_SHIFT 0
+#include <libgraphic/framebuffer.h>
+#include <libk/logging.h>
 
-#include <boot/stivale2.h>
-#include <stddef.h>
+/* OOP C cause I wanted to try */
 
-typedef struct
+static Color bg_color = {0, 64, 73}, fg_color = {238, 232, 213};
+
+static void init(struct stivale2_struct *info)
 {
-    uint8_t r, g, b;
-} Color;
+    module("Framebuffer");
+    VBE_init(info);
 
-typedef struct
-{
-    size_t x, y;
-} Position;
+}
 
-enum shapes
+static void clear_screen(Framebuffer *self)
 {
-    RECTANGLE,
-    RHOMBUS,
-    TRIANGLE
-};
-void VBE_init(struct stivale2_struct *info);
-void VBE_clear_screen(int info, Color color);
-void VBE_putchar(char character, int position_x, int position_y, Color color);
-void VBE_puts(char *string, Color color);
-void VBE_put(char c, Color color);
-void VBE_putf(char *format, ...);
-void VBE_cputf(Color color, char *format, ...);
-void VBE_display_circle(int xc, int yc, int radius);
-void VBE_draw_line(int x0, int y0, int x1, int y1);
-void VBE_draw_shape(int shape, int width, int height, int x, int y);
-struct stivale2_struct_tag_framebuffer* VBE_get_fb_info();
-#endif
+    VBE_clear_screen(0, self->bg_color);
+}
+
+Framebuffer _Framebuffer()
+{
+    Framebuffer new;
+    new.init = init;
+    new.clear_screen = clear_screen;
+    new.bg_color = bg_color;
+    new.fg_color = fg_color;
+    return new;
+}
