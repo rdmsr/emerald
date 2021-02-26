@@ -54,6 +54,7 @@ void VBE_clear_screen(int info, Color color);
 void VBE_putchar(char character, int position_x, int position_y, Color color);
 void VBE_puts(char *string, Color color);
 void VBE_put(char c, Color color);
+void VBE_draw_pixel(int x, int y, uint32_t color);
 void VBE_putf(char *format, ...);
 void VBE_cputf(Color color, char *format, ...);
 void VBE_display_circle(int xc, int yc, int radius);
