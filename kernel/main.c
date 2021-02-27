@@ -30,6 +30,7 @@
 #include <boot/boot.h>
 #include <devices/keyboard/keyboard.h>
 #include <devices/pci/PCI.h>
+#include <devices/pcspkr/pcspkr.h>
 #include <devices/serial/serial.h>
 #include <devices/video/vbe.h>
 #include <libgraphic/framebuffer.h>
@@ -79,6 +80,7 @@ void kmain(struct stivale2_struct *info)
 
     /*VMM_init();*/
 
+    PCSpkr_beep();
     Keyboard_init();
 
     VBE_putf("System booted in %dms", PIT_get_ticks());
