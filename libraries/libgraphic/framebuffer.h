@@ -39,7 +39,7 @@ typedef struct framebuffer_struct
     void (*clear_screen)(struct framebuffer_struct *);
     void (*scroll)();
     void (*puts)(char *, struct framebuffer_struct *);
-
+    void (*putchar)(uint8_t, Position, struct framebuffer_struct *);
     /* Framebuffer info */
     int width, height;
     uint64_t address;

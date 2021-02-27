@@ -59,6 +59,7 @@ static void init(struct stivale2_struct *info, Framebuffer *self)
     self->bpp = fb_info->framebuffer_bpp;
     self->pitch = fb_info->framebuffer_pitch;
     self->address = fb_info->framebuffer_addr;
+
     /* Initializing the VBE driver */
     VBE_init(info);
 }
@@ -96,7 +97,7 @@ static uint32_t get_color(Color *color)
     return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
 
-void putchar(uint8_t c, Position pos, Framebuffer *self)
+static void putchar(uint8_t c, Position pos, Framebuffer *self)
 {
 
     /* FIXME: &self->fb_font.data is not working, we need to use the fb_font directly */
@@ -144,7 +145,9 @@ Framebuffer _Framebuffer()
     new.init = init;
     new.clear_screen = clear_screen;
     new.puts = puts;
+    new.putchar = putchar;
 
+    /* Font */
     new.font = fb_font;
 
     /* Colors */
