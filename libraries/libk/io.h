@@ -34,4 +34,5 @@ void IO_outb(uint16_t port, uint8_t value);
 unsigned char IO_inb(unsigned short port);
 void IO_outl(uint16_t port, uint32_t value);
 uint32_t IO_inl(uint16_t port);
+void IO_outw(unsigned short port, unsigned short value);
 #endif

@@ -88,7 +88,7 @@ void kmain(struct stivale2_struct *info)
     Framebuffer fb = _Framebuffer();
     fb.init(info, &fb);
     fb.clear_screen(&fb);
-    fb.puts("Hello",&fb);
+    fb.puts("hello", &fb);
     /* Random circles: */
 
     /*
@@ -109,6 +109,7 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(300, 400, 25);*/
 
     set_ascii();
+
 
     while (1)
         ;
