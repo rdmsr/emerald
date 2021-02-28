@@ -28,10 +28,20 @@ SOFTWARE.
 #include <libk/module.h>
 #include "pcspkr.h"
 
+/* Change the c2 f */
+void PCSpkr_set_c2(uint32_t hz) {
+	__asm__ volatile ("cli");
+	uint32_t div = 1193182 / hz;
+	IO_outb(0x42, 0xB6);
+	IO_outb(0x40, div & 0xFF);
+	IO_outb(0x40, div >> 8);
+	__asm__ volatile ("sti");
+}
+
 void PCSpkr_play(uint32_t frequency) {
 	uint8_t tmp;	
-	PIT_init(frequency);
-
+	PCSpkr_set_c2(frequency);
+	
 	tmp = IO_inb(0x61);
 	if(tmp != (tmp | 3)) IO_outb(0x61, tmp | 3);
 }
@@ -43,11 +53,12 @@ void PCSpkr_stop() {
 }
 
 void PCSpkr_beep() {
+	module("PCSpkr");
 	/* I desire thee ears survive ;) */
 	PCSpkr_play(1000);
+	/* sleep for sometime */
 	PCSpkr_stop();
-	PIT_init(1000); /* Change freq back */
-	module("PCSpkr");
+	
 	log(INFO, "Beeped!");
 }
 

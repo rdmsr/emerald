@@ -55,3 +55,10 @@ uint32_t IO_inl(uint16_t port)
                      : "d"(port));
     return ret;
 }
+
+void IO_outw(unsigned short port, unsigned short value)
+{
+   __asm__ volatile("outw %%ax,%%dx"
+                :
+                : "dN"(port), "a"(value));
+}

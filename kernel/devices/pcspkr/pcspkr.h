@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef PCSPKR_H
 #define PCSPKR_H
 
+void PCSpkr_setc2(uint32_t hz);
 void PCSpkr_play(uint32_t frequency);
 void PCSpkr_stop();
 void PCSpkr_beep();
