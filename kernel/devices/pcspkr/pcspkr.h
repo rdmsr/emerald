@@ -28,6 +28,7 @@ SOFTWARE.
 void PCSpkr_setc2(uint32_t hz);
 void PCSpkr_play(uint32_t frequency);
 void PCSpkr_stop();
-void PCSpkr_beep();
+void PCSpkr_wait(uint16_t delay);
+void PCSpkr_beep(uint16_t mstime);
 #endif
 

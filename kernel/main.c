@@ -80,7 +80,7 @@ void kmain(struct stivale2_struct *info)
 
     /*VMM_init();*/
 
-    PCSpkr_beep();
+    PCSpkr_beep(100);
     Keyboard_init();
 
     VBE_putf("System booted in %dms", PIT_get_ticks());

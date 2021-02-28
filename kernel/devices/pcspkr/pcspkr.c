@@ -50,15 +50,24 @@ void PCSpkr_stop() {
 	uint8_t itmp = IO_inb(0x61) & 0xFC;
 	/* Shut it up */
 	IO_outb(0x61, itmp);
+	PCSpkr_set_c2(1);
 }
 
-void PCSpkr_beep() {
+void PCSpkr_wait(uint16_t delay) {
+	uint64_t cticks = PIT_get_ticks();
+	while(1) {
+		if (cticks + delay == PIT_get_ticks()) break;
+	}
+}
+
+void PCSpkr_beep(uint16_t mstime) {
 	module("PCSpkr");
 	/* I desire thee ears survive ;) */
-	PCSpkr_play(1000);
+	PCSpkr_play(900);
+	PCSpkr_wait(mstime);
 	/* sleep for sometime */
 	PCSpkr_stop();
 	
-	log(INFO, "Beeped!");
+	log(INFO, "Beeped for %d ms!", mstime);
 }
 
