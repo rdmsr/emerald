@@ -81,12 +81,6 @@ void kmain(struct stivale2_struct *info)
     /*VMM_init();*/
 
     PCSpkr_init();
-    uint8_t beeps = 0;
-    while(beeps < 3) {
-	    PCSpkr_beep(55);
-	    PCSpkr_sleep(80);
-	    beeps++;
-    }
     Keyboard_init();
 
     VBE_putf("System booted in %dms", PIT_get_ticks());
@@ -97,6 +91,12 @@ void kmain(struct stivale2_struct *info)
     fb.init(info, &fb);
     fb.clear_screen(&fb);
     fb.puts("hello",&fb);
+    uint8_t beeps = 0;
+    while(beeps < 3) {
+	    PCSpkr_beep(55);
+	    PCSpkr_sleep(80);
+	    beeps++;
+    }
 
     /* Random circles: */
 

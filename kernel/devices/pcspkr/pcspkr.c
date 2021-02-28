@@ -54,16 +54,15 @@ void PCSpkr_play(uint32_t frequency) {
 }
 
 void PCSpkr_stop() {
-	uint8_t itmp = IO_inb(0x61) & 0xFC;
 	/* Shut it up */
-	IO_outb(0x61, itmp);
+	IO_outb(0x61, IO_inb(0x61) & 0xFC);
 	PCSpkr_set_c2(1);
 }
 
 void PCSpkr_sleep(uint16_t delay) {
 	uint64_t cticks = PIT_get_ticks();
 	while(1) {
-		if (cticks + delay == PIT_get_ticks()) break;
+		if (cticks + delay < PIT_get_ticks()) break;
 	}
 }
 

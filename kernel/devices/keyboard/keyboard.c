@@ -71,7 +71,7 @@ unsigned int current_location = 0;
 void Keyboard_init(void)
 {
     module("Keyboard");
-    IO_outb(0x21, 0xFD);
+    /* bruh this was masking PIT IO_outb(0x21, 0xFD); */
     log(INFO, "Keyboard initialized!");
 }
 
