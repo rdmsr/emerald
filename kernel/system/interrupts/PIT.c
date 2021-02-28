@@ -40,7 +40,7 @@ void PIT_init(uint32_t frequency)
 
     log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
 }
-uint64_t ticks = 0;
+volatile uint64_t ticks = 0;
 
 void PIT_add_ticks()
 {
