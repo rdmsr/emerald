@@ -28,6 +28,13 @@ SOFTWARE.
 #include <libk/module.h>
 #include "pcspkr.h"
 
+/* FIXME: outb to 0x61 spkrpos is too slow and conflicting with keyboard, we need to use IDT */
+void PCSpkr_init() {
+	IO_outb(0x61, IO_inb(0x61) | 0x1);
+	module("PCSpkr");
+	log(INFO, "Initialized PC speaker");
+}
+
 /* Change the c2 f */
 void PCSpkr_set_c2(uint32_t hz) {
 	__asm__ volatile ("cli");
@@ -41,7 +48,7 @@ void PCSpkr_set_c2(uint32_t hz) {
 void PCSpkr_play(uint32_t frequency) {
 	uint8_t tmp;	
 	PCSpkr_set_c2(frequency);
-	
+
 	tmp = IO_inb(0x61);
 	if(tmp != (tmp | 3)) IO_outb(0x61, tmp | 3);
 }
@@ -53,7 +60,7 @@ void PCSpkr_stop() {
 	PCSpkr_set_c2(1);
 }
 
-void PCSpkr_wait(uint16_t delay) {
+void PCSpkr_sleep(uint16_t delay) {
 	uint64_t cticks = PIT_get_ticks();
 	while(1) {
 		if (cticks + delay == PIT_get_ticks()) break;
@@ -63,8 +70,8 @@ void PCSpkr_wait(uint16_t delay) {
 void PCSpkr_beep(uint16_t mstime) {
 	module("PCSpkr");
 	/* I desire thee ears survive ;) */
-	PCSpkr_play(900);
-	PCSpkr_wait(mstime);
+	PCSpkr_play(1000);
+	PCSpkr_sleep(mstime);
 	/* sleep for sometime */
 	PCSpkr_stop();
 	
