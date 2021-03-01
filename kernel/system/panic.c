@@ -20,6 +20,10 @@ char *comments_lol[] =
         ":(",
         "Kernel is not in the sudoers file. This incident will be reported.",
         "Error Code: INSERT_FUNNY_THING_HERE"
+        "oh god. i crashed. ¯\_(ツ)_/¯"
+        "Siri, please crash me."
+        "nani ?"
+        "So, you wanted to destroy me ? LOL System has crashed."
 
 };
 
