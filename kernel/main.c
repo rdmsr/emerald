@@ -93,8 +93,8 @@ void kmain(struct stivale2_struct *info)
     fb.puts("hello",&fb);
     uint8_t beeps = 0;
     while(beeps < 3) {
-	    PCSpkr_beep(55);
-	    PCSpkr_sleep(80);
+	    PCSpkr_beep(35);
+	    PCSpkr_sleep(1000);
 	    beeps++;
     }
 
@@ -119,6 +119,6 @@ void kmain(struct stivale2_struct *info)
 
     set_ascii();
 
-    while (1)
+    while (1) 
         ;
 }
