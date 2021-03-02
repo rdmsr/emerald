@@ -27,106 +27,82 @@
 #include <libk/alloc.h>
 #include <memory/pmm.h>
 #include <memory/vmm.h>
-Pagemap *VMM_new_pagemap()
-{
-    Pagemap *pagemap = (Pagemap *)malloc(sizeof(Pagemap));
 
-    pagemap->pml4 = MEM_OFFSET + PMM_callocate_page();
+Pagemap *kernel_map = NULL;
+
+Pagemap *VMM_new_pagemap(void)
+{
+    Pagemap *pagemap = malloc(sizeof(pagemap));
+    pagemap->top_level = PMM_callocate_page();
+
     return pagemap;
 }
 
-uintptr_t lower_half(uintptr_t arg)
-{
-    /* offset is defined in link.ld */
-    return arg - MEM_OFFSET;
-}
-uintptr_t higher_half(uintptr_t arg)
-{
-    /* offset is defined in link.ld */
-    return arg + MEM_OFFSET;
-}
-
-static uintptr_t *get_next_level(uint64_t *current, uint16_t index)
+static uintptr_t *get_next_level(uintptr_t *current_level, size_t entry)
 {
     uintptr_t ret;
-    if (current[index] & 0x1)
+
+    if (current_level[entry] & 0x1)
     {
-        ret = current[index] & ~((uintptr_t)0xfff);
+        ret = current_level[entry] & ~((uintptr_t)0xfff);
     }
     else
     {
+
+        /* Allocate a table for the next paging level */
         ret = (uintptr_t)PMM_callocate_page();
         if (ret == 0)
         {
-	  return NULL;
+            return NULL;
         }
-        current[index] = ret | 0b11;
+        current_level[entry] = ret | 0b111;
     }
 
     return (void *)ret + MEM_OFFSET;
 }
 
-void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags)
+void VMM_map_page(Pagemap *pagemap, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags)
 {
-    /* Paging levels */
-    uintptr_t level4 = (virtual_address >> 39) & 0x1FF;
-    uintptr_t level3 = (virtual_address >> 30) & 0x1FF;
-    uintptr_t level2 = (virtual_address >> 21) & 0x1FF;
-    uintptr_t level1 = (virtual_address >> 12) & 0x1FF;
+    uintptr_t level4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
+    uintptr_t level3 = (virtual_address & ((uintptr_t)0x1ff << 30)) >> 30;
+    uintptr_t level2 = (virtual_address & ((uintptr_t)0x1ff << 21)) >> 21;
+    uintptr_t level1 = (virtual_address & ((uintptr_t)0x1ff << 12)) >> 12;
 
     uintptr_t *pml4, *pml3, *pml2, *pml1;
 
-    pml4 = (void *)page_map->pml4;
+    pml4 = (void *)pagemap->top_level + MEM_OFFSET;
 
     pml3 = get_next_level(pml4, level4);
 
-    if (!pml3)
-    {
-        log(ERROR, "Pml3 is null");
-        return;
-    }
-
     pml2 = get_next_level(pml3, level3);
 
-    if (!pml2)
-    {
-        log(ERROR, "pml2 is null");
-        return;
-    }
-
     pml1 = get_next_level(pml2, level2);
-
-    if (!pml1)
-    {
-        log(ERROR, "pml1 is null");
-        return;
-    }
 
     pml1[level1] = physical_address | flags;
 }
 
-void VMM_switch_pagemap(Pagemap *map)
+void VMM_switch_pagemap(Pagemap *pagemap)
 {
-    __asm__ volatile("mov %0, %%cr3" ::"r"(map->pml4 - MEM_OFFSET)
-                     : "memory");
+    __asm__ volatile(
+        "mov %0,%%cr3"
+        :
+        : "r"(pagemap->top_level)
+        : "memory");
 }
-void VMM_init()
+
+void VMM_init(void)
 {
+
     module("VMM");
+    kernel_map = VMM_new_pagemap();
 
-    Pagemap *kernel_map = VMM_new_pagemap();
-
-    log(INFO, "Kernel pagemap created!");
-
-    uint64_t i;
-    for (i = 0; i < 0x100000000; i += PAGE_SIZE)
+    uintptr_t p;
+    for (p = 0; p < 0x100000000; p += PAGE_SIZE)
     {
-        VMM_map_page(kernel_map, i, i + MEM_OFFSET, 0b11);
+        VMM_map_page(kernel_map, p, p + MEM_OFFSET, 0x03);
     }
 
-    log(INFO, "Mapped kernel");
+    log(INFO, "Mapped kernel!");
 
     VMM_switch_pagemap(kernel_map);
-
-    log(INFO, "VMM initialized!");
 }

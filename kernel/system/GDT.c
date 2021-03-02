@@ -37,7 +37,7 @@ void GDT_load()
                      : "m"(gdtr)
                      : "memory");
     __asm__ volatile(
-        "    mov %%rsp, %%rax\n"
+        "mov %%rsp, %%rax\n"
         "push $0x10\n"
         "push %%rax\n"
         " pushf\n"

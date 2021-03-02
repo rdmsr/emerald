@@ -27,7 +27,7 @@
 #ifndef PMM
 #define PMM
 
-#define PAGE_SIZE 4096
+#define PAGE_SIZE 0x1000
 
 #define MEM_OFFSET 0xffff800000000000
 
