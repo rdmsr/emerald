@@ -3,7 +3,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2020 Abb1x
+ * Copyright (c) 2020-2021 Abb1x
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,14 +88,18 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("EmeraldOS!\n", green);
 
     Framebuffer fb = _Framebuffer();
+
+    /* Framebuffer functions */
     fb.init(info, &fb);
     fb.clear_screen(&fb);
-    fb.puts("hello",&fb);
+    fb.puts("hello", &fb);
+
     uint8_t beeps = 0;
-    while(beeps < 3) {
-	    PCSpkr_beep(55);
-	    PCSpkr_sleep(80);
-	    beeps++;
+    while (beeps < 3)
+    {
+        PCSpkr_beep(55);
+        PCSpkr_sleep(80);
+        beeps++;
     }
 
     /* Random circles: */
@@ -118,7 +122,6 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(300, 400, 25);*/
 
     set_ascii();
-
 
     while (1)
         ;
