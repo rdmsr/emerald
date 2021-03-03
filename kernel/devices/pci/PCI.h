@@ -33,7 +33,7 @@
 
 typedef struct
 {
-    uint8_t bus, device, function, class, subclass;
+    uint8_t bus, device, function, prog_if, class, subclass;
     uint16_t device_id, vendor_id;
 
 } PCIDevice;

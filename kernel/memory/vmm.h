@@ -37,13 +37,12 @@
 
 typedef struct
 {
-    uintptr_t *pml4;
-} Pagemap __attribute__((aligned(4096)));
+    uintptr_t *top_level;
+} Pagemap;
 
-
-void VMM_init();
+void VMM_init(void);
 void VMM_switch_pagemap(Pagemap *map);
-void VMM_map_page(Pagemap *page_map, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags);
+void VMM_map_page(Pagemap *pagemap, uintptr_t physical_address, uint64_t virtual_address, uintptr_t flags);
 
-Pagemap *VMM_new_pagemap();
+Pagemap *VMM_new_pagemap(void);
 #endif

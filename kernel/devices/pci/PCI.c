@@ -26,6 +26,7 @@
 
 #include "PCI.h"
 #include "pci_id.h"
+#include <devices/ahci/ahci.h>
 #include <libk/logging.h>
 PCIDevice *pci_devices;
 
@@ -78,6 +79,11 @@ uint8_t get_secondary_bus(PCIDevice *device)
     return (uint8_t)(PCI_read_dword(device, 0x18) >> 8);
 }
 
+uint8_t get_prog_if(PCIDevice *device)
+{
+	return (uint8_t)(PCI_read_dword(device, 0x8) >> 8);
+}
+
 uint8_t is_bridge(PCIDevice *device)
 {
     if (get_header_type(device) != 0x1)
@@ -127,13 +133,17 @@ void PCI_init()
 
     for (device = 0; device < current_count; device++)
     {
-        pci_devices[device].class = get_class(&pci_devices[device]);
+	module("PCI");
+	pci_devices[device].class = get_class(&pci_devices[device]);
         pci_devices[device].subclass = get_subclass(&pci_devices[device]);
         pci_devices[device].vendor_id = get_vendor(&pci_devices[device]);
         pci_devices[device].device_id = get_device_id(&pci_devices[device]);
+	pci_devices[device].prog_if = get_prog_if(&pci_devices[device]);
 
         log(INFO, "Found device with vendor %x, device id: %x", pci_devices[device].vendor_id, pci_devices[device].device_id);
 
         VBE_putf("[PCI] 00:%x.%d %s: %s %s", device, pci_devices[device].function, PCI_id_to_string(&pci_devices[device]), PCI_vendor_to_string(&pci_devices[device]), PCI_device_id_to_string(&pci_devices[device]));
-    }
+	if (pci_devices[device].class == 1 && pci_devices[device].subclass == 6) ahci_init(&pci_devices[device]);
+	}
 }
+
