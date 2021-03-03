@@ -27,7 +27,7 @@ SOFTWARE.
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <system/interrupts/PIT.h>
-/* FIXME: outb to 0x61 spkrpos is too slow and conflicting with keyboard, we need to use IDT */
+
 void PCSpkr_init()
 {
     IO_outb(0x61, IO_inb(0x61) | 0x1);
@@ -38,22 +38,19 @@ void PCSpkr_init()
 /* Change the c2 f */
 void PCSpkr_set_c2(uint32_t hz)
 {
-    __asm__ volatile("cli");
     uint32_t div = 1193182 / hz;
-    IO_outb(0x42, 0xB6);
-    IO_outb(0x40, div & 0xFF);
-    IO_outb(0x40, div >> 8);
-    __asm__ volatile("sti");
+    IO_outb(0x43, 0xB6);
+    IO_outb(0x42, div & 0xFF);
+    IO_outb(0x42, div >> 8);
 }
 
 void PCSpkr_play(uint32_t frequency)
 {
-    uint8_t tmp;
     PCSpkr_set_c2(frequency);
 
-    tmp = IO_inb(0x61);
-    if (tmp != (tmp | 3))
-        IO_outb(0x61, tmp | 3);
+    uint8_t tmp = IO_inb(0x61);
+    if (tmp != (tmp | 3)) 
+	IO_outb(0x61, tmp | 3);
 }
 
 void PCSpkr_stop()

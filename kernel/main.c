@@ -97,8 +97,8 @@ void kmain(struct stivale2_struct *info)
     uint8_t beeps = 0;
     while (beeps < 3)
     {
-        PCSpkr_beep(55);
-        PCSpkr_sleep(80);
+        PCSpkr_beep(100);
+        PCSpkr_sleep(1000);
         beeps++;
     }
 
