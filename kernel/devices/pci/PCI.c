@@ -43,7 +43,17 @@ uint32_t PCI_read_dword(PCIDevice *device, uint8_t reg)
     return IO_inl(0xCFC);
 }
 
-/* Get stuff from device */
+void PCI_write_dword(PCIDevice *device, uint8_t reg, uint32_t data)
+{
+	uint32_t bus32 = (uint32_t)device->bus;
+	uint32_t device32 = (uint32_t)device->device;
+	uint32_t function32 = (uint32_t)device->function;
+
+	uint32_t target = (1 << 31) | (bus32 << 16) | ((device32) << 11) | ((function32) << 8) | (reg & 0xFC);
+
+	IO_outl(0xCF8, target);
+	IO_outl(0xCFC, data);
+}
 
 uint16_t get_vendor(PCIDevice *device)
 {
@@ -94,6 +104,22 @@ uint8_t is_bridge(PCIDevice *device)
         return 0;
 
     return 1;
+}
+
+int PCI_get_bar(PCIDevice *device, PCIBar *ret, size_t bnum)
+{
+	if (get_header_type(device) != 0)
+		return 1;
+
+	size_t bar_off = 4 * bnum + 0x10;
+
+	ret->base = PCI_read_dword(device, bar_off);
+
+	PCI_write_dword(device, bar_off, 0xffffffff);
+	ret->size = PCI_read_dword(device, bar_off);
+	ret->size = ~(ret->size) + 1;
+	PCI_write_dword(device, bar_off, ret->base);
+	return 0;
 }
 
 uint64_t current_count = 0;

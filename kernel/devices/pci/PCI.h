@@ -38,5 +38,13 @@ typedef struct
 
 } PCIDevice;
 
+typedef struct
+{
+	uint32_t base;
+	uint32_t size;
+} PCIBar;
+
 void PCI_init();
+int PCI_get_bar(PCIDevice *device, PCIBar *ret, size_t bnum);
+
 #endif
