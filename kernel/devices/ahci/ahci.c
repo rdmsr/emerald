@@ -19,10 +19,14 @@ void ahci_init(PCIDevice *ahci_device)
 			log(DEBUG, "Detected a serial storage bus");
 			return;
 	}
+
+	PCI_set_bus_master(ahci_device);
+
 	PCIBar bar;
 	if (PCI_get_bar(ahci_device, &bar, 5) == 1) return;
-	log(DEBUG, "AHCI bar size -> %d or %x", bar.size, bar.size);
-	log(DEBUG, "AHCI bar base -> %d or %x", bar.base, bar.base);
+	log(INFO, "Bar size: %d %x, bar base: %d %x", bar.size, bar.size, bar.base, bar.base);	
+	/* volatile HBA_mem *hba_mem = (volatile HBA_mem*)((size_t)bar.base + MEM_OFFSET);
+	stuff to be added */
 }
 
 

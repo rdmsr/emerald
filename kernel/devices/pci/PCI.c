@@ -122,6 +122,13 @@ int PCI_get_bar(PCIDevice *device, PCIBar *ret, size_t bnum)
 	return 0;
 }
 
+void PCI_set_bus_master(PCIDevice *device)
+{
+	PCI_write_dword(device, 0x4, 
+		PCI_read_dword(device, 0x4 | (1 << 2)));
+	log(INFO, "Set %s to bus master", PCI_id_to_string(device));
+}
+
 uint64_t current_count = 0;
 
 /* FIXME: implement multifunction parsing */

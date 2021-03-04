@@ -46,5 +46,6 @@ typedef struct
 
 void PCI_init();
 int PCI_get_bar(PCIDevice *device, PCIBar *ret, size_t bnum);
+void PCI_set_bus_master(PCIDevice *device);
 
 #endif
