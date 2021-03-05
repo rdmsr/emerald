@@ -22,7 +22,7 @@ You can use prebuilt .hdd images in the releases tab, I suggest you run them usi
 - [ ] Port libc
 - [ ] AHCI/Sata (would be nice)
 - [ ] Reading from disk (goes with sata)
-- [ ] Implement a font parser (PSF or TTF)
+- [x] Implement a font parser (PSF or TTF)
 - [x] Rewrite
 
 ## :question: Questions?
