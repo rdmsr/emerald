@@ -26,8 +26,11 @@
 
 #include "pmm.h"
 #include <stdbool.h>
+#include <stddef.h>
+
 
 uint8_t *bitmap;
+
 size_t last_used_index = 0;
 uintptr_t highest_page = 0;
 

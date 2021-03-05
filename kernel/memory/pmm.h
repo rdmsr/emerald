@@ -30,7 +30,6 @@
 #define PAGE_SIZE 0x1000
 
 #define MEM_OFFSET 0xffff800000000000
-
 #define SETBIT(i) bitmap[i / 8] = bitmap[i / 8] | (1 << (i % 8))
 #define CLEARBIT(i) bitmap[i / 8] = bitmap[i / 8] & (~(1 << (i % 8)))
 
