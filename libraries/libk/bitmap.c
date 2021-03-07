@@ -19,11 +19,11 @@ static void set(size_t index, bool value, Bitmap *self)
 
     if (value)
     {
-        bitmap->buffer[byte] |= (1 << (bit));
+        self->buffer[byte] |= (1 << (bit));
     }
     else
     {
-        bitmap->buffer[byte] &= ~(1 << (bit));
+        self->buffer[byte] &= ~(1 << (bit));
     }
 }
 
@@ -41,7 +41,7 @@ static bool get(size_t index, Bitmap *self)
     size_t bit = index % 8; /* 8 since the bitmap is uint8_t */
     size_t byte = index / 8;
 
-    return (bitmap->buffer[byte] & (1 << (bit)));
+    return (self->buffer[byte] & (1 << (bit)));
 }
 
 Bitmap _Bitmap(uint8_t *data, size_t size)
@@ -59,4 +59,6 @@ Bitmap _Bitmap(uint8_t *data, size_t size)
     new_bitmap.last_free = 0;
     new_bitmap.set = set;
     new_bitmap.get = get;
+
+    return new_bitmap;
 }

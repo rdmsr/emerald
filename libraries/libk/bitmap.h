@@ -17,7 +17,7 @@ typedef struct bitmap_struct
     size_t (*set_used)(size_t, size_t, struct bitmap_struct *);
 
     /* Variables */
-    size_t bitmap_size, last_free;
+    size_t size, last_free;
     uint8_t *buffer;
 
 } Bitmap;
