@@ -24,15 +24,50 @@
  * SOFTWARE.
  */
 
+/* stivale2_mmap_entry */
 #include "pmm.h"
 #include <stdbool.h>
 #include <stddef.h>
 
+/* Here, we define the bitmap as NULL since it's a pointer */
+uint8_t *bitmap = NULL;
+uint64_t last_free_page = 0;
+size_t memory_size;
 
-uint8_t *bitmap;
+static uint64_t get_bitmap_array_index(uint64_t page_addr)
+{
+    return page_addr / 8; /* The bitmap is a uint8_t so we use 8 to divide */
+}
 
-size_t last_used_index = 0;
-uintptr_t highest_page = 0;
+static uint64_t get_bitmap_bit_index(uint64_t page_addr)
+{
+    return page_addr % 8;
+}
+
+/* These functions are for setting/clearing bits into the bitmap */
+static void bitmap_set_bit(uint64_t page_addr)
+{
+    uint64_t bit = get_bitmap_bit_index(page_addr);
+    uint64_t byte = get_bitmap_array_index(page_addr);
+
+    bitmap[byte] |= (1 << bit);
+}
+
+static void bitmap_clear_bit(uint64_t page_addr)
+{
+    uint64_t bit = get_bitmap_bit_index(page_addr);
+    uint64_t byte = get_bitmap_array_index(page_addr);
+
+    bitmap[byte] &= ~(1 << bit);
+}
+
+static bool bitmap_is_bit_set(uint64_t page_addr)
+{
+
+    uint64_t bit = get_bitmap_bit_index(page_addr);
+    uint64_t byte = get_bitmap_array_index(page_addr);
+    return bitmap[byte] & (1 << bit);
+}
 
 void *memset(void *bufptr, int value, size_t size)
 {
@@ -46,10 +81,11 @@ void *memset(void *bufptr, int value, size_t size)
 void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
 {
     module("PMM");
-
     log(INFO, "Memory Adress: %x", (uint64_t)memory_map);
 
-    size_t i, j, length, i_entry;
+    /* Here, we want to get the size of the memory and the size of the bitmap */
+    size_t i = 0, i_entry;
+    uintptr_t highest_page = 0;
 
     for (i_entry = 0; i_entry < memory_entries; i_entry++)
     {
@@ -66,118 +102,118 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
             highest_page = top;
     }
 
-    size_t memory_size = highest_page + (PAGE_SIZE - 1) / PAGE_SIZE;
+    memory_size = highest_page + (PAGE_SIZE - 1) / PAGE_SIZE;
     size_t bitmap_size = memory_size / 8;
 
-    for (i = 0; i < memory_entries; i++)
+    /* Here, we are finding a place to put the bitmap in */
+
+    size_t m;
+
+    for (m = 0; m < memory_entries && bitmap == NULL; m++)
     {
+        log(INFO, "Finding a place for the bitmap...");
         struct stivale2_mmap_entry entry = memory_map[i];
 
-        if (entry.type != STIVALE2_MMAP_USABLE)
-            continue;
-
-        if (entry.length >= bitmap_size)
+        if (entry.type == STIVALE2_MMAP_USABLE && entry.length > bitmap_size)
         {
             bitmap = (uint8_t *)entry.base + MEM_OFFSET;
-            memset(bitmap, 0xff, bitmap_size);
-
-            entry.base += bitmap_size;
-            entry.length -= bitmap_size;
-
-            break;
+            log(INFO, "Found place for the bitmap at %x",bitmap);
         }
     }
 
-    for (j = 0; j < memory_entries; j++)
-    {
-        struct stivale2_mmap_entry entry = memory_map[j];
-        if (entry.type != STIVALE2_MMAP_USABLE)
-            continue;
+    uint64_t free_memory = 0;
 
-        for (length = 0; length < entry.length; length += PAGE_SIZE)
-            CLEARBIT((entry.base + length) / PAGE_SIZE);
+    memset(bitmap, 0xff, bitmap_size); /* Setting all pages as used */
+    size_t n;
+    for (n = 0; n < memory_entries; n++)
+    {
+        struct stivale2_mmap_entry entry = memory_map[i];
+        if (entry.type == STIVALE2_MMAP_USABLE)
+        {
+            uint64_t j;
+            for (j = 0; j < entry.length; j += PAGE_SIZE)
+            {
+                bitmap_clear_bit((entry.base + j) / PAGE_SIZE);
+                free_memory += PAGE_SIZE;
+            }
+        }
     }
 
-    log(INFO, "PMM initialized!");
+    uint64_t bitmap_start = (uint64_t)bitmap;
+
+    uint64_t bitmap_end = bitmap_start + bitmap_size;
+
+    uint64_t a;
+    for (a = bitmap_start; a <= bitmap_end; a += PAGE_SIZE)
+    {
+        bitmap_set_bit(a / PAGE_SIZE);
+    }
 }
 
-void *PMM_inner_allocate(size_t count, size_t limit)
+uint64_t find_free_pages(uint64_t count)
 {
-    size_t p = 0;
+    uint64_t free_count = 0;
+
     size_t i;
-    while (last_used_index < limit)
+    for (i = last_free_page; i < (memory_size / PAGE_SIZE); i++)
     {
-        if (bitmap[last_used_index++] == false)
+        if (!bitmap_is_bit_set(i))
         {
-            if (p++ == count)
+            free_count++;
+            if (free_count == count)
             {
-                size_t page = last_used_index - count;
-
-                for (i = page; i < last_used_index; i++)
-                    SETBIT(i);
-
-                return (void *)(page * PAGE_SIZE);
+                last_free_page = i; /* Last free page */
+                return i;
             }
         }
         else
         {
-            p = 0;
+            free_count = 0;
         }
     }
-    return NULL;
-}
 
-void *PMM_allocate_page()
-{
-    return PMM_allocate_pages(1);
-}
-
-void *PMM_allocate_pages(size_t count)
-{
-    size_t length = last_used_index;
-
-    void *address = PMM_inner_allocate(count, highest_page / PAGE_SIZE);
-
-    if (address == NULL)
+    if (last_free_page != 0)
     {
-        last_used_index = 0;
-        address = PMM_inner_allocate(count, length);
+        last_free_page = 0;
+        return find_free_pages(count);
     }
 
-    return address;
+    return -1; /* There is no free page */
 }
 
-void *PMM_callocate_page()
+void *PMM_allocate_pages(uint64_t count)
 {
-    return PMM_callocate_pages(1);
+    uint64_t page = find_free_pages(count);
+
+    uintptr_t i;
+    for (i = page; i < count + page; i++)
+    {
+        bitmap_set_bit(i);
+    }
+    return (void *)(page * PAGE_SIZE);
 }
 
-void *PMM_callocate_pages(size_t count)
+void PMM_free_pages(void *addr, uint64_t page_count)
 {
-    char *address = (char *)PMM_allocate_pages(count);
+    uint64_t target = ((uint64_t)addr) / PAGE_SIZE;
 
-    if (address == NULL)
-        return NULL;
-
-    uint64_t *ptr = (uint64_t *)(address + MEM_OFFSET);
-
-    size_t i;
-
-    for (i = 0; i < count * (PAGE_SIZE / sizeof(uint64_t)); i++)
-        ptr[i] = 0;
-
-    return address;
+    uintptr_t i;
+    for (i = target; i <= target + page_count; i++)
+    {
+        bitmap_clear_bit(i);
+    }
 }
 
-void PMM_free_page(void *address)
+void *PMM_allocate_zero(uint64_t count)
 {
-    PMM_free_pages(address, 1);
-}
+    void *d = PMM_allocate_pages(count);
+    uint64_t *pages = (uint64_t *)(d + MEM_OFFSET);
 
-void PMM_free_pages(void *address, size_t count)
-{
-    uint64_t startPage = (uint64_t)address / PAGE_SIZE;
-    size_t i;
-    for (i = startPage; i < startPage + count; i++)
-        CLEARBIT(i);
+    uint64_t i;
+
+    for (i = 0; i < (count * PAGE_SIZE); i++)
+    {
+        pages[i] = 0;
+    }
+    return d;
 }

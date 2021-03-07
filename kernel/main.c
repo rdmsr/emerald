@@ -66,7 +66,7 @@ void kmain(struct stivale2_struct *info)
     info = (void *)info + MEM_OFFSET;
 
     PCI_init();
-    BootInfo boot_info = Boot_get_info(info);
+/*    BootInfo boot_info = Boot_get_info(info); */
 
     DateTime date = RTC_get_date_time();
 
@@ -76,9 +76,9 @@ void kmain(struct stivale2_struct *info)
 
     srand(RTC_get_seconds());
 
-    PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries);
+   /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
 
-    /*VMM_init();*/
+    VMM_init();*/
 
     PCSpkr_init();
     Keyboard_init();
@@ -87,12 +87,12 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
-    Framebuffer fb = _Framebuffer();
+    /* Framebuffer fb = _Framebuffer();
 
-    /* Framebuffer functions */
+    Framebuffer functions
     fb.init(info, &fb);
     fb.clear_screen(&fb);
-    fb.puts("hello", &fb);
+    fb.puts("hello", &fb);*/
 
     uint8_t beeps = 0;
     while (beeps < 3)

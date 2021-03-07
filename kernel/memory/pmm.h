@@ -24,28 +24,26 @@
  * SOFTWARE.
  */
 
-#ifndef PMM
-#define PMM
+#ifndef PMM_H
+#define PMM_H
 
 #define PAGE_SIZE 0x1000
 
 #define MEM_OFFSET 0xffff800000000000
-#define SETBIT(i) bitmap[i / 8] = bitmap[i / 8] | (1 << (i % 8))
-#define CLEARBIT(i) bitmap[i / 8] = bitmap[i / 8] & (~(1 << (i % 8)))
 
+#include <boot/boot.h>
 #include <boot/stivale2.h>
+#include <libk/bitmap.h>
 #include <libk/logging.h>
 #include <stddef.h>
 
 void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries);
 
-void *PMM_allocate_page();
-void *PMM_allocate_pages(size_t count);
+void *PMM_allocate_pages(uint64_t count);
 
-void *PMM_callocate_page();
-void *PMM_callocate_pages(size_t count);
+void *PMM_allocate_zero(uint64_t count);
 
-void PMM_free_page(void *adress);
-void PMM_free_pages(void *adress, size_t count);
+void PMM_free_pages(void *addr, uint64_t page_count);
+void *memset(void *bufptr, int value, size_t size);
 
 #endif

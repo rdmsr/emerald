@@ -33,7 +33,7 @@ Pagemap *kernel_map = NULL;
 Pagemap *VMM_new_pagemap(void)
 {
     Pagemap *pagemap = malloc(sizeof(pagemap));
-    pagemap->top_level = PMM_callocate_page();
+    pagemap->top_level = PMM_allocate_zero(1);
 
     return pagemap;
 }
@@ -50,7 +50,7 @@ static uintptr_t *get_next_level(uintptr_t *current_level, size_t entry)
     {
 
         /* Allocate a table for the next paging level */
-        ret = (uintptr_t)PMM_callocate_page();
+        ret = (uintptr_t)PMM_allocate_zero(1);
         if (ret == 0)
         {
             return NULL;

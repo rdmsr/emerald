@@ -29,7 +29,7 @@
 void *malloc(size_t size)
 {
     size_t page_count = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
-    void *ptr = (char *)PMM_callocate_pages(page_count + 1);
+    void *ptr = (char *)PMM_allocate_zero(page_count + 1);
 
     if (!ptr)
         return NULL;
