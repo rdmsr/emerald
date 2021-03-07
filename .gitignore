@@ -6,4 +6,4 @@
 .cxxflags
 .files
 .includes
-build/
+./build/
