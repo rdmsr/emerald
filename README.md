@@ -1,5 +1,5 @@
 <img src="https://abbix.me/i/emerald-logo.png" align="center">
-<p> An operating system kernel written for fun in ANSI C</p>
+<p> An operating system kernel written for fun in ANSI C (we make use of gnu extensions though)</p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c01428b7b3864d1f86eb1753c6c8deaf)](https://app.codacy.com/gh/Abb1x/emerald?utm_source=github.com&utm_medium=referral&utm_content=Abb1x/emerald&utm_campaign=Badge_Grade)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Abb1x/emerald?include_prereleases)
