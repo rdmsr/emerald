@@ -4,6 +4,7 @@
 - Building emeraldOS
     -   [Dependencies](#dependencies)
     -   [Getting the source code](#getting-the-source-code)
+	-    Configuring  #configuring
     -   [Building](#building)
     -   [Running in a virtual machine](#running-in-a-virtual-machine)
 
@@ -19,7 +20,7 @@ Building emeraldOS requires:
 - GNU/Make (build system)
 - Meson (build system)
 - Ninja (build system used with meson)
-- QEMU or any other virtualization softwarei
+- QEMU or any other virtualization software
 
 ```sh
 # On debian-based distributions
@@ -49,15 +50,23 @@ $ git clone https://github.com/Abb1x/emerald.git --recursive
 $ git clone https://gitlab.com/Abb1x/emerald.git --recursive
 ```
 
-## Building 
-
-Building emerald is pretty simple, just run these commands:
+## Configuring
+First, you need to configure meson to work with your system. Run the following commands:
 
 ```sh
-$ cd emerald
+$ cd emerald/scripts/build
+$ ./configure.sh
+$ cd ../..
+```
+## Building 
+
+Building emerald is pretty simple, just run this command:
+
+```sh
 $ make
 ```
 
+Make will use ninja to build the system.
 ## Running in a virtual machine
 
 Emerald has only been tested on the following virtualization software:
@@ -71,7 +80,7 @@ To run in QEMU, just execute the following command:
 $ make run
 ```
 
-To run in VirtualBox,  create a new machine with the following properties:
+To run in VirtualBox, create a new machine with the following properties:
 
 Make sure to run 
 ```sh
