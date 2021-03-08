@@ -4,7 +4,7 @@
 - Building emeraldOS
     -   [Dependencies](#dependencies)
     -   [Getting the source code](#getting-the-source-code)
-	-    Configuring  #configuring
+	-   [Configuring Meson](#configuring)
     -   [Building](#building)
     -   [Running in a virtual machine](#running-in-a-virtual-machine)
 
