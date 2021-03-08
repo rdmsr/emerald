@@ -12,7 +12,7 @@ typedef struct bitmap_struct
     bool (*get)(size_t, struct bitmap_struct *);
 
     size_t (*find_free)(size_t, struct bitmap_struct *);
-    size_t (*alloc)(size_t, struct bitmap_struct *);
+    size_t (*allocate)(size_t, struct bitmap_struct *);
     size_t (*set_free)(size_t, size_t, struct bitmap_struct *);
     size_t (*set_used)(size_t, size_t, struct bitmap_struct *);
 
