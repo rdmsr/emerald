@@ -32,11 +32,11 @@ void PIT_init(uint32_t frequency)
 {
     module("PIT");
 
-    uint32_t divisor = 1193181 / frequency;
+    uint32_t divisor = BASE_FREQ / frequency;
 
-    IO_outb(0x43, 0x36);
-    IO_outb(0x40, (uint8_t)divisor & 0xFF);
-    IO_outb(0x40, (uint8_t)(divisor >> 8) & 0xFF);
+    IO_outb(PIT_CTL, 0x36);
+    IO_outb(TIMER0_CTL, (uint8_t)divisor & 0xFF);
+    IO_outb(TIMER0_CTL, (uint8_t)(divisor >> 8) & 0xFF);
 
     log(INFO, "Initialized PIT with frequency: %d Hz", frequency);
 }

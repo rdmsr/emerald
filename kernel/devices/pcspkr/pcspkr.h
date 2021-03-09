@@ -27,9 +27,8 @@ SOFTWARE.
 #include <stdint.h>
 
 void PCSpkr_init();
-void PCSpkr_set_c2(uint32_t hz);
-void PCSpkr_play(uint32_t frequency);
-void PCSpkr_stop();
+void PCSpkr_tone_on(uint32_t frequency);
+void PCSpkr_tone_off();
 void PCSpkr_sleep(uint16_t delay);
 void PCSpkr_beep(uint16_t mstime);
 #endif

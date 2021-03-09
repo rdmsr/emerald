@@ -27,6 +27,13 @@
 #define PIT_H
 #include <stdint.h>
 
+#define TIMER0_CTL 0x40
+/* Reserved for PCSpkr */
+#define TIMER2_CTL 0x42
+#define PIT_CTL 0x43
+
+#define BASE_FREQ 1193182
+
 void PIT_init(uint32_t frequency);
 uint64_t PIT_get_ticks();
 
