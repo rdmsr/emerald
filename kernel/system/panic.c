@@ -27,7 +27,7 @@ void __panic(char *file, const char function[20], int line, char *message)
 {
     static Color bg_color = {0, 64, 73};
 
-    VBE_clear_screen(0,bg_color);
+    VBE_clear_screen(0, bg_color);
 
     __asm__("cli");
 
