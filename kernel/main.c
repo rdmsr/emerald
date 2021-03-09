@@ -66,7 +66,7 @@ void kmain(struct stivale2_struct *info)
     info = (void *)info + MEM_OFFSET;
 
     PCI_init();
-/*    BootInfo boot_info = Boot_get_info(info); */
+    /*    BootInfo boot_info = Boot_get_info(info); */
 
     DateTime date = RTC_get_date_time();
 
@@ -76,7 +76,7 @@ void kmain(struct stivale2_struct *info)
 
     srand(RTC_get_seconds());
 
-   /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
+    /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
 
     VMM_init();*/
 

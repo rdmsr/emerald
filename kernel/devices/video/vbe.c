@@ -52,9 +52,9 @@ void VBE_draw_pixel(int x, int y, uint32_t color)
     fb[fb_i] = color;
 }
 
-struct stivale2_struct_tag_framebuffer* VBE_get_fb_info()
+struct stivale2_struct_tag_framebuffer *VBE_get_fb_info()
 {
-  return fb_info;
+    return fb_info;
 }
 void VBE_clear_screen(int info, Color color)
 {
@@ -101,7 +101,7 @@ void VBE_init(struct stivale2_struct *info)
 
         tag = (struct stivale2_tag *)tag->next;
     }
-    
+
     log(INFO, "Framebuffer info:");
     log(INFO, "\t Resolution: %dx%d", fb_info->framebuffer_width, fb_info->framebuffer_height);
     log(INFO, "\t Pitch: %d", fb_info->framebuffer_pitch);

@@ -117,7 +117,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
         if (entry.type == STIVALE2_MMAP_USABLE && entry.length > bitmap_size)
         {
             bitmap = (uint8_t *)entry.base + MEM_OFFSET;
-            log(INFO, "Found place for the bitmap at %x",bitmap);
+            log(INFO, "Found place for the bitmap at %x", bitmap);
         }
     }
 

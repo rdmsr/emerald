@@ -58,7 +58,7 @@ uint32_t IO_inl(uint16_t port)
 
 void IO_outw(unsigned short port, unsigned short value)
 {
-   __asm__ volatile("outw %%ax,%%dx"
-                :
-                : "dN"(port), "a"(value));
+    __asm__ volatile("outw %%ax,%%dx"
+                     :
+                     : "dN"(port), "a"(value));
 }

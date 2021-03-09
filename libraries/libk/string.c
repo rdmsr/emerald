@@ -103,5 +103,4 @@ void printf(char *format, ...)
     }
 
     va_end(arg);
-
 }
