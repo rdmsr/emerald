@@ -29,6 +29,16 @@
 #include <libk/logging.h>
 PCIDevice *pci_devices;
 
+uint32_t PCI_raw_read(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg)
+{
+	IO_outl(0xCF8,	(1 << 31)
+			| ((uint32_t)bus << 16)
+			| (((uint32_t)device & 31) << 11)
+			| (((uint32_t)function & 7) << 8)
+			| (reg & 0xFC));
+	return IO_inl(0xCFC);
+}
+
 uint32_t PCI_read_dword(PCIDevice *device, uint8_t reg)
 {
     uint32_t bus32 = (uint32_t)device->bus;
@@ -44,33 +54,32 @@ uint32_t PCI_read_dword(PCIDevice *device, uint8_t reg)
 
 /* Get stuff from device */
 
-uint16_t get_vendor(PCIDevice *device)
+uint16_t get_vendor(uint8_t bus, uint8_t device, uint8_t function)
 {
-    return (uint16_t)(PCI_read_dword(device, 0));
+    return (uint16_t)(PCI_raw_read(bus, device, function, 0));
 }
 
-uint16_t get_device_id(PCIDevice *device)
+uint16_t get_device_id(uint8_t bus, uint8_t device, uint8_t function)
 {
-    return (uint16_t)(((uint32_t)PCI_read_dword(device, 0)) >> 16);
+    return (uint16_t)(((uint32_t)PCI_raw_read(bus, device, function, 0)) >> 16);
 }
 
-uint8_t get_class(PCIDevice *device)
+uint8_t get_class(uint8_t bus, uint8_t device, uint8_t function)
 {
-    uint8_t class = (uint8_t)(PCI_read_dword(device, 0x8) >> 24);
+    uint8_t class = (uint8_t)(PCI_raw_read(bus, device, function, 0x8) >> 24);
     return class;
 }
 
-uint8_t get_subclass(PCIDevice *device)
+uint8_t get_subclass(uint8_t bus, uint8_t device, uint8_t function)
 {
-    uint8_t subclass = (uint8_t)(PCI_read_dword(device, 0x8) >> 16);
+    uint8_t subclass = (uint8_t)(PCI_raw_read(bus, device, function, 0x8) >> 16);
 
     return subclass;
 }
 
-uint8_t get_header_type(PCIDevice *device)
+uint8_t get_header_type(uint8_t bus, uint8_t device, uint8_t function)
 {
-    uint8_t header_type = (uint8_t)(PCI_read_dword(device, 0xC) >> 16);
-    return header_type & ~(1 << 7);
+    return (uint8_t)(PCI_raw_read(bus, device, function, 0xC) >> 16);
 }
 
 uint8_t get_secondary_bus(PCIDevice *device)
@@ -80,11 +89,11 @@ uint8_t get_secondary_bus(PCIDevice *device)
 
 uint8_t is_bridge(PCIDevice *device)
 {
-    if (get_header_type(device) != 0x1)
+    if ((get_header_type(device->bus, device->device, device->function) & ~(1 << 7)) != 0x1)
         return 0;
-    if (get_class(device) != 0x6)
+    if (get_class(device->bus, device->device, device->function) != 0x6)
         return 0;
-    if (get_subclass(device) != 0x4)
+    if (get_subclass(device->bus, device->device, device->function) != 0x4)
         return 0;
 
     return 1;
@@ -92,7 +101,17 @@ uint8_t is_bridge(PCIDevice *device)
 
 uint64_t current_count = 0;
 
-/* FIXME: implement multifunction parsing */
+void PCI_scan_device(PCIDevice *dev, uint8_t bus, uint8_t device, uint8_t function)
+{
+	dev->class = get_class(bus, device, function);
+	dev->subclass = get_subclass(bus, device, function);
+	dev->vendor_id = get_vendor(bus, device, function);
+	dev->device_id = get_device_id(bus, device, function);
+	dev->bus = bus;
+	dev->device = device;
+	dev->function = function;
+}
+
 void PCI_scan_bus(uint8_t bus)
 {
     log(INFO, "Checking bus %x", (uint32_t)bus);
@@ -101,16 +120,21 @@ void PCI_scan_bus(uint8_t bus)
 
     for (device = 0; device < 32; device++)
     {
-        pci_devices[device].bus = bus;
-        pci_devices[device].device = device;
-        pci_devices[device].function = 0;
-
-        if (get_vendor(&pci_devices[device]) != 0xFFFF)
+        if (get_vendor(bus, device, 0) != 0xFFFF)
         {
             current_count++;
+	    /* Multifunction devices */
+	    if (get_header_type(bus, device, 0) & (1 << 7))
+	    {
+		    uint8_t func;
+		    for (func = 1; func < 8; func++)
+			    if (get_vendor(bus, device, func) != 0xFFFF)
+				    PCI_scan_device(&pci_devices[device], bus, device, func);
+	    } else
+		    PCI_scan_device(&pci_devices[device], bus, device, 0);
+
             if (is_bridge(&pci_devices[device])) /* If it's a bridge */
             {
-
                 PCI_scan_bus(get_secondary_bus(&pci_devices[device]));
             }
         }
@@ -127,14 +151,17 @@ void PCI_init()
 
     for (device = 0; device < current_count; device++)
     {
-        pci_devices[device].class = get_class(&pci_devices[device]);
-        pci_devices[device].subclass = get_subclass(&pci_devices[device]);
-        pci_devices[device].vendor_id = get_vendor(&pci_devices[device]);
-        pci_devices[device].device_id = get_device_id(&pci_devices[device]);
+        log(INFO, "Found device with vendor %x, device id: %x, function: %d", 
+		pci_devices[device].vendor_id,
+		pci_devices[device].device_id,
+		pci_devices[device].function);
 
-        log(INFO, "Found device with vendor %x, device id: %x", pci_devices[device].vendor_id, pci_devices[device].device_id);
-
-        VBE_putf("[PCI] 00:%x.%d %s: %s %s", device, pci_devices[device].function, PCI_id_to_string(&pci_devices[device]), PCI_vendor_to_string(&pci_devices[device]), PCI_device_id_to_string(&pci_devices[device]));
+        VBE_putf("[PCI] 00:%x.%d %s: %s %s",
+		device,
+		pci_devices[device].function,
+		PCI_id_to_string(&pci_devices[device]),
+		PCI_vendor_to_string(&pci_devices[device]),
+		PCI_device_id_to_string(&pci_devices[device]));
     }
 }
 
