@@ -103,10 +103,10 @@ static size_t allocate(size_t length, Bitmap *self)
         return 0;
     }
 
-    if (self->set_used(block, length) == 0)
+    if (self->set_used(block, length, self) == 0)
     {
         log(WARNING, "Can't set blocks as used");
-	return 0;
+        return 0;
     }
 
     return block;
@@ -130,6 +130,5 @@ Bitmap _Bitmap(uint8_t *data, size_t size)
     new_bitmap.find_free = find_free;
     new_bitmap.allocate = allocate;
 
-    
     return new_bitmap;
 }
