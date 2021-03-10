@@ -41,11 +41,23 @@ uint32_t PCI_read_dword(PCIDevice *device, uint8_t reg)
     uint32_t device32 = (uint32_t)device->device;
     uint32_t function32 = (uint32_t)device->function;
 
-    uint32_t target = 0x80000000 | (bus32 << 16) | ((device32) << 11) | ((function32) << 8) | (reg & 0xFC);
+    uint32_t target = 0x80000000 | (bus32 << 16) | (device32 << 11) | ((function32) << 8) | (reg & 0xFC);
 
     IO_outl(0xcf8, target);
 
     return IO_inl(0xCFC);
+}
+
+void PCI_write_dword(PCIDevice *device, uint8_t reg, uint32_t data)
+{
+    uint32_t bus32 = (uint32_t)device->bus;
+    uint32_t device32 = (uint32_t)device->device & 31;
+    uint32_t function32 = (uint32_t)device->function & 7;
+
+    uint32_t target = (1 << 31) | (bus32 << 16) | (device32 << 11) | (function32 << 8) | (reg & 0xFC);
+
+    IO_outl(0xCF8, target);
+    IO_outl(0xCFC, data);
 }
 
 /* Get stuff from device */
@@ -85,7 +97,7 @@ uint8_t get_secondary_bus(PCIDevice *device)
 
 uint8_t is_bridge(PCIDevice *device)
 {
-    if ((get_header_type(device->bus, device->device, device->function) & ~(1 << 7)) != 0x1)
+    if ((get_header_type(device->bus, device->device, device->function) & ~(0x80)) != 0x1)
         return 0;
     if (get_class(device->bus, device->device, device->function) != 0x6)
         return 0;
@@ -93,6 +105,23 @@ uint8_t is_bridge(PCIDevice *device)
         return 0;
 
     return 1;
+}
+
+/* Getting BAR */
+uint8_t PCI_get_bar(PCIDevice *device, PCIBar *bar, size_t num)
+{
+    if ((get_header_type(device->bus, device->device, device->function) & ~(0x80)) != 0)
+        return 1;
+
+    /* FIXME: Add IO/mem and 64-bit bars detection */
+    size_t offset = 0x10 + num * 4;
+
+    bar->base = PCI_read_dword(device, offset);
+
+    PCI_write_dword(device, offset, 0xFFFFFFFF);
+    bar->size = ~(PCI_read_dword(device, offset)) + 1;
+    PCI_write_dword(device, offset, bar->base);
+    return 0;
 }
 
 uint64_t current_count = 0;
@@ -113,11 +142,11 @@ void PCI_scan_device(PCIDevice *dev, uint8_t bus, uint8_t device, uint8_t functi
 void PCI_scan_fn(PCIDevice *dev, uint8_t bus, uint8_t device)
 {
     uint8_t function = 0;
-    if (get_header_type(bus, device, 0) & (1 << 7))
+    if (get_header_type(bus, device, 0) & 0x80)
     {
         for (function = 1; function < 8; function++)
             if (get_vendor(bus, device, function) != 0xFFFF)
-		/* FIXME: Implement vector arrays and stuff for multiple functions */
+                /* FIXME: Implement vector arrays and stuff for multiple functions */
                 PCI_scan_device(dev, bus, device, function);
     }
     else
