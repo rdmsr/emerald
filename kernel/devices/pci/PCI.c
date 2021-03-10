@@ -99,13 +99,29 @@ uint64_t current_count = 0;
 
 void PCI_scan_device(PCIDevice *dev, uint8_t bus, uint8_t device, uint8_t function)
 {
-    dev->class = get_class(bus, device, function);
-    dev->subclass = get_subclass(bus, device, function);
-    dev->vendor_id = get_vendor(bus, device, function);
-    dev->device_id = get_device_id(bus, device, function);
-    dev->bus = bus;
-    dev->device = device;
-    dev->function = function;
+    PCIDevice ndev = {
+        .bus = bus,
+        .device = device,
+        .function = function,
+        .class = get_class(bus, device, function),
+        .subclass = get_subclass(bus, device, function),
+        .vendor_id = get_vendor(bus, device, function),
+        .device_id = get_device_id(bus, device, function)};
+    *dev = ndev;
+}
+
+void PCI_scan_fn(PCIDevice *dev, uint8_t bus, uint8_t device)
+{
+    uint8_t function = 0;
+    if (get_header_type(bus, device, 0) & (1 << 7))
+    {
+        for (function = 1; function < 8; function++)
+            if (get_vendor(bus, device, function) != 0xFFFF)
+		/* FIXME: Implement vector arrays and stuff for multiple functions */
+                PCI_scan_device(dev, bus, device, function);
+    }
+    else
+        PCI_scan_device(dev, bus, device, function);
 }
 
 void PCI_scan_bus(uint8_t bus)
@@ -120,15 +136,7 @@ void PCI_scan_bus(uint8_t bus)
         {
             current_count++;
             /* Multifunction devices */
-            if (get_header_type(bus, device, 0) & (1 << 7))
-            {
-                uint8_t func;
-                for (func = 1; func < 8; func++)
-                    if (get_vendor(bus, device, func) != 0xFFFF)
-                        PCI_scan_device(&pci_devices[device], bus, device, func);
-            }
-            else
-                PCI_scan_device(&pci_devices[device], bus, device, 0);
+            PCI_scan_fn(&pci_devices[device], bus, device);
 
             if (is_bridge(&pci_devices[device])) /* If it's a bridge */
             {
