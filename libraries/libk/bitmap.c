@@ -112,6 +112,30 @@ static size_t allocate(size_t length, Bitmap *self)
     return block;
 }
 
+static size_t set_free(size_t index, size_t length, Bitmap *self)
+{
+    size_t i;
+    for (i = 0; i < length; i++)
+    {
+        self->set(index + i, false, self);
+    }
+
+    self->last_free = index;
+    return 1;
+}
+
+static size_t set_used(size_t index, size_t length, Bitmap *self)
+{
+    size_t i;
+    for (i = 0; i < length; i++)
+    {
+        self->set(index + i, true, self);
+    }
+
+    self->last_free = index;
+    return 1;
+}
+
 Bitmap _Bitmap(uint8_t *data, size_t size)
 {
     module("Bitmap");
@@ -129,6 +153,8 @@ Bitmap _Bitmap(uint8_t *data, size_t size)
     new_bitmap.get = get;
     new_bitmap.find_free = find_free;
     new_bitmap.allocate = allocate;
+    new_bitmap.set_free = set_free;
+    new_bitmap.set_used = set_used;
 
     return new_bitmap;
 }
