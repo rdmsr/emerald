@@ -33,6 +33,11 @@ $ sudo pacman -S nasm llvm make meson ninja qemu
 ```
 
 ```sh
+# on void-based distributions
+$ sudo xbps-install nasm llvm make meson ninja qemu
+```
+
+```sh
 # on gentoo
 $ sudo emerge --ask llvm nasm make meson ninja qemu
 ```
