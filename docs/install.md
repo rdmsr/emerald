@@ -1,4 +1,4 @@
-# Build guide
+# Installation
 
 ## Table of contents
 - Building emeraldOS
