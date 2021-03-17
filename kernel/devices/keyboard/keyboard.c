@@ -25,7 +25,7 @@
  */
 #include "keyboard.h"
 #include <devices/video/vbe.h>
-#include <libgraphic/framebuffer.h>
+#include <libk/graphics/framebuffer.h>
 #include <libk/io.h>
 #include <libk/logging.h>
 unsigned char keyboard_map[128] = {

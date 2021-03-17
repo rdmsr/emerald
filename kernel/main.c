@@ -33,7 +33,7 @@
 #include <devices/pcspkr/pcspkr.h>
 #include <devices/serial/serial.h>
 #include <devices/video/vbe.h>
-#include <libgraphic/framebuffer.h>
+#include <libk/graphics/framebuffer.h>
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <libk/random.h>

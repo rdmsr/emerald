@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-#include <libgraphic/framebuffer.h>
+#include <libk/graphics/framebuffer.h>
 #include <libk/logging.h>
 
 /* OOP C because I wanted to try it */
