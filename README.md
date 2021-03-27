@@ -23,6 +23,7 @@ Contributions, issues and feature requests are welcome!
 
 ## :heavy_check_mark: TODO
 
+- [ ] Change to a proper build system (remove make)
 - [ ] Fix VMM
 - [ ] Multitasking
 - [ ] EXT2 filesystem
