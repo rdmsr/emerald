@@ -3,7 +3,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2020 Abb1x
+ * Copyright (c) 2021 Abb1x
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,38 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef ASCII_H
-#define ASCII_H
-#include <devices/rtc/rtc.h>
-#include <devices/serial/serial.h>
-#include <devices/video/vbe.h>
+#include "time.h"
 
-char ascii_art[] = "\e[0;32m  _____                         _     _ \n"
-                   " |  ___|                       | |   | |\n"
-                   " | |__ _ __ ___   ___ _ __ __ _| | __| |\n"
-                   " |  __| '_ ` _ \\ / _ \\ '__/ _` | |/ _` |\n"
-                   " | |__| | | | | |  __/ | | (_| | | (_| |\n"
-                   " \\____/_| |_| |_|\\___|_|  \\__,_|_|\\__,_|\n\e[0m"
-                   " ─────────────────────────────────────────────────\n"
-                   "Copyright (c) 2020-2021 EmeraldOS contributors\n";
-
-void set_ascii()
+void sleep(uint16_t delay)
 {
-
-    Serial_write_string(ascii_art);
-
-    if (RTC_get_hours() < 12)
+    uint64_t current_ticks = PIT_get_ticks();
+    while (1)
     {
-        Serial_write_string("Good Morning!\n");
-    }
-    if (RTC_get_hours() >= 12 && RTC_get_hours() < 18)
-    {
-        Serial_write_string("Good Afternoon!\n");
-    }
-    if (RTC_get_hours() >= 18)
-    {
-        Serial_write_string("Good Evening!\n");
+        if (current_ticks + delay < PIT_get_ticks())
+            break;
     }
 }
-
-#endif
