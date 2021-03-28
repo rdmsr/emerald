@@ -40,10 +40,15 @@ void PCSpkr_init()
 void PCSpkr_set_c2(uint32_t hz)
 {
     __asm__ volatile("cli");
+
     uint32_t div = 1193182 / hz;
+
     IO_outb(0x42, 0xB6);
+
     IO_outb(0x40, div & 0xFF);
+
     IO_outb(0x40, div >> 8);
+    
     __asm__ volatile("sti");
 }
 

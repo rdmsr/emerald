@@ -45,6 +45,7 @@
 #include <stdint.h>
 #include <system/interrupts/IDT.h>
 #include <system/interrupts/PIT.h>
+
 Color white = {255, 255, 255}, green = {0, 148, 99}, gray = {94, 94, 94};
 
 void kmain(struct stivale2_struct *info)
@@ -67,7 +68,8 @@ void kmain(struct stivale2_struct *info)
     info = (void *)info + MEM_OFFSET;
 
     PCI_init();
-    /* BootInfo boot_info = Boot_get_info(info); */
+
+    BootInfo boot_info = Boot_get_info(info);
 
     DateTime date = RTC_get_date_time();
 
@@ -77,9 +79,9 @@ void kmain(struct stivale2_struct *info)
 
     srand(RTC_get_seconds());
 
-    /* PMM_init((void*)boot_info.memory_map, boot_info.memory_map->entries);
+    PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries, boot_info);
 
-    VMM_init();*/
+    /* VMM_init();*/
 
     PCSpkr_init();
     Keyboard_init();
@@ -88,11 +90,14 @@ void kmain(struct stivale2_struct *info)
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
 
+    
     /* Framebuffer functions
+
     Framebuffer fb = _Framebuffer();
     fb.init(info, &fb);
     fb.clear_screen(&fb);
     fb.puts("hello", &fb);
+
     */
 
     /* Random circles: */
@@ -116,16 +121,16 @@ void kmain(struct stivale2_struct *info)
 
     set_ascii();
 
-    Chrono *chrono = NULL;
+    Chrono chrono;
     uint8_t beeps = 0;
     while (beeps < 3)
     {
 
-        Chrono_start(chrono);
-	
+        Chrono_start(&chrono);
+
         PCSpkr_beep(55);
-	
-        log(DEBUG, "%d",Chrono_end(chrono));
+
+        log(DEBUG, "%dms have passed since the chronometer was started", Chrono_end(&chrono));
         sleep(80);
         beeps++;
     }

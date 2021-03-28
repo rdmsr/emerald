@@ -34,6 +34,7 @@ uintptr_t convert_to_mb(uintptr_t bytes)
     uintptr_t megabytes = bytes / 1024 / 1024;
     return megabytes;
 }
+
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)
 {
     struct stivale2_tag *current_tag = (void *)stivale2_struct->tags + MEM_OFFSET;
@@ -59,8 +60,11 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
     struct stivale2_struct_tag_framebuffer *fb_info = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+
     BootInfo bootinfo;
+
     size_t usable_mem = 0;
+
     uint64_t total_mem = 0;
 
     bootinfo.memory_entries = memory_map->entries;
@@ -70,13 +74,25 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
     for (i = 0; i < memory_map->entries; i++)
     {
         struct stivale2_mmap_entry *entry = &memory_map->memmap[i];
+
         total_mem += entry->length;
+
         if (entry->type == STIVALE2_MMAP_USABLE)
         {
             usable_mem += entry->length;
-            bootinfo.memory_top = entry->base + entry->length;
+        }
+	
+        if (entry->type != STIVALE2_MMAP_USABLE && entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE && entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
+            continue;
+
+        bootinfo.memory_top = entry->base + entry->length;
+
+        if (bootinfo.memory_top > bootinfo.memory_highest_page)
+        {
+            bootinfo.memory_highest_page = bootinfo.memory_top;
         }
     }
+
     bootinfo.memory_usable = usable_mem;
     bootinfo.total_memory = total_mem;
 

@@ -7,7 +7,7 @@ static void set(size_t index, bool value, Bitmap *self)
 {
     if (index > self->size)
     {
-        log(ERROR, "Trying to set bit outside of the bitmap!");
+        log(ERROR, "Trying to set bit outside of the bitmap! %x > %x", index, self->size);
 
         panic("Trying to set bit outside of the bitmap!");
 
@@ -82,7 +82,7 @@ static size_t find_free(size_t length, Bitmap *self)
 
     if (self->last_free == 0)
     {
-        panic("No free entry found for the bitmap");
+        panic("No free entry found for memory allocation");
         return 0;
     }
     else
@@ -132,7 +132,6 @@ static size_t set_used(size_t index, size_t length, Bitmap *self)
         self->set(index + i, true, self);
     }
 
-    self->last_free = index;
     return 1;
 }
 
@@ -140,9 +139,9 @@ Bitmap _Bitmap(uint8_t *data, size_t size)
 {
     module("Bitmap");
 
-    log(INFO, "Creating bitmap %x which is %d bytes", (uint64_t)data, size / 8);
+    log(INFO, "Creating bitmap at address %x which is %d bytes big", data, size / 8);
 
-    memset(data, 0xff, size / 8);
+    memset(data, 0xff, size);
 
     Bitmap new_bitmap;
 
