@@ -117,6 +117,8 @@ static size_t set_free(size_t index, size_t length, Bitmap *self)
     size_t i;
     for (i = 0; i < length; i++)
     {
+        log(INFO, "%d", index + i);
+
         self->set(index + i, false, self);
     }
 
@@ -154,6 +156,8 @@ Bitmap _Bitmap(uint8_t *data, size_t size)
     new_bitmap.allocate = allocate;
     new_bitmap.set_free = set_free;
     new_bitmap.set_used = set_used;
+
+    log(INFO, "Bitmap created!");
 
     return new_bitmap;
 }

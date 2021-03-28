@@ -88,26 +88,26 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries, Boo
         }
     }
 
+    /* Populating free entries */
     size_t j;
 
     for (j = 0; j < memory_entries; j++)
     {
 
         if (memory_map[j].type != STIVALE2_MMAP_USABLE)
-            bitmap.set_used(memory_map[j].base / PAGE_SIZE, memory_map[j].length / PAGE_SIZE, &bitmap);
+            continue;
 
-        else
-        {
-
-            bitmap.set_free(memory_map[j].base / PAGE_SIZE, memory_map[j].length / PAGE_SIZE, &bitmap);
-        }
+	log(INFO,"%x",memory_map[j].length / PAGE_SIZE);
+	
+        bitmap.set_free(memory_map[j].base / PAGE_SIZE, memory_map[j].length / PAGE_SIZE, &bitmap);
+	
+	log(INFO,"%d",j);
     }
-
+    
     module("PMM");
 
     log(INFO, "initialized!");
 }
-
 void *PMM_allocate(uint64_t count)
 {
 
