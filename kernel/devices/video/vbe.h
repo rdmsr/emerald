@@ -60,5 +60,6 @@ void VBE_cputf(Color color, char *format, ...);
 void VBE_display_circle(int xc, int yc, int radius);
 void VBE_draw_line(int x0, int y0, int x1, int y1);
 void VBE_draw_shape(int shape, int width, int height, int x, int y);
+
 struct stivale2_struct_tag_framebuffer* VBE_get_fb_info();
 #endif

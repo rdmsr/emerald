@@ -35,7 +35,6 @@ typedef struct framebuffer_struct
 {
 
     /* Functions */
-    void (*init)(struct stivale2_struct *, struct framebuffer_struct *);
     void (*clear_screen)(struct framebuffer_struct *);
     void (*scroll)();
     void (*puts)(char *, struct framebuffer_struct *);
@@ -53,7 +52,7 @@ typedef struct framebuffer_struct
     PSF font;
 } Framebuffer;
 
-Framebuffer _Framebuffer();
+Framebuffer _Framebuffer(struct stivale2_struct *info);
 Framebuffer Framebuffer_get_current();
 
 #endif

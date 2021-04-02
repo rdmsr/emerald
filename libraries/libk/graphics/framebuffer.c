@@ -46,24 +46,6 @@ struct stivale2_struct_tag_framebuffer *Framebuffer_get_info();
 static Framebuffer current_framebuffer;
 static Color bg_color = {0, 64, 73}, fg_color = {238, 232, 213};
 
-static void init(struct stivale2_struct *info, Framebuffer *self)
-{
-    /* Setting the logging module */
-    module("Framebuffer");
-
-    /* Getting info */
-    struct stivale2_struct_tag_framebuffer *fb_info = Framebuffer_get_info(info);
-
-    self->width = fb_info->framebuffer_width;
-    self->height = fb_info->framebuffer_height;
-    self->bpp = fb_info->framebuffer_bpp;
-    self->pitch = fb_info->framebuffer_pitch;
-    self->address = fb_info->framebuffer_addr;
-
-    /* Initializing the VBE driver */
-    VBE_init(info);
-}
-
 static void clear_screen(Framebuffer *self)
 {
     VBE_clear_screen(0, self->bg_color);
@@ -137,12 +119,26 @@ Framebuffer Framebuffer_get_current()
     return current_framebuffer;
 }
 
-Framebuffer _Framebuffer()
+Framebuffer _Framebuffer(struct stivale2_struct *info)
 {
     Framebuffer new;
 
+    /* Setting the logging module */
+    module("Framebuffer");
+
+    /* Getting info */
+    struct stivale2_struct_tag_framebuffer *fb_info = Framebuffer_get_info(info);
+
+    new.width = fb_info->framebuffer_width;
+    new.height = fb_info->framebuffer_height;
+    new.bpp = fb_info->framebuffer_bpp;
+    new.pitch = fb_info->framebuffer_pitch;
+    new.address = fb_info->framebuffer_addr;
+
+    /* Initializing the VBE driver */
+    VBE_init(info);
+
     /* Functions */
-    new.init = init;
     new.clear_screen = clear_screen;
     new.puts = puts;
     new.putchar = putchar;
