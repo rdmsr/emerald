@@ -76,10 +76,11 @@ void kmain(struct stivale2_struct *info)
     VBE_putf("Time Info:");
     VBE_putf("\tDate: %x/%x/20%x", date.month, date.day, date.year);
     VBE_putf("\tTime: %d:%d:%d\n", date.time.hour, date.time.minute, date.time.second);
-
+    
     srand(RTC_get_seconds());
 
     PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries, boot_info);
+
 
     /* VMM_init();*/
 
@@ -110,6 +111,7 @@ void kmain(struct stivale2_struct *info)
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+
     */
 
     /*VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);*/

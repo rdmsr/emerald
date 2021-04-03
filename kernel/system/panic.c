@@ -10,7 +10,7 @@ char *comments_lol[] =
         "oops I did a woopsie doopsie OwO.",
         "Random error just to annoy you.",
         "Keyboard not found, press F to pay respects.",
-        "Greenpeace free'd the mallocs",
+        "Greenpeace freed the mallocs",
         "Typo in the code.",
         "Excuse Me Sir, do you have a moment to talk about our Lord and Saviour?",
         "Never gonna give you up",

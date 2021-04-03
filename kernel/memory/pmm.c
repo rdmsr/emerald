@@ -99,7 +99,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries, Boo
 
 	log(INFO,"%x",memory_map[j].length / PAGE_SIZE);
 	
-        bitmap.set_free(memory_map[j].base / PAGE_SIZE, memory_entries / PAGE_SIZE, &bitmap);
+        bitmap.set_free(memory_map[j].base / PAGE_SIZE, memory_map[j].length / PAGE_SIZE, &bitmap);
 	
 	log(INFO,"%d",j);
     }
