@@ -35,6 +35,7 @@ void *malloc(size_t size)
         return NULL;
 
     ptr += MEM_OFFSET;
+
     heap_data *metadata = ptr;
     ptr += PAGE_SIZE;
 

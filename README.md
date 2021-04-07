@@ -22,7 +22,8 @@ Contributions, issues and feature requests are welcome!
 - Issue (in the github "issues" tab) fixing
 
 ## :heavy_check_mark: TODO
-
+- [ ] Remove useless stuff
+- [ ] Refactor progressively
 - [ ] Change to a proper build system (remove make)
 - [ ] Fix VMM
 - [ ] Multitasking

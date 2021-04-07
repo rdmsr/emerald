@@ -106,6 +106,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries, Boo
 
     log(INFO, "initialized!");
 }
+
 void *PMM_allocate(uint64_t count)
 {
 
@@ -116,16 +117,16 @@ void *PMM_allocate(uint64_t count)
 
 void *PMM_allocate_zero(uint64_t count)
 {
-    void *d = PMM_allocate(count);
+    char *ret = (char *)PMM_allocate(count);
 
-    uint64_t *pages = (uint64_t *)(MEM_OFFSET + (uint64_t)d);
+    if (!ret)
+        return NULL;
 
-    uint64_t i;
+    uint64_t *ptr = (uint64_t *)(ret + MEM_OFFSET);
 
-    for (i = 0; i < (count * PAGE_SIZE) / sizeof(uint64_t); i++)
-    {
-        pages[i] = 0;
-    }
+    size_t i;
+    for (i = 0; i < count * (PAGE_SIZE / sizeof(uint64_t)); i++)
+        ptr[i] = 0;
 
-    return d;
+    return ret;
 }

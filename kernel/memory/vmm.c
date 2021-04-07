@@ -112,5 +112,6 @@ void VMM_init(void)
     log(INFO, "Mapped kernel!");
 
     log(INFO,"Switching pagemap...");
+
     VMM_switch_pagemap(kernel_map);
 }
