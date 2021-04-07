@@ -111,13 +111,6 @@ void *PMM_allocate(uint64_t count)
 
     uint64_t res = bitmap.allocate(count, &bitmap);
 
-    if (count > 1)
-    {
-        log(INFO, "Allocated %d pages", count);
-    }
-    else
-        log(INFO, "Allocated %d page", count);
-
     return (void *)(res * PAGE_SIZE);
 }
 

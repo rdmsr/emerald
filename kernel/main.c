@@ -82,7 +82,7 @@ void kmain(struct stivale2_struct *info)
     PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries, boot_info);
 
 
-    /* VMM_init();*/
+    VMM_init();
 
     PCSpkr_init();
     Keyboard_init();

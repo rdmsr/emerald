@@ -96,13 +96,21 @@ void VMM_init(void)
     module("VMM");
     kernel_map = VMM_new_pagemap();
 
-    uintptr_t p;
-    for (p = 0; p < 0x100000000; p += PAGE_SIZE)
+    uint64_t i;
+    for (i = 0; i < 0x80000000; i += PAGE_SIZE)
     {
-        VMM_map_page(kernel_map, p, p + MEM_OFFSET, 0x03);
+        VMM_map_page(kernel_map, i, MEM_OFFSET + i, 0x07);
     }
 
+    uint64_t p;
+    for (p = 0; p < 0x100000000; p += 4096)
+    {
+        VMM_map_page(kernel_map, p, p, 0x03);
+        VMM_map_page(kernel_map, p, MEM_OFFSET + p, 0x07);
+    }
+    
     log(INFO, "Mapped kernel!");
 
+    log(INFO,"Switching pagemap...");
     VMM_switch_pagemap(kernel_map);
 }
