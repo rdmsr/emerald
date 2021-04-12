@@ -4,7 +4,6 @@
 - Building emeraldOS
     -   [Dependencies](#dependencies)
     -   [Getting the source code](#getting-the-source-code)
-	-   [Configuring Meson](#configuring)
     -   [Building](#building)
     -   [Running in a virtual machine](#running-in-a-virtual-machine)
 
@@ -18,28 +17,26 @@ Building emeraldOS requires:
 - nasm (Assembler)
 - LLVM (toolchain)
 - GNU/Make (build system)
-- Meson (build system)
-- Ninja (build system used with meson)
 - QEMU or any other virtualization software
 
 ```sh
 # On debian-based distributions
-$ sudo apt install nasm llvm make meson ninja-build qemu-system-x86 
+$ sudo apt install nasm llvm make qemu-system-x86 
 ```
 
 ```sh
 # on arch-based distributions
-$ sudo pacman -S nasm llvm make meson ninja qemu
+$ sudo pacman -S nasm llvm make qemu
 ```
 
 ```sh
 # on void-based distributions
-$ sudo xbps-install nasm llvm make meson ninja qemu
+$ sudo xbps-install nasm llvm make qemu
 ```
 
 ```sh
 # on gentoo
-$ sudo emerge --ask llvm nasm make meson ninja qemu
+$ sudo emerge --ask llvm nasm make qemu
 ```
 
 ## Getting the source code
@@ -55,14 +52,6 @@ $ git clone https://github.com/Abb1x/emerald.git --recursive
 $ git clone https://gitlab.com/Abb1x/emerald.git --recursive
 ```
 
-## Configuring
-First, you need to configure meson to work with your system. Run the following commands:
-
-```sh
-$ cd emerald/scripts/build
-$ ./configure.sh
-$ cd ../..
-```
 ## Building 
 
 Building emerald is pretty simple, just run this command:
@@ -71,7 +60,6 @@ Building emerald is pretty simple, just run this command:
 $ make
 ```
 
-Make will use ninja to build the system.
 ## Running in a virtual machine
 
 Emerald has only been tested on the following virtualization software:

@@ -25,7 +25,6 @@
  */
 #include "keyboard.h"
 #include <devices/video/vbe.h>
-#include <libk/graphics/framebuffer.h>
 #include <libk/io.h>
 #include <libk/logging.h>
 unsigned char keyboard_map[128] = {
@@ -65,8 +64,6 @@ unsigned char keyboard_map[128] = {
     0,
     0,
     0};
-
-unsigned int current_location = 0;
 
 void Keyboard_init(void)
 {

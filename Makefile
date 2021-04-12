@@ -6,32 +6,29 @@ KERNEL_HDD = build/disk.hdd
 KERNEL_ELF = kernel.elf
 NASMFLAGS := -felf64
 
+ARCH = x86_64
 
 
 
-CHARDFLAGS :=	 -pipe                   \
-	-target x86_64-unknown-none-elf  \
-	-nostdlib                        \
-	-Werror                          \
-	-Wall				 \
-	-Wextra                          \
-	-fno-pic                         \
-	-mno-sse                         \
-	-mno-sse2                        \
-	-mno-mmx                         \
-	-O3                              \
-	-g                               \
-	-mno-80387                       \
-	-mno-red-zone                    \
-	-mcmodel=kernel                  \
-	-ffreestanding                   \
-	-fno-stack-protector             \
-	-Ikernel/                        \
-	-Ilibraries/	                 \
+CHARDFLAGS :=	-target ${ARCH}-unknown-none	\
+			-ggdb							\
+			-nostdlib						\
+			-O3                                                     \
+			-fno-stack-protector			\
+			-Wall							\
+			-Wextra							\
+			-ffreestanding					\
+			-ansi						\
+			-mcmodel=kernel					\
+			-Ikernel/								\
+			-Ilibraries							\
+			-fno-pic						\
+			-mno-red-zone					\
+			-mno-sse						\
+			-mno-sse2						\
 
 LDHARDFLAGS :=        \
-        -target\
-        x86_64-unknown-none-elf \
+        -target x86_64-unknown-none \
         -nostdlib                 \
 	-static                   \
 	-fno-pie                   \
@@ -42,6 +39,7 @@ LDHARDFLAGS :=        \
 .PHONY: clean
 
 .DEFAULT_GOAL = $(KERNEL_HDD)
+
 disk: $(KERNEL_HDD)
 
 run: $(KERNEL_HDD)
@@ -53,7 +51,7 @@ debug: $(KERNEL_HDD)
 
 %.o: %.c
 	@echo [ CC ] $<
-	$(CC) $(CHARDFLAGS) -c $< -o $@
+	@$(CC) $(CHARDFLAGS) -c $< -o $@
 %.o: %.asm
 	@echo [ NASM ] $<
 	@nasm $(NASMFLAGS) $< -o $@

@@ -33,7 +33,6 @@
 #include <devices/pcspkr/pcspkr.h>
 #include <devices/serial/serial.h>
 #include <devices/video/vbe.h>
-#include <libk/graphics/framebuffer.h>
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <libk/random.h>
@@ -87,6 +86,7 @@ void kmain(struct stivale2_struct *info)
     PCSpkr_init();
     Keyboard_init();
 
+
     VBE_putf("System booted in %dms", PIT_get_ticks());
     VBE_puts("\nWelcome to ", white);
     VBE_puts("EmeraldOS!\n", green);
@@ -101,13 +101,14 @@ void kmain(struct stivale2_struct *info)
 
     /* Random circles: */
 
-    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+    /*VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
 
     VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
+    */
 
     /*VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);*/
 
@@ -118,19 +119,6 @@ void kmain(struct stivale2_struct *info)
 
     set_ascii();
 
-    Chrono chrono;
-    uint8_t beeps = 0;
-    while (beeps < 3)
-    {
-
-        Chrono_start(&chrono);
-
-        PCSpkr_beep(20);
-
-        log(DEBUG, "%dms have passed since the chronometer was started", Chrono_end(&chrono));
-        sleep(80);
-        beeps++;
-    }
 
     while (1)
         ;
