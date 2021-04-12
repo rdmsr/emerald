@@ -24,7 +24,7 @@ Contributions, issues and feature requests are welcome!
 ## :heavy_check_mark: TODO
 - [ ] Remove useless stuff
 - [ ] Refactor progressively
-- [ ] Change to a proper build system (remove make)
+- [x] Change to a proper build system (remove meson)
 - [ ] Fix VMM
 - [ ] Multitasking
 - [ ] EXT2 filesystem

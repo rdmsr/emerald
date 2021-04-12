@@ -43,10 +43,12 @@ LDHARDFLAGS :=        \
 disk: $(KERNEL_HDD)
 
 run: $(KERNEL_HDD)
+	@echo [ QEMU ] $<
 	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 256 -soundhw pcspk
 
 
 debug: $(KERNEL_HDD)
+	@echo [ QEMU ] $<
 	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -d int -serial stdio -rtc base=localtime -m 256
 
 %.o: %.c
