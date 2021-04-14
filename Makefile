@@ -36,6 +36,12 @@ LDHARDFLAGS :=        \
 	-T kernel/link.ld
 
 
+ifndef ECHO
+HIT_TOTAL != ${MAKE} ${MAKECMDGOALS} --dry-run ECHO="HIT_MARK" | grep -c "HIT_MARK"
+HIT_COUNT = $(eval HIT_N != expr ${HIT_N} + 1)${HIT_N}
+ECHO = "[\033[1;32m`expr ${HIT_COUNT} '*' 100 / ${HIT_TOTAL}`%\033[1;0m]"
+endif
+
 .PHONY: clean
 
 .DEFAULT_GOAL = $(KERNEL_HDD)
@@ -52,23 +58,23 @@ debug: $(KERNEL_HDD)
 	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -d int -serial stdio -rtc base=localtime -m 256
 
 %.o: %.c
-	@echo [ CC ] $<
+	@echo -e CC $(ECHO) $<
 	@$(CC) $(CHARDFLAGS) -c $< -o $@
 %.o: %.asm
-	@echo [ NASM ] $<
+	@echo -e AS  $(ECHO) $<
 	@nasm $(NASMFLAGS) $< -o $@
 
 
 $(KERNEL_ELF): $(OBJ)
 
-	@echo [ LD ] $<
+	@echo -e LD $(ECHO) $@
 	@$(CC) $(LDHARDFLAGS) $(OBJ) -o $@
 
 limine/limine-install:
 	$(MAKE) -C thirdparty/limine/ limine-install
 
-$(KERNEL_HDD): $(KERNEL_ELF) limine/limine-install
-	@echo [ LIMINE ] $(KERNEL_ELF)
+$(KERNEL_HDD): limine/limine-install $(KERNEL_ELF)
+	@echo -e LIMINE $(KERNEL_HDD)
 	@-mkdir build
 	@rm -f $(KERNEL_HDD)
 	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD)
