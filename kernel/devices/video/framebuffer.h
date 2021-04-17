@@ -24,19 +24,42 @@
  * SOFTWARE.
  */
 
-#ifndef PCI_H
-#define PCI_H
-
-#include <devices/video/framebuffer.h>
-#include <libk/io.h>
-#include <stdint.h>
+#ifndef FRAMEBUFFER_H
+#define FRAMEBUFFER_H
+#include "font.h"
+#include "psf.h"
+#include <boot/stivale2.h>
+#include <stddef.h>
+typedef struct
+{
+    uint8_t r, g, b;
+} Color;
 
 typedef struct
 {
-    uint8_t bus, device, function, class, subclass;
-    uint16_t device_id, vendor_id;
+    Color colorscheme[8], background, foreground;
+    struct stivale2_struct_tag_framebuffer *fb_info;
+    int cursor_y, cursor_x;
+    PSF font;
+} Framebuffer;
 
-} PCIDevice;
+Framebuffer Framebuffer_init(Color colorscheme[8], struct stivale2_struct *info);
 
-void PCI_init();
+void Framebuffer_clear();
+void Framebuffer_putc(char c, int position_x, int position_y, Framebuffer *self);
+void Framebuffer_puts(char *string);
+void Framebuffer_set(Framebuffer *self);
+void Framebuffer_put(char c);
+
+Color rgb(int r, int g, int b);
+
+void glog(int level, char *format, ...);
+
+enum glog_level
+{
+    SUCCESS,
+    FAILURE,
+    SILENT
+
+};
 #endif

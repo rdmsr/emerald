@@ -32,7 +32,7 @@
 #include <devices/pci/PCI.h>
 #include <devices/pcspkr/pcspkr.h>
 #include <devices/serial/serial.h>
-#include <devices/video/vbe.h>
+#include <devices/video/framebuffer.h>
 #include <libk/logging.h>
 #include <libk/module.h>
 #include <libk/random.h>
@@ -59,67 +59,49 @@ void kmain(struct stivale2_struct *info)
 
     Serial_init();
 
-    static Color bg_color = {0, 64, 73};
+    /*VBE_init(info);
+      VBE_clear_screen(1, bg_color);*/
 
-    VBE_init(info);
-    VBE_clear_screen(1, bg_color);
+    Color colorscheme[8] = {
+        rgb(88, 110, 117),  /* Black */
+        rgb(220, 50, 47),   /* Red */
+        rgb(133, 153, 0),   /* Green */
+        rgb(181, 137, 0),   /* Yellow */
+        rgb(38, 139, 210),  /* Blue */
+        rgb(108, 113, 196), /* Magenta */
+        rgb(42, 161, 152),  /* Cyan */
+        rgb(253, 246, 227)  /* White */
+    };
 
     info = (void *)info + MEM_OFFSET;
+
+    Framebuffer_init(colorscheme, info);
+    Framebuffer_clear();
 
     PCI_init();
 
     BootInfo boot_info = Boot_get_info(info);
-
     DateTime date = RTC_get_date_time();
 
-    VBE_putf("Time Info:");
-    VBE_putf("\tDate: %x/%x/20%x", date.month, date.day, date.year);
-    VBE_putf("\tTime: %d:%d:%d\n", date.time.hour, date.time.minute, date.time.second);
+    glog(SUCCESS, "Time info:");
+    glog(SILENT, "\tDate: %x/%x/20%x", date.month, date.day, date.year);
+    glog(SILENT, "\tTime: %d:%d:%d\n", date.time.hour, date.time.minute, date.time.second);
 
     srand(RTC_get_seconds());
 
     PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries, boot_info);
-
 
     /*VMM_init();*/
 
     PCSpkr_init();
     Keyboard_init();
 
+    glog(SUCCESS,"System booted in %dms", PIT_get_ticks());
+    Framebuffer_puts("Welcome to ");
+    Framebuffer_puts("\033[32mEmeraldOS!\n\033[0m");
 
-    VBE_putf("System booted in %dms", PIT_get_ticks());
-    VBE_puts("\nWelcome to ", white);
-    VBE_puts("EmeraldOS!\n", green);
-
-    /* Framebuffer functions
-
-    Framebuffer fb = _Framebuffer(info);
-    fb.clear_screen(&fb);
-    fb.puts("hello", &fb);
-
-    */
-
-    /* Random circles: */
-
-    /*VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-
-    VBE_display_circle(rand() % 100 + 200, rand() % 100 + 200, rand() % 50 + 100);
-    */
-
-    /*VBE_draw_shape(RECTANGLE, 20, 20, 100, 500);*/
-
-    /*VBE_draw_shape(TRIANGLE, 150, 300, 200, 300);
-
-    VBE_display_circle(300, 400, 50);
-    VBE_display_circle(300, 400, 25);*/
 
     set_ascii();
-
-
     while (1)
         ;
 }

@@ -25,7 +25,7 @@
  */
 
 #include <boot/boot.h>
-#include <devices/video/vbe.h>
+#include <devices/video/framebuffer.h>
 #include <libk/logging.h>
 #include <memory/pmm.h>
 
@@ -81,7 +81,7 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
         {
             usable_mem += entry->length;
         }
-	
+
         if (entry->type != STIVALE2_MMAP_USABLE && entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE && entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
             continue;
 
@@ -98,13 +98,12 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
 
     bootinfo.framebuffer_width = fb_info->framebuffer_width;
     bootinfo.framebuffer_height = fb_info->framebuffer_height;
-
     bootinfo.framebuffer_bpp = fb_info->framebuffer_bpp;
     bootinfo.framebuffer_pitch = fb_info->framebuffer_pitch;
 
-    VBE_putf("Memory info:");
-    VBE_putf("\t Total size: %d mb", convert_to_mb(bootinfo.total_memory) + 1);
-    VBE_putf("\t Usable: %d mb\n", convert_to_mb(bootinfo.memory_usable) + 1);
+    glog(SUCCESS, "Memory info:");
+    glog(SILENT, "\t Total size: %d mb", convert_to_mb(bootinfo.total_memory) + 1);
+    glog(SILENT,"\t Usable: %d mb", convert_to_mb(bootinfo.memory_usable) + 1);
     log(INFO, "Memory Size is %d mb", convert_to_mb(bootinfo.total_memory) + 1);
     return bootinfo;
 }

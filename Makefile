@@ -17,6 +17,7 @@ CHARDFLAGS :=	-target ${ARCH}-unknown-none	\
 			-fno-stack-protector			\
 			-Wall							\
 			-Wextra							\
+			-Werror							\
 			-ffreestanding					\
 			-ansi						\
 			-mcmodel=kernel					\

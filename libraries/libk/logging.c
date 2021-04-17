@@ -57,7 +57,7 @@ void log(int status, char *format, ...)
     va_list arg;
     va_start(arg, format);
 
-    char str[4096] = {0};
+    char str[1000] = {0};
 
     vsprintf(str, format, arg);
     Serial_write_string(str);

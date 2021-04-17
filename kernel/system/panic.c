@@ -1,5 +1,5 @@
 #include "panic.h"
-#include <devices/video/vbe.h>
+#include <devices/video/framebuffer.h>
 #include <libk/logging.h>
 #include <libk/random.h>
 char *comments_lol[] =
@@ -25,19 +25,17 @@ char *comments_lol[] =
 
 void __panic(char *file, const char function[20], int line, char *message)
 {
-    static Color bg_color = {0, 64, 73};
 
-    VBE_clear_screen(0,bg_color);
+    Framebuffer_clear();
 
     __asm__("cli");
 
-    Color red = {245, 49, 0}, gray = {105, 100, 99}, blue = {19, 144, 194};
 
-    VBE_puts("------------------------------------------------------------------------\n", red);
-    VBE_puts("KERNEL PANIC\n", red);
-    VBE_cputf(gray, " /* %s */", comments_lol[rand() % 17]);
-    VBE_cputf(blue, "%s", message);
-    VBE_putf("In %s at %s(), line %d", file, function, line);
+    Framebuffer_puts(" \033[31m------------------------------------------------------------------------\n");
+    Framebuffer_puts(" KERNEL PANIC\n\033[0m");
+    glog(SILENT, " \033[30m/* %s */", comments_lol[rand() % 17]);
+    glog(SILENT, " \033[35m%s\033[0m", message);
+    glog(SILENT, " In %s at %s(), line %d", file, function, line);
 
     while (1)
         ;

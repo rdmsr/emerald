@@ -1,4 +1,4 @@
-
+#include <stdint.h>
 #pragma once
 
 static uint8_t font[128][8] = {

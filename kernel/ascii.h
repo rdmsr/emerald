@@ -27,7 +27,7 @@
 #define ASCII_H
 #include <devices/rtc/rtc.h>
 #include <devices/serial/serial.h>
-#include <devices/video/vbe.h>
+#include <devices/video/framebuffer.h>
 
 char ascii_art[] = "\e[0;32m  _____                         _     _ \n"
                    " |  ___|                       | |   | |\n"

@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 #include "keyboard.h"
-#include <devices/video/vbe.h>
+#include <devices/video/framebuffer.h>
 #include <libk/io.h>
 #include <libk/logging.h>
 unsigned char keyboard_map[128] = {
@@ -74,13 +74,19 @@ void Keyboard_init(void)
 
 void Keyboard_main()
 {
-    uint8_t keycode = IO_inb(0x60);
-
-    Color white = {255, 255, 255};
-
-    if (keyboard_map[(unsigned char)keycode] != 0)
+    uint8_t state = IO_inb(0x64);
+    while (state & 1 && (state & 0x20) == 0)
     {
-        VBE_put(keyboard_map[(unsigned char)keycode], white);
+        uint8_t keycode = IO_inb(0x60);
+        uint8_t scan_code = keycode & 0x7f;
+        uint8_t key_state = !(keycode & 0x80);
+
+        if (key_state)
+        {
+            Framebuffer_put(keyboard_map[(unsigned char)scan_code]);
+        }
+
+        state = IO_inb(0x64);
     }
 
     IO_outb(0x20, 0x20);
