@@ -77,7 +77,7 @@ $(KERNEL_HDD): limine/limine-install $(KERNEL_ELF)
 	@echo -e LIMINE $(KERNEL_HDD)
 	@-mkdir build
 	@rm -f $(KERNEL_HDD)
-	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD)
+	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD) status=none
 	@parted -s $(KERNEL_HDD) mklabel msdos
 	@parted -s $(KERNEL_HDD) mkpart primary 1 100%
 	@echfs-utils -m -p0 $(KERNEL_HDD) quick-format 32768

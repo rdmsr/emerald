@@ -27,9 +27,12 @@
 #ifndef STRING_H
 #define STRING_H
 #include <stdarg.h>
-
+#include <stddef.h>
 void printf(char *format, ...);
 char *string_convert(unsigned int num, int base);
-
-
+int atoi(char *str);
+size_t strlen(char *str);
+char *strncat(char *dest, char *src, size_t n);
+char *strcat(char *dest, char *src);
+void vsprintf(char *str, char *format, va_list arg);
 #endif

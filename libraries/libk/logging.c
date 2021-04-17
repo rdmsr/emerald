@@ -54,63 +54,16 @@ void log(int status, char *format, ...)
 
     printf(string, RTC_get_hours(), RTC_get_minutes(), RTC_get_seconds(), current_module, " ");
 
-    unsigned int i;
-    unsigned int ZERO = 0;
-    char *s;
-
     va_list arg;
     va_start(arg, format);
 
-    while (*format)
-    {
+    char str[4096] = {0};
 
-        if (*format == '%')
-        {
-            format++;
-            switch (*format)
-            {
-            case 'c':
-                i = va_arg(arg, int);
-                Serial_write(i);
-                break;
-
-            case 'd':
-                i = va_arg(arg, int);
-                if (i < ZERO)
-                {
-                    i = -i;
-                    Serial_write('-');
-                }
-                Serial_write_string(string_convert(i, 10));
-                break;
-
-            case 'o':
-                i = va_arg(arg, unsigned int);
-                Serial_write_string(string_convert(i, 8));
-                break;
-
-            case 's':
-                s = va_arg(arg, char *);
-                Serial_write_string(s);
-                break;
-
-            case 'x':
-                i = va_arg(arg, unsigned int);
-                Serial_write_string(string_convert(i, 16));
-                break;
-            default:
-                Serial_write('%');
-                break;
-            }
-        }
-        else
-        {
-            Serial_write(*format);
-        }
-        format++;
-    }
+    vsprintf(str, format, arg);
+    Serial_write_string(str);
 
     va_end(arg);
 
-    Serial_write('\n');
+    Serial_write_string("\n");
+
 }

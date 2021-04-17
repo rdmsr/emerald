@@ -46,12 +46,24 @@ char *string_convert(unsigned int num, int base)
 
 void printf(char *format, ...)
 {
+
+    va_list arg;
+    va_start(arg, format);
+
+
+    char message[4096] = {0};
+    vsprintf(message, format, arg);
+    Serial_write_string(message);
+    va_end(arg);
+}
+
+void vsprintf(char *str, char *format, va_list arg)
+{
     unsigned int i;
     unsigned int ZERO = 0;
     char *s;
 
-    va_list arg;
-    va_start(arg, format);
+    int position = 0;
 
     while (*format)
     {
@@ -63,7 +75,8 @@ void printf(char *format, ...)
             {
             case 'c':
                 i = va_arg(arg, int);
-                Serial_write(i);
+                str[position] = i;
+		position++;
                 break;
 
             case 'd':
@@ -71,37 +84,84 @@ void printf(char *format, ...)
                 if (i < ZERO)
                 {
                     i = -i;
-                    Serial_write('-');
+                    str[position] = '-';
                 }
-                Serial_write_string(string_convert(i, 10));
+                strcat(str, string_convert(i, 10));
+                position += strlen(string_convert(i, 10));
+
                 break;
 
             case 'o':
                 i = va_arg(arg, unsigned int);
-                Serial_write_string(string_convert(i, 8));
+                strcat(str, string_convert(i, 8));
+                position += strlen(string_convert(i, 8));
                 break;
 
             case 's':
                 s = va_arg(arg, char *);
-                Serial_write_string(s);
+                strcat(str, s);
+                position += strlen(s);
                 break;
 
             case 'x':
                 i = va_arg(arg, unsigned int);
-                Serial_write_string(string_convert(i, 16));
+                strcat(str, string_convert(i, 16));
+                position += strlen(string_convert(i, 16));
                 break;
+		
             default:
-                Serial_write('%');
+                str[position] = '%';
+                position++;
                 break;
             }
         }
+
         else
         {
-            Serial_write(*format);
+            str[position] = *format;
+	    position++;
         }
+
         format++;
     }
+}
 
-    va_end(arg);
+int atoi(char *str)
+{
+    int res = 0;
 
+    int i;
+    for (i = 0; str[i] != '\0'; ++i)
+        res = res * 10 + str[i] - '0';
+
+    return res;
+}
+
+size_t strlen(char *str)
+{
+    size_t i;
+
+    for (i = 0; str[i] != '\0'; i++)
+        ;
+    return i;
+}
+
+char *strncat(char *dest, char *src, size_t n)
+{
+    size_t dest_length = strlen(dest);
+    size_t i;
+
+    for (i = 0; i < n && src[i] != '\0'; i++)
+    {
+        dest[dest_length + i] = src[i];
+    }
+
+    dest[dest_length + i] = '\0';
+
+    return dest;
+}
+
+char *strcat(char *dest, char *src)
+{
+    return strncat(dest, src, strlen(src));
 }
