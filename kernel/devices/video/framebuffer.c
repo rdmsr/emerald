@@ -77,6 +77,7 @@ void Framebuffer_set(Framebuffer *self)
     current_fb = *self;
 }
 
+/* ANSI colors couldn't have been possible without https://github.com/Keyboard-Slayer/navy/blob/main/devices/framebuffer.c (very epic resource/code) */
 void Framebuffer_putc(char c, int position_x, int position_y, Framebuffer *self)
 {
 
