@@ -59,9 +59,6 @@ void kmain(struct stivale2_struct *info)
 
     Serial_init();
 
-    /*VBE_init(info);
-      VBE_clear_screen(1, bg_color);*/
-
     Color colorscheme[8] = {
         rgb(88, 110, 117),  /* Black */
         rgb(220, 50, 47),   /* Red */
@@ -75,9 +72,14 @@ void kmain(struct stivale2_struct *info)
 
     info = (void *)info + MEM_OFFSET;
 
-    Framebuffer_init(colorscheme, info);
+    Framebuffer fb = Framebuffer_init(colorscheme, info);
     Framebuffer_clear();
 
+    glog(SUCCESS, "Framebuffer info:");
+    glog(SILENT, "\tResolution: %dx%d", fb.fb_info->framebuffer_width, fb.fb_info->framebuffer_height);
+    glog(SILENT, "\tPitch: %d", fb.fb_info->framebuffer_pitch);
+    glog(SILENT, "\tBPP: %d\n", fb.fb_info->framebuffer_bpp);
+    
     PCI_init();
 
     BootInfo boot_info = Boot_get_info(info);
@@ -96,10 +98,15 @@ void kmain(struct stivale2_struct *info)
     PCSpkr_init();
     Keyboard_init();
 
-    glog(SUCCESS,"System booted in %dms", PIT_get_ticks());
+    glog(SUCCESS, "System booted in %dms", PIT_get_ticks());
     Framebuffer_puts("Welcome to ");
     Framebuffer_puts("\033[32mEmeraldOS!\n\033[0m");
 
+    int c;
+    for (c = 0; c < 7; c++)
+    {
+        glog(SILENT, "\033[%dmcolor\033[0m", c + 30);
+    }
 
     set_ascii();
     while (1)

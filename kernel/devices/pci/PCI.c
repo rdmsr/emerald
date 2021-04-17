@@ -136,5 +136,7 @@ void PCI_init()
 
 	glog(SUCCESS,"[PCI] 00:%x.%d %s: %s %s", device, pci_devices[device].function, PCI_id_to_string(&pci_devices[device]), PCI_vendor_to_string(&pci_devices[device]), PCI_device_id_to_string(&pci_devices[device]));
     }
+
+    Framebuffer_puts("\n");
 }
 

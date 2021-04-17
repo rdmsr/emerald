@@ -103,7 +103,7 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
 
     glog(SUCCESS, "Memory info:");
     glog(SILENT, "\t Total size: %d mb", convert_to_mb(bootinfo.total_memory) + 1);
-    glog(SILENT,"\t Usable: %d mb", convert_to_mb(bootinfo.memory_usable) + 1);
+    glog(SILENT,"\t Usable: %d mb\n", convert_to_mb(bootinfo.memory_usable) + 1);
     log(INFO, "Memory Size is %d mb", convert_to_mb(bootinfo.total_memory) + 1);
     return bootinfo;
 }
