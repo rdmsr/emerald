@@ -26,9 +26,9 @@
 
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
-#pragma once
-#include <stdint.h>
 #include <libk/logging.h>
+#include <stdint.h>
+
 void exception_handler(uint64_t irq);
 void exc_0();
 void exc_1();

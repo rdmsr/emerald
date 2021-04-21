@@ -24,7 +24,6 @@
  * SOFTWARE.
  */
 
-/* stivale2_mmap_entry */
 #include "pmm.h"
 #include <stdbool.h>
 #include <stddef.h>
@@ -117,15 +116,15 @@ void *PMM_allocate(uint64_t count)
 
 void *PMM_allocate_zero(uint64_t count)
 {
-    char *ret = (char *)PMM_allocate(count);
+    void *ret = PMM_allocate(count);
 
     if (!ret)
         return NULL;
 
-    uint64_t *ptr = (uint64_t *)(ret + MEM_OFFSET);
+    uint64_t *ptr = (uint64_t *)((uint64_t)ret + MEM_OFFSET);
 
     size_t i;
-    for (i = 0; i < count * (PAGE_SIZE / sizeof(uint64_t)); i++)
+    for (i = 0; i < (count * PAGE_SIZE) / sizeof(uint64_t); i++)
         ptr[i] = 0;
 
     return ret;

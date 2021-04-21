@@ -79,7 +79,7 @@ void kmain(struct stivale2_struct *info)
     glog(SILENT, "\tResolution: %dx%d", fb.fb_info->framebuffer_width, fb.fb_info->framebuffer_height);
     glog(SILENT, "\tPitch: %d", fb.fb_info->framebuffer_pitch);
     glog(SILENT, "\tBPP: %d\n", fb.fb_info->framebuffer_bpp);
-    
+
     PCI_init();
 
     BootInfo boot_info = Boot_get_info(info);
@@ -91,7 +91,10 @@ void kmain(struct stivale2_struct *info)
 
     srand(RTC_get_seconds());
 
-    PMM_init((void *)boot_info.memory_map, boot_info.memory_map->entries, boot_info);
+    struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+    
+    PMM_init((void *)memory_map->memmap, memory_map->entries, boot_info);
+
 
     /*VMM_init();*/
 
@@ -109,6 +112,7 @@ void kmain(struct stivale2_struct *info)
     }
 
     set_ascii();
+
     while (1)
         ;
 }

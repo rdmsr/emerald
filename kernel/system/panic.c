@@ -28,15 +28,13 @@ void __panic(char *file, const char function[20], int line, char *message)
 
     Framebuffer_clear();
 
+    Framebuffer_puts("\033[31m------------------------------------------------------------------------\n");
+    Framebuffer_puts("KERNEL PANIC\n\033[0m");
+    glog(SILENT, "\033[30m/* %s */", comments_lol[rand() % 17]);
+    glog(SILENT, "\033[35m%s\033[0m", message);
+    glog(SILENT, "In %s at %s(), line %d\n", file, function, line);
+
     __asm__("cli");
-
-
-    Framebuffer_puts(" \033[31m------------------------------------------------------------------------\n");
-    Framebuffer_puts(" KERNEL PANIC\n\033[0m");
-    glog(SILENT, " \033[30m/* %s */", comments_lol[rand() % 17]);
-    glog(SILENT, " \033[35m%s\033[0m", message);
-    glog(SILENT, " In %s at %s(), line %d", file, function, line);
-
     while (1)
         ;
 }

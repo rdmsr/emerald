@@ -26,8 +26,11 @@
 
 #ifndef PANIC_H
 #define PANIC_H
+#include <stdint.h>
+
 
 void __panic(char *file, const char function[20], int line, char *message);
 
-#define panic(msg) __panic(__FILE_NAME__,__FUNCTION__,__LINE__,msg);
+#define panic(msg) __panic(__FILE_NAME__, __FUNCTION__, __LINE__, msg);
+
 #endif

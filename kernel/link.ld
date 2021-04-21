@@ -2,9 +2,7 @@ ENTRY(kmain)
 
 SECTIONS
 {
-    kernel_phys_offset = 0xffffffff80000000;
-    . = kernel_phys_offset + 0x100000;
-
+    . = 0xffffffff80200000; /* 2 MB in the higher half */
     .stivale2hdr ALIGN(4K) :
     {
         KEEP(*(.stivale2hdr))

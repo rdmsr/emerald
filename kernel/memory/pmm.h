@@ -44,5 +44,4 @@ void *PMM_allocate_zero(uint64_t count);
 
 void PMM_free_pages(void *addr, uint64_t page_count);
 void *memset(void *bufptr, int value, size_t size);
-
 #endif

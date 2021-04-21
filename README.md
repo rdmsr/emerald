@@ -22,7 +22,7 @@ Contributions, issues and feature requests are welcome!
 - Issue (in the github "issues" tab) fixing
 
 ## :heavy_check_mark: TODO
-- [ ] Remove useless stuff
+- [x] Remove useless stuff
 - [ ] Refactor progressively
 - [x] Change to a proper build system (remove meson)
 - [ ] Fix VMM

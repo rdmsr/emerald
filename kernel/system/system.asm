@@ -8,7 +8,7 @@ global pit_handler
 global keyboard_handler
 extern PIT_add_ticks
 extern Keyboard_main
-	
+
 %macro pushaq 0
     push rax
     push rbx
@@ -62,7 +62,10 @@ pit_handler:
 	pushaq
 	call PIT_add_ticks
 	popaq
-	iretq	
+	iretq
+	
+
+	
 keyboard_handler:
 	pushaq
 	cld
