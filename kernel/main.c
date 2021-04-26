@@ -92,9 +92,10 @@ void kmain(struct stivale2_struct *info)
 
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
     
-    PMM_init((void *)memory_map->memmap, memory_map->entries, boot_info);
+    PMM_init(memory_map->memmap, memory_map->entries);
 
-
+    if(PMM_allocate_zero(1) == NULL)
+      log(ERROR,"f");
     /*VMM_init();*/
 
     PCSpkr_init();

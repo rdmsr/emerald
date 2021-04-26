@@ -27,21 +27,23 @@
 #ifndef PMM_H
 #define PMM_H
 
-#define PAGE_SIZE 0x1000
-
+#define PAGE_SIZE 0x1000 /* 4096 bytes pages, 4kb */
 #define MEM_OFFSET 0xffff800000000000
+
 #include <boot/boot.h>
 #include <boot/stivale2.h>
 #include <libk/bitmap.h>
 #include <libk/logging.h>
 #include <stddef.h>
 
-void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries, BootInfo bootinfo);
+void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries);
 
-void *PMM_allocate(uint64_t count);
+void *PMM_allocate(uint32_t count);
 
 void *PMM_allocate_zero(uint64_t count);
 
-void PMM_free_pages(void *addr, uint64_t page_count);
+void PMM_free_pages(void *address, uint32_t page_count);
+
 void *memset(void *bufptr, int value, size_t size);
+
 #endif
