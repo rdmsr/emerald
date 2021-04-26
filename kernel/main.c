@@ -70,7 +70,6 @@ void kmain(struct stivale2_struct *info)
         rgb(253, 246, 227)  /* White */
     };
 
-    info = (void *)info + MEM_OFFSET;
 
     Framebuffer fb = Framebuffer_init(colorscheme, info);
     Framebuffer_clear();
@@ -82,7 +81,7 @@ void kmain(struct stivale2_struct *info)
 
     PCI_init();
 
-    BootInfo boot_info = Boot_get_info(info);
+    Boot_get_info(info);
     DateTime date = RTC_get_date_time();
 
     glog(SUCCESS, "Time info:");

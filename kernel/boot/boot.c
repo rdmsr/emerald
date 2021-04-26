@@ -37,21 +37,17 @@ uintptr_t convert_to_mb(uintptr_t bytes)
 
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)
 {
-    struct stivale2_tag *current_tag = (void *)stivale2_struct->tags + MEM_OFFSET;
-    for (;;)
+    struct stivale2_tag *tag = (void *)stivale2_struct->tags;
+    while (tag)
     {
-        if (!current_tag)
+        if (tag->identifier == id)
         {
-            return NULL;
+            return tag;
         }
-
-        if (current_tag->identifier == id)
-        {
-            return current_tag;
-        }
-
-        current_tag = (void *)current_tag->next + MEM_OFFSET;
+        tag = (void *)tag->next;
     }
+    
+    return NULL;
 }
 
 BootInfo Boot_get_info(struct stivale2_struct *info)
@@ -103,7 +99,7 @@ BootInfo Boot_get_info(struct stivale2_struct *info)
 
     glog(SUCCESS, "Memory info:");
     glog(SILENT, "\t Total size: %d mb", convert_to_mb(bootinfo.total_memory) + 1);
-    glog(SILENT,"\t Usable: %d mb\n", convert_to_mb(bootinfo.memory_usable) + 1);
+    glog(SILENT, "\t Usable: %d mb\n", convert_to_mb(bootinfo.memory_usable) + 1);
     log(INFO, "Memory Size is %d mb", convert_to_mb(bootinfo.total_memory) + 1);
     return bootinfo;
 }
