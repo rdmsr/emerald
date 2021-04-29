@@ -141,7 +141,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
             highest_page = top;
     }
 
-    bitmap_size = ALIGN_UP(highest_page) / 8;
+    bitmap_size = ALIGN_DOWN(highest_page) / PAGE_SIZE / 8;
 
     for (i = 0; (size_t)i < memory_entries; i++) /* Find a place for the bitmap */
     {
@@ -154,6 +154,8 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
         {
             bitmap = (uint8_t *)entry.base;
 
+            memset(bitmap, 0xff, bitmap_size);
+
             entry.base += bitmap_size;
             entry.length -= bitmap_size;
 
@@ -161,18 +163,16 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
         }
     }
 
-    for (i = 0; (size_t)i < memory_entries; i++)
+    size_t j;
+    uintptr_t k;
+
+    for (j = 0; j < memory_entries; j++)
     {
-        if (memory_map[i].type != STIVALE2_MMAP_USABLE)
-        {
-            PMM_reserve_pages((void *)memory_map[i].base, memory_map[i].length / PAGE_SIZE); /* Set unusable pages as set */
-        }
+        if (memory_map[j].type != STIVALE2_MMAP_USABLE)
+            continue;
 
-        else
-        {
-
-            PMM_free_pages((void *)memory_map[i].base, memory_map[i].length / PAGE_SIZE);
-        }
+        for (k = 0; k < memory_map[i].length; k += PAGE_SIZE)
+	  PMM_free_pages((void*)memory_map[j].base, memory_map[j].length / PAGE_SIZE);
     }
 
     module("PMM");

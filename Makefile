@@ -11,9 +11,9 @@ ARCH = x86_64
 
 
 CHARDFLAGS :=	-target ${ARCH}-unknown-none	\
-			-ggdb							\
 			-nostdlib						\
-			-O3                                                     \
+			-g \
+			-O2                                                     \
 			-fno-stack-protector			\
 			-Wall							\
 			-Wextra							\
@@ -29,6 +29,7 @@ CHARDFLAGS :=	-target ${ARCH}-unknown-none	\
 			-mno-sse2						\
 
 LDHARDFLAGS :=        \
+	-O2 \
         -target x86_64-unknown-none \
         -nostdlib                 \
 	-static                   \
