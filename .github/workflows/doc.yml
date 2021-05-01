@@ -18,7 +18,6 @@ jobs:
       - uses: mattnotmitt/doxygen-action@v1 
         name: Generate documentation
 
-	# Publish on Netlify
       - name: Publish
         uses: netlify/actions/cli@master
         with:
