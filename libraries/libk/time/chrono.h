@@ -29,9 +29,15 @@
 
 typedef struct
 {
-    uint64_t start, end;
+    /** When the chrono was started. */
+    uint64_t start;
+    /** When the chrono was stopped. */
+    uint64_t end;
 } Chrono;
 
+/** Starts a chronometer. */
 void Chrono_start(Chrono *chrono);
+
+/** Ends a chronometer, returns `end - start`. */
 uint64_t Chrono_end(Chrono *chrono);
 #endif
