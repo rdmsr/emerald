@@ -143,6 +143,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
 
     bitmap_size = ALIGN_DOWN(highest_page) / PAGE_SIZE / 8;
 
+    log(INFO, "bitmap size: %x", bitmap_size);
     for (i = 0; (size_t)i < memory_entries; i++) /* Find a place for the bitmap */
     {
         struct stivale2_mmap_entry entry = memory_map[i];
