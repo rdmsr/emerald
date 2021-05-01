@@ -31,6 +31,21 @@
 #include <libk/module.h>
 #include <libk/string.h>
 
+/**
+@file logging.h
+Header related to logging.
+*/
+
+/**
+The level of logging that specifies the color.
+
+- WARNING: yellow
+- INFO: blue
+- DEBUG: cyan
+- PANIC: red
+- ERROR: red
+*/
+
 enum status
 {
     INFO,
@@ -40,6 +55,10 @@ enum status
     ERROR
 
 };
+/** Logs to serial with a formatted output.
+@param[in] status The level of logging.
+@param[in] format The formatted string.
+*/
 void log(int status, char *format, ...);
 
 

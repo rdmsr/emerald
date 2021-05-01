@@ -40,11 +40,13 @@ typedef struct
 
 @param[in] chrono The chronometer to start.
  */
+
 void Chrono_start(Chrono *chrono);
 
 /** Ends a chronometer, returns `end - start`. 
 
 @param[in] chrono The chronometer to end.
 */
+
 uint64_t Chrono_end(Chrono *chrono);
 #endif

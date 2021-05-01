@@ -28,11 +28,50 @@
 #define STRING_H
 #include <stdarg.h>
 #include <stddef.h>
+
+/**
+@file string.h
+A header used for string manipulation & printing.
+*/
+
+/** The standard printf function, prints using serial. */
 void printf(char *format, ...);
+
+/** Converts a number to a string.
+@param[in] num The actual number.
+@param[in] base The base used in the number (e.g: 16,10,...).
+@param[out] string The number turned to string.
+*/
 char *string_convert(unsigned int num, int base);
+
+/** Converts int to string (function will be removed)*/
 int atoi(char *str);
+
+/** Gets the length of a string
+@param[in] str The string to get the length of.
+@param[out] size The size of the string
+*/
 size_t strlen(char *str);
+
+/** Concatenates two strings up to a specified length.
+@param[in] dest The original string.
+@param[in] src  The string to be appended.
+@param[in] n    The maximum number of character to be appended.
+@param[out] string The concatenated string
+*/
 char *strncat(char *dest, char *src, size_t n);
+
+/** Concatenates two strings.
+@param[in] dest The original string.
+@param[in] src The string to be appended.
+@param[out] string The concatenated string.
+*/
 char *strcat(char *dest, char *src);
+
+/** Formats a string to a buffer.
+@param[in] str The buffer.
+@param[in] format The format string.
+@param[in] arg The list of optional arguments.
+*/
 void vsprintf(char *str, char *format, va_list arg);
 #endif

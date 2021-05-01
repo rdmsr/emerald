@@ -27,6 +27,10 @@
 #ifndef TIME_H
 #define TIME_H
 #include <system/interrupts/PIT.h>
+
+/** Sleeps for a specified amount of time.
+@param[in] delay The amount of time in miliseconds.
+*/
 void sleep(uint16_t delay);
 
 

@@ -29,8 +29,21 @@
 #ifndef IO_H
 #define IO_H
 
+/**
+@file io.h
+This header is used to interact with IO ports.
+*/
 
+/** Writes to a port
+@param[in] port The port to write to.
+@param[in] value What to write to the port.
+*/
 void IO_outb(uint16_t port, uint8_t value);
+
+/** Reads from a port
+@param[in] port The port to read from.
+@param[out] value What has been received.
+*/
 unsigned char IO_inb(unsigned short port);
 void IO_outl(uint16_t port, uint32_t value);
 uint32_t IO_inl(uint16_t port);

@@ -27,8 +27,16 @@
 #ifndef MODULE_H
 #define MODULE_H
 #include <libk/logging.h>
+
+/** 
+@file module.h
+This header is used for logging modules and is used only by logging.h.
+*/
+
+/** The name of the current module. */
 extern char *current_module;
 
+/** Defines the current module */
 #define module(name)           \
     {                          \
         current_module = name; \
