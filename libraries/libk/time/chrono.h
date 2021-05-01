@@ -27,6 +27,7 @@
 #define CHRONO_H
 #include <system/interrupts/PIT.h>
 
+/** A struct to mesure the time passed */
 typedef struct
 {
     /** When the chrono was started. */
@@ -35,9 +36,15 @@ typedef struct
     uint64_t end;
 } Chrono;
 
-/** Starts a chronometer. */
+/** Starts a chronometer.
+
+@param[in] chrono The chronometer to start.
+ */
 void Chrono_start(Chrono *chrono);
 
-/** Ends a chronometer, returns `end - start`. */
+/** Ends a chronometer, returns `end - start`. 
+
+@param[in] chrono The chronometer to end.
+*/
 uint64_t Chrono_end(Chrono *chrono);
 #endif

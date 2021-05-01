@@ -32,7 +32,7 @@
 /**
 Converts bytes to megabytes.
 
-- `bytes`: The number of bytes to convert.
+@param[in] bytes The number of bytes to convert.
 */
 
 uintptr_t convert_to_mb(uintptr_t bytes)
@@ -44,8 +44,8 @@ uintptr_t convert_to_mb(uintptr_t bytes)
 /**
 Returns a specified tag.
 
-- `info`: The bootloader info.
-- `id`: ID of the tag.
+@param[in] info Bootloader's info, passed to the main function.
+@param[in] id   ID of the tag
 */
 
 void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id)
@@ -66,7 +66,8 @@ void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id)
 /**
 Gets the boot info from the bootloader in a more readable way.
 
-- `info`: The bootloader info.
+@param[in] info The bootloader info.
+@param[out] BootInfo The BootInfo struct
 */
 BootInfo Boot_get_info(struct stivale2_struct *info)
 {

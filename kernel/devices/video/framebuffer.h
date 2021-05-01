@@ -30,6 +30,7 @@
 #include "psf.h"
 #include <boot/stivale2.h>
 #include <stddef.h>
+
 typedef struct
 {
     uint8_t r, g, b;

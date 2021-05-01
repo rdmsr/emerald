@@ -30,6 +30,7 @@
 #ifndef BOOT_H
 #    define BOOT_H
 
+/** Gets information from the bootloader in a more readable way. */
 typedef struct
 {
     /** Size of the usable memory. */
@@ -37,11 +38,13 @@ typedef struct
 
     /** Total size of memory. */
     size_t total_memory;
+
     /** Number of memory entries. */
     size_t memory_entries;
 
     /** Top of memory. */
     uintptr_t memory_top;
+
     /** Highest page. */
     uintptr_t memory_highest_page;
 
@@ -56,11 +59,12 @@ typedef struct
 
     /** Bootloader's framebuffer height. */
     uint16_t framebuffer_height;
+
     /** Bootloader's framebuffer pitch. */
     uint16_t framebuffer_pitch;
+
     /** Bootloader's framebuffer bytes-per-pixel. */
     uint16_t framebuffer_bpp;
-
 } BootInfo;
 
 void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id);
