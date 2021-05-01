@@ -32,22 +32,37 @@
 
 typedef struct
 {
+    /** Size of the usable memory. */
     size_t memory_usable;
+
+    /** Total size of memory. */
     size_t total_memory;
+    /** Number of memory entries. */
     size_t memory_entries;
+
+    /** Top of memory. */
     uintptr_t memory_top;
+    /** Highest page. */
     uintptr_t memory_highest_page;
-  
+
+    /** Stivale memory map. */
     struct stivale2_struct_tag_memmap *memory_map;
 
+    /** Bootloader's framebuffer memory address. */
     uint64_t framebuffer_addr;
+
+    /** Bootloader's framebuffer width. */
     uint16_t framebuffer_width;
+
+    /** Bootloader's framebuffer height. */
     uint16_t framebuffer_height;
+    /** Bootloader's framebuffer pitch. */
     uint16_t framebuffer_pitch;
+    /** Bootloader's framebuffer bytes-per-pixel. */
     uint16_t framebuffer_bpp;
 
 } BootInfo;
 
-void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id);
+void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id);
 BootInfo Boot_get_info(struct stivale2_struct *info);
 #endif

@@ -29,15 +29,28 @@
 #include <libk/logging.h>
 #include <memory/pmm.h>
 
+/**
+Converts bytes to megabytes.
+
+- `bytes`: The number of bytes to convert.
+*/
+
 uintptr_t convert_to_mb(uintptr_t bytes)
 {
     uintptr_t megabytes = bytes / 1024 / 1024;
     return megabytes;
 }
 
-void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)
+/**
+Returns a specified tag.
+
+- `info`: The bootloader info.
+- `id`: ID of the tag.
+*/
+
+void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id)
 {
-    struct stivale2_tag *tag = (void *)stivale2_struct->tags;
+    struct stivale2_tag *tag = (void *)info->tags;
     while (tag)
     {
         if (tag->identifier == id)
@@ -50,6 +63,11 @@ void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)
     return NULL;
 }
 
+/**
+Gets the boot info from the bootloader in a more readable way.
+
+- `info`: The bootloader info.
+*/
 BootInfo Boot_get_info(struct stivale2_struct *info)
 {
     module("Boot");
