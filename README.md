@@ -13,6 +13,8 @@ Please look at the [Build guide](https://github.com/Abb1x/emerald/blob/master/do
 ### Prebuilt images
 You can use prebuilt .hdd images in the releases tab.
 
+## Documentation
+Full documentation is available [here](https://emerald.abbix.me)
 ## 🤝 Contributing
 Contributions, issues and feature requests are welcome!
 <br />
