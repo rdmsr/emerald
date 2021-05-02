@@ -94,7 +94,7 @@ void kmain(struct stivale2_struct *info)
     
     PMM_init(memory_map->memmap, memory_map->entries);
 
-    if(PMM_allocate_zero(1) == NULL)
+    if(!PMM_allocate_zero(1))
       log(ERROR,"f");
     /*VMM_init();*/
 

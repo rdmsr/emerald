@@ -50,17 +50,21 @@ Returns a specified tag.
 
 void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id)
 {
-    struct stivale2_tag *tag = (void *)info->tags;
-    while (tag)
+    struct stivale2_tag *current_tag = (void *)info->tags;
+    for (;;)
     {
-        if (tag->identifier == id)
+        if (!current_tag)
         {
-            return tag;
+            return NULL;
         }
-        tag = (void *)tag->next;
+
+        if (current_tag->identifier == id)
+        {
+            return current_tag;
+        }
+
+        current_tag = (void *)current_tag->next;
     }
-    
-    return NULL;
 }
 
 /**

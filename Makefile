@@ -55,7 +55,11 @@ run: $(KERNEL_HDD)
 	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 256 -soundhw pcspk
 
 documentation/:
-	@doxygen
+
+	@echo -e "Generating documentation to\033[1;32m" $@ "\033[0m"
+	@doxygen > /dev/null 2>&1
+	@echo -e "\033[1;36mDone!\033[0m"
+
 docs: documentation/
 debug: $(KERNEL_HDD)
 	@echo [ QEMU ] $<

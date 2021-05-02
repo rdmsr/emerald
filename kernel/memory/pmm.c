@@ -36,6 +36,12 @@
 #define BIT_CLEAR(__bit) (bitmap[(__bit) / 8] &= ~(1 << ((__bit) % 8)))
 #define BIT_TEST(__bit) ((bitmap[(__bit) / 8] >> ((__bit) % 8)) & 1)
 
+#define DIV_ROUNDUP(A, B) ({ \
+    __typeof__(A) _a_ = A;       \
+    __typeof__(B) _b_ = B;       \
+    (_a_ + (_b_ - 1)) / _b_; \
+})
+
 size_t bitmap_size;
 
 static uintptr_t highest_page = 0;
@@ -84,6 +90,7 @@ void PMM_reserve_pages(void *address, uint32_t page_count)
 
 void *PMM_allocate(uint32_t pages)
 {
+
     uint32_t i, j;
     for (i = 0; i < bitmap_size * 8; i++)
     {
@@ -141,9 +148,14 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
             highest_page = top;
     }
 
-    bitmap_size = ALIGN_DOWN(highest_page) / PAGE_SIZE / 8;
+    if (top > highest_page)
+        highest_page = top;
 
-    log(INFO, "bitmap size: %x", bitmap_size);
+    log(INFO, "Highest page: %x", highest_page);
+    
+    bitmap_size = DIV_ROUNDUP(highest_page, PAGE_SIZE) / 8;
+
+    log(INFO, "%x", bitmap_size);
     for (i = 0; (size_t)i < memory_entries; i++) /* Find a place for the bitmap */
     {
         struct stivale2_mmap_entry entry = memory_map[i];
@@ -173,7 +185,7 @@ void PMM_init(struct stivale2_mmap_entry *memory_map, size_t memory_entries)
             continue;
 
         for (k = 0; k < memory_map[i].length; k += PAGE_SIZE)
-	  PMM_free_pages((void*)memory_map[j].base, memory_map[j].length / PAGE_SIZE);
+            PMM_free_pages((void *)memory_map[j].base, memory_map[j].length / PAGE_SIZE);
     }
 
     module("PMM");
