@@ -42,5 +42,5 @@ Contributions, issues and feature requests are welcome!
 Please join the [discord server](https://discord.gg/VMGVJcgVcR) or contact me at abb1x@protonmail.com
 ### Screenshots
 
-<img src="screenshots/main.png">
-<img src="screenshots/random_circles.png">
+<img src="screenshots/main-new.png">
+<img src="screenshots/panic-new.png">
