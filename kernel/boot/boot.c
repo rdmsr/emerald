@@ -71,7 +71,7 @@ void *stivale2_get_tag(struct stivale2_struct *info, uint64_t id)
 Gets the boot info from the bootloader in a more readable way.
 
 @param[in] info The bootloader info.
-@param[out] BootInfo The BootInfo struct
+@return The Generated BootInfo struct
 */
 BootInfo Boot_get_info(struct stivale2_struct *info)
 {

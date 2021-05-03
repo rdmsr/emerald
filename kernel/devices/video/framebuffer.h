@@ -64,7 +64,7 @@ typedef struct
 /** Creates a new framebuffer.
 @param[in] colorscheme[8] The RGB colorscheme.
 @param[in] info The bootloader information about the framebuffer.
-@param[out] fb The newly created framebuffer.*/
+@return The newly created framebuffer.*/
 Framebuffer Framebuffer_init(Color colorscheme[8], struct stivale2_struct *info);
 
 /** Clears the screen */
@@ -97,7 +97,7 @@ void Framebuffer_put(char c);
 @param[in] r Red.
 @param[in] g Green.
 @param[in] b Blue.
-@param[out] color The generated color.*/
+@return The generated color.*/
 Color rgb(int r, int g, int b);
 
 /** GUI Log

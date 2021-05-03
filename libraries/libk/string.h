@@ -40,7 +40,7 @@ void printf(char *format, ...);
 /** Converts a number to a string.
 @param[in] num The actual number.
 @param[in] base The base used in the number (e.g: 16,10,...).
-@param[out] string The number turned to string.
+@return The number turned to string.
 */
 char *string_convert(unsigned int num, int base);
 
@@ -49,7 +49,7 @@ int atoi(char *str);
 
 /** Gets the length of a string
 @param[in] str The string to get the length of.
-@param[out] size The size of the string
+@return The size of the string
 */
 size_t strlen(char *str);
 
@@ -57,14 +57,14 @@ size_t strlen(char *str);
 @param[in] dest The original string.
 @param[in] src  The string to be appended.
 @param[in] n    The maximum number of character to be appended.
-@param[out] string The concatenated string
+@return The concatenated string.
 */
 char *strncat(char *dest, char *src, size_t n);
 
 /** Concatenates two strings.
 @param[in] dest The original string.
 @param[in] src The string to be appended.
-@param[out] string The concatenated string.
+@return The concatenated string.
 */
 char *strcat(char *dest, char *src);
 
