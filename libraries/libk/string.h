@@ -69,7 +69,7 @@ char *strncat(char *dest, char *src, size_t n);
 char *strcat(char *dest, char *src);
 
 /** Formats a string to a buffer.
-@param[in] str The buffer.
+@param[out] str The buffer.
 @param[in] format The format string.
 @param[in] arg The list of optional arguments.
 */
