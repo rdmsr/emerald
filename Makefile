@@ -33,7 +33,7 @@ LDHARDFLAGS :=        \
         -target x86_64-unknown-none \
         -nostdlib                 \
 	-static                   \
-	-fno-pie                   \
+	-fno-pic -fpie                   \
 	-z max-page-size=0x1000  \
 	-T kernel/link.ld
 
@@ -79,11 +79,11 @@ $(KERNEL_ELF): $(OBJ)
 	@$(CC) $(LDHARDFLAGS) $(OBJ) -o $@
 
 limine/limine-install:
-	$(MAKE) -C thirdparty/limine/ limine-install
+	@$(MAKE) -C thirdparty/limine/ limine-install
 
 $(KERNEL_HDD): limine/limine-install $(KERNEL_ELF)
 	@echo -e LIMINE $(KERNEL_HDD)
-	@-mkdir build
+	@-mkdir build > /dev/null 2>&1
 	@rm -f $(KERNEL_HDD)
 	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD) status=none
 	@parted -s $(KERNEL_HDD) mklabel msdos

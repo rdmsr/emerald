@@ -7,6 +7,9 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/Abb1x/emerald)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Abb1x/emerald)
  <a href="https://discord.gg/VMGVJcgVcR"> <img src="https://img.shields.io/discord/813937669407113226"> </a>
+
+## Note
+This project is currently in rewrite(again!), a new repo will probably be created in an organization to open the project more (PRs will be accepted).
 ## ⚙️ How to build
 
 Please look at the [Build guide](https://github.com/Abb1x/emerald/blob/master/docs/build-guide.md)
