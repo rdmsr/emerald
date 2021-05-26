@@ -91,8 +91,8 @@ $(KERNEL_HDD): limine/limine-install $(KERNEL_ELF)
 	@echfs-utils -m -p0 $(KERNEL_HDD) quick-format 32768
 	@echfs-utils -m -p0 $(KERNEL_HDD) import $(KERNEL_ELF) build/$(KERNEL_ELF)
 	@echfs-utils -m -p0 $(KERNEL_HDD) import limine.cfg limine.cfg
-	@echfs-utils -m -p0 $(KERNEL_HDD) import thirdparty/limine/bin/limine.sys limine.sys
-	@thirdparty/limine/bin/limine-install $(KERNEL_HDD)
+	@echfs-utils -m -p0 $(KERNEL_HDD) import thirdparty/limine/limine.sys limine.sys
+	@thirdparty/limine/limine-install-linux-x86_64 $(KERNEL_HDD)
 
 clean:
 	rm -f $(KERNEL_HDD) $(KERNEL_ELF) $(OBJ)
