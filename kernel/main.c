@@ -113,6 +113,11 @@ void kmain(struct stivale2_struct *info)
 
     set_ascii();
 
+    module("test");
+    log(INFO, "info");
+    log(ERROR, "error");
+    log(WARNING, "warning");
+    log(DEBUG, "debug");
     while (1)
         ;
 }
