@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include <arch/gdt.h>
+#include <arch/descriptors/gdt.h>
 
 static GDTDescriptor gdt[3];
 static GDTPointer gdtr;
@@ -32,7 +32,7 @@ void gdt_load()
 	
 }
 
-void gdt_init()
+void gdt_initialize()
 {
     gdtr.base = (uint64_t)&gdt;
     gdtr.limit = sizeof(gdt) - 1;
@@ -43,5 +43,5 @@ void gdt_init()
 
     log(INFO, "Loading GDT...");
     gdt_load();
-    log(INFO, "GDT initialized");
+    log(INFO, "GDT loaded");
 }

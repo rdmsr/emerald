@@ -26,6 +26,6 @@ typedef struct __attribute__((packed))
     uint8_t base_high8;
 } GDTDescriptor;
 
-void gdt_init();
+void gdt_initialize();
 
 #endif

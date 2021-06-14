@@ -10,5 +10,6 @@
 #include <devices/com.h>
 
 Writer* arch_debug_writer();
+void arch_initialize_descriptors(void);
 
 #endif

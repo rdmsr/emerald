@@ -1,4 +1,4 @@
-#include <arch/gdt.h>
+#include <arch/arch.h>
 #include <devices/com.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
@@ -17,7 +17,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
     UNUSED(stivale2_struct);
 
     com_initialize(COM1);
-    gdt_init();
+
+    arch_initialize_descriptors();    
     kernel_splash();
     for (;;)
     {
