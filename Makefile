@@ -1,6 +1,7 @@
 ASMFILES  := $(shell find src -type f -name '*.asm')
 CFILES    := $(shell find src -type f -name '*.c')
-CC         = toolchain/local/bin/x86_64-elf-gcc
+export PATH := $(shell toolchain/use.sh):$(PATH)
+CC         = x86_64-elf-gcc
 OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
 KERNEL_HDD = build/disk.hdd
 KERNEL_ELF = kernel.elf
