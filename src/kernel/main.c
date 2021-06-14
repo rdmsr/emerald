@@ -1,8 +1,8 @@
+#include <arch/gdt.h>
 #include <devices/com.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
-
 void kernel_splash()
 {
     log(INFO, "  __                     __ __ __                ");
@@ -17,9 +17,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
     UNUSED(stivale2_struct);
 
     com_initialize(COM1);
-
+    gdt_init();
     kernel_splash();
-    
     for (;;)
     {
         __asm__("hlt");
