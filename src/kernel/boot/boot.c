@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
 #include <main.h>
 
 static uint8_t stack[4096] = {0};

@@ -9,6 +9,8 @@
 
 #include <arch/arch.h>
 #include <emerald/io.h>
+#include <emerald/str.h>
+#include <emerald/macros.h>
 
 typedef enum
 {
@@ -22,6 +24,6 @@ typedef enum
 
 void __log(LogLevel level, int line, char* file, char* format, ...);
 
-#define log(level, format, ...) __log(level, __LINE__, __FILE__, format __VA_OPT__(,) __VA_ARGS__)
+#define log(level, format, ...) __log(level, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
 
 #endif

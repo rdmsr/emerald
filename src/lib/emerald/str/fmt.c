@@ -34,15 +34,23 @@ void fmt_buffer(char *buffer, char *string, va_list args)
 
             switch (scan_current(&scan))
             {
-            case 's':
+            case 'a':
             {
                 char *s = va_arg(args, char *);
                 str_concat(make_str(s), make_str(buffer));
                 position += cstrlen(s);
                 break;
             }
-
-            case 'd':
+	    
+            case 's':
+            {
+                String s = va_arg(args, String);
+                str_concat(s, make_str(buffer));
+	        position += cstrlen(s.buffer);
+                break;
+            }
+	    
+            case 'i':
             {
                 make_integer(10, int);
                 break;
