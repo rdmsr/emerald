@@ -9,7 +9,9 @@
  <a href="https://discord.gg/VMGVJcgVcR"> <img src="https://img.shields.io/discord/813937669407113226"> </a>
 
 ## Note
-This project is currently in rewrite(again!), a new repo will probably be created in an organization to open the project more (PRs will be accepted).
+This project is being rewritten.
+Please take a look at the rewrite branch
+The rewrite branch will be merged with the master branch when it is ready so all the previous commits will be removed.
 ## ⚙️ How to build
 
 Please look at the [Build guide](https://github.com/Abb1x/emerald/blob/master/docs/build-guide.md)
