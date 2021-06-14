@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, Abb1x
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef KERNEL_ASM_H
 #define KERNEL_ASM_H
 #include <stdint.h>
