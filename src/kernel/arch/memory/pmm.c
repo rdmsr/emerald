@@ -14,36 +14,7 @@ static size_t last_used_index = 0;
 /* TODO: implement a bitmap data structure in libemerald */
 static uint8_t *bitmap;
 
-static void release_page(void *addr)
-{
-    size_t index = (size_t)(uintptr_t)addr / PAGE_SIZE;
-    BIT_CLEAR(index);
-}
-
-static void reserve_page(void *adr)
-{
-    size_t index = (size_t)(uintptr_t)adr / PAGE_SIZE;
-    BIT_SET(index);
-}
-
-static void release_pages(void *addr, int count)
-{
-    int i;
-    for (i = 0; i < count; i++)
-    {
-        release_page((void *)(addr + (i * PAGE_SIZE)));
-    }
-}
-
-void reserve_pages(void *addr, int count)
-{
-    int i;
-    for (i = 0; i < count; i++)
-    {
-        reserve_page((void *)(addr + (i * PAGE_SIZE)));
-    }
-}
-
+/* part of the function is taken from https://github.com/lyre-os/lyre */
 static void *inner_alloc(size_t count, size_t limit)
 {
     size_t p = 0;
@@ -129,6 +100,7 @@ void pmm_initialize(struct stivale2_struct *boot_info)
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(boot_info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
     log(INFO, "Getting memory map...");
+    
     for (i = 0; i < memory_map->entries; i++)
     {
         struct stivale2_mmap_entry *entry = &memory_map->memmap[i];
