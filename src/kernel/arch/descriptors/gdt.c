@@ -15,16 +15,20 @@ void gdt_load()
         "mov %%rsp, %%rax\n"
         "push $0x10\n"
         "push %%rax\n"
-        " pushf\n"
-        " push $0x08\n"
-        " push $1f\n %%ax, %%es\n"
+        "pushf\n"
+        "push $0x8\n"
+        "push $1f\n"
+        "iretq\n"
+        "1:\n"
+        "mov $0x10, %%ax\n"
+        "mov %%ax, %%ds\n"
+        "mov %%ax, %%es\n"
         "mov %%ax, %%ss\n"
         "mov %%ax, %%fs\n"
         "mov %%ax, %%gs\n"
         :
-        : "m" (gdtr)
+        : "m"(gdtr)
         : "rax", "memory");
-	
 }
 
 void gdt_initialize()
