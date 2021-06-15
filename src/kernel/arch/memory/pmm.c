@@ -14,6 +14,22 @@ static size_t last_used_index = 0;
 /* TODO: implement a bitmap data structure in libemerald */
 static uint8_t *bitmap;
 
+static void release_page(void *addr)
+{
+    size_t index = (size_t)(uintptr_t)addr / PAGE_SIZE;
+    BIT_CLEAR(index);
+}
+
+static void release_pages(void *addr, int count)
+{
+    int i;
+    for (i = 0; i < count; i++)
+    {
+        release_page((void *)(addr + (i * PAGE_SIZE)));
+    }
+}
+
+
 /* part of the function is taken from https://github.com/lyre-os/lyre */
 static void *inner_alloc(size_t count, size_t limit)
 {

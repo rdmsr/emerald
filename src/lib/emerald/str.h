@@ -6,7 +6,6 @@
 
 #ifndef LIBEMERALD_STR_GLOBAL_H
 #define LIBEMERALD_STR_GLOBAL_H
-
 #include <emerald/str/str.h>
 #include <emerald/str/fmt.h>
 
