@@ -28,6 +28,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     arch_initialize_descriptors();
     pmm_initialize(stivale2_struct);
+
+    
     kernel_splash();
 
     log(INFO, "{s} {i}", make_str("Hello"), 10);

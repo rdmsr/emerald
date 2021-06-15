@@ -70,6 +70,8 @@ void *pmm_allocate(size_t pages)
 {
     size_t l = last_used_index;
     void *ret = inner_alloc(pages, highest_page / PAGE_SIZE);
+
+    log(INFO, "pmm_allocate(): allocating {i} pages", pages);
     if (ret == NULL)
     {
         last_used_index = 0;
