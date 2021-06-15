@@ -2,6 +2,7 @@
 #include <devices/com.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
+#include <arch/memory/pmm.h>
 #include <main.h>
 
 void kernel_splash()
@@ -21,6 +22,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
     com_initialize(COM1);
 
     arch_initialize_descriptors();
+    pmm_initialize(stivale2_struct);
+    
     kernel_splash();
 
     log(INFO, "{s} {i}", make_str("Hello"), 10);
