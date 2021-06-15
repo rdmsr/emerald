@@ -15,6 +15,7 @@ static size_t last_used_index = 0;
 static uint8_t *bitmap;
 
 
+/* part of the function is taken from https://github.com/lyre-os/lyre */
 static void *inner_alloc(size_t count, size_t limit)
 {
     size_t p = 0;
