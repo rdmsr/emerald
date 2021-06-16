@@ -12,7 +12,7 @@ TARGET = x86_64-unknown-none
 
 
 
-CHARDFLAGS := \
+CHARDFLAGS := -Wno-sequence-point \
 			-nostdlib \
 			-g 	\
 			-O2                                                     \
