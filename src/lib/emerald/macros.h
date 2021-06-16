@@ -9,7 +9,7 @@
 
 #define UNUSED(x) (void)x
 #define ARRLEN(arr) sizeof(arr) / sizeof(arr[0])
-#define MAX(a,b) (((a)>(b))?(a):(b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 #define ALIGN_DOWN(__addr, __align) ((__addr) & ~((__align)-1))
 #define ALIGN_UP(__addr, __align) (((__addr) + (__align)-1) & ~((__align)-1))
@@ -20,6 +20,5 @@
 #define BIT_TEST(__bit) ((bitmap[(__bit) / 8] >> ((__bit) % 8)) & 1)
 
 #define __FILENAME__ (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
-
 
 #endif
