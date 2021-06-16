@@ -15,6 +15,7 @@
 /* 4 KB per page */
 #define PAGE_SIZE 4096
 #define MEM_PHYS_OFFSET ((uintptr_t)0xffff800000000000)
+#define KERNEL_BASE ((uintptr_t)0xffffffff80000000)
 
 void pmm_initialize(struct stivale2_struct* boot_info);
 
@@ -22,5 +23,5 @@ void *pmm_allocate(size_t pages);
 void *pmm_allocate_zero(size_t pages);
 
 void pmm_free(void *address, size_t pages);
-void print_bitmap(void);
+void print_bitmap(int n);
 #endif

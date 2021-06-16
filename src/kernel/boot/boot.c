@@ -31,7 +31,7 @@ __attribute__((section(".stivale2hdr"), used)) static struct stivale2_header sti
     .entry_point = (uintptr_t)&kmain,
     .stack = (uintptr_t)stack + sizeof(stack),
     .flags = (1 << 1),
-    .tags = (uintptr_t)&framebuffer_hdr_tag,
+    .tags = (uint64_t)&framebuffer_hdr_tag,
 };
 
 
