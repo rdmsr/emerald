@@ -6,16 +6,21 @@
 
 #include <emerald/str/fmt.h>
 
-#define make_integer(base, type)     \
-    type i = va_arg(args, type);     \
-    if (i < (type)ZERO)              \
-    {                                \
-        i = -i;                      \
-        buffer[position] = '-';      \
-        position++;                  \
-    }                                \
-    String s = str_convert(i, base); \
-    str_concat(s, make_str(buffer)); \
+#define make_integer(base, type)                      \
+    type i = va_arg(args, type);                      \
+    if (i < (type)ZERO)                               \
+    {                                                 \
+        i = -i;                                       \
+        buffer[position] = '-';                       \
+        position++;                                   \
+    }                                                 \
+    String s = str_convert(i, base);                  \
+    if (base == 16)                                   \
+    {                                                 \
+        str_concat(make_str("0x"), make_str(buffer)); \
+        position += 2;                                \
+    }                                                 \
+    str_concat(s, make_str(buffer));                  \
     position += s.size;
 
 void fmt_buffer(char *buffer, char *string, va_list args)
@@ -41,15 +46,15 @@ void fmt_buffer(char *buffer, char *string, va_list args)
                 position += cstrlen(s);
                 break;
             }
-	    
+
             case 's':
             {
                 String s = va_arg(args, String);
                 str_concat(s, make_str(buffer));
-	        position += cstrlen(s.buffer);
+                position += cstrlen(s.buffer);
                 break;
             }
-	    
+
             case 'i':
             {
                 make_integer(10, int);
