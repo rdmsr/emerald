@@ -8,12 +8,11 @@
 
 void *memset(void *s, int c, unsigned int len)
 {
-    unsigned char *p = s;
-    while (len--)
+    uint8_t *s_uint8 = (uint8_t *)s;
+    size_t i;
+    for (i = 0; i < len; i++)
     {
-        *p++ = (unsigned char)c;
+        s_uint8[i] = (uint8_t)c;
     }
     return s;
 }
-
-
