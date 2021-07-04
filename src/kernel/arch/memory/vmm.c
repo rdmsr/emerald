@@ -60,9 +60,7 @@ void vmm_map_range(uint64_t *pagemap, uint64_t start, uint64_t end, uint64_t off
 
 void load_pagemap(uint64_t *pagemap)
 {
-    __asm__ volatile("mov %0, %%cr3"
-                     :
-                     : "r"(pagemap));
+    asm_write_cr3((uint64_t)pagemap);
 }
 
 void vmm_initialize()
