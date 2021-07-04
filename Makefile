@@ -53,7 +53,7 @@ disk: $(KERNEL_HDD)
 
 run: $(KERNEL_HDD)
 	@echo [ QEMU ] $<
-	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 256M -soundhw pcspk
+	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 256 -soundhw pcspk
 
 documentation/:
 
