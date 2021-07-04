@@ -6,6 +6,8 @@
 #include <arch/arch.h>
 #include <arch/descriptors/gdt.h>
 #include <arch/descriptors/idt.h>
+#include <arch/memory/pmm.h>
+#include <arch/memory/vmm.h>
 
 static void serial_writer(char *string)
 {
@@ -22,6 +24,12 @@ Writer *arch_debug_writer()
 
 void arch_initialize_descriptors(void)
 {
-  gdt_initialize();
-  idt_initialize();
+    gdt_initialize();
+    idt_initialize();
+}
+
+void arch_initialize_memory(struct stivale2_struct *bootinfo)
+{
+    pmm_initialize(bootinfo);
+    vmm_initialize();
 }
