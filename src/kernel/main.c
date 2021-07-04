@@ -1,11 +1,10 @@
 #include <arch/arch.h>
-#include <arch/memory/pmm.h>
-#include <arch/memory/vmm.h>
 #include <devices/com.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
 #include <emerald/debug.h>
+#include <arch/memory/pmm.h>
 
 void kernel_splash()
 {
@@ -16,8 +15,8 @@ void kernel_splash()
     log(INFO, " |  _  |  -__|   _|  |  |  |  |  |  |  |        |  ");
     log(INFO, " |_____|_____|__| |___  |__|__|__|_____|__|__|__|  ");
     log(INFO, "                |_____|");
-    log(INFO, "{a} {a}", __DATE__, __TIME__);
-    log(INFO, "x86_64-elf-gcc ({a})", __VERSION__);
+    log(INFO, "Compiled on {a} {a}", __DATE__, __TIME__);
+    log(INFO, "Using x86_64-elf-gcc ({a})", __VERSION__);
     log(INFO, "------------------------------------------------");
 }
 
@@ -26,14 +25,15 @@ void kmain(struct stivale2_struct *stivale2_struct)
     com_initialize(COM1);
 
     arch_initialize_descriptors();
-    
-    pmm_initialize(stivale2_struct);
-    vmm_initialize();
-    
+
+    arch_initialize_memory(stivale2_struct);
+
+    log(INFO, "Usable pages: {i}\t Usable memory: {i}mb", get_usable_pages(), get_usable_pages() * 4096 / 1024 / 1024);
     kernel_splash();
 
     for (;;)
     {
         __asm__("hlt");
     }
+
 }

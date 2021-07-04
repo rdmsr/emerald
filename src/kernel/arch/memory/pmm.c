@@ -11,15 +11,18 @@
 
 static Bitmap bitmap;
 static uintptr_t highest_page = 0;
+static size_t usable_pages = 0;
 
 void clear_page(void *addr)
 {
     bitmap_clear(&bitmap, (size_t)addr / PAGE_SIZE);
+    usable_pages++;
 }
 
 void set_page(void *addr)
 {
     bitmap_set(&bitmap, (size_t)addr / PAGE_SIZE);
+    usable_pages--;
 }
 
 void pmm_free(void *addr, size_t pages)
@@ -43,6 +46,7 @@ void set_pages(void *addr, size_t page_count)
 void *pmm_allocate(size_t pages)
 {
     kassert(pages > 0);
+    kassert(usable_pages > 0);
     kassert(pages < bitmap.size);
 
     size_t i, j;
@@ -86,10 +90,15 @@ void print_bitmap(int n)
 
     for (i = 0; i < (size_t)n; i++)
     {
-      print(arch_debug_writer(), "{i}", bitmap_get(&bitmap, i));
+        print(arch_debug_writer(), "{i}", bitmap_get(&bitmap, i));
     }
 
     print(arch_debug_writer(), "\n");
+}
+
+size_t get_usable_pages(void)
+{
+    return usable_pages;
 }
 
 static const char *get_memmap_entry_type(int type)
@@ -149,7 +158,7 @@ void pmm_initialize(struct stivale2_struct *boot_info)
     size_t bitmap_size = ALIGN_UP(ALIGN_DOWN(highest_page, PAGE_SIZE) / PAGE_SIZE / 8, PAGE_SIZE);
 
     bitmap.size = bitmap_size;
-    
+
     kassert(bitmap.size > 0);
 
     log(INFO, "The bitmap needs to be {i} kb long", bitmap.size / 1024);
