@@ -15,20 +15,20 @@ static IDTPointer idtr;
 
 void pic_remap(void)
 {
-    outb(0x20, 0x11);
-    outb(0xA0, 0x11);
+    asm_outb(0x20, 0x11);
+    asm_outb(0xA0, 0x11);
 
-    outb(0x21, 0x20);
-    outb(0xA1, 0x28);
+    asm_outb(0x21, 0x20);
+    asm_outb(0xA1, 0x28);
 
-    outb(0x21, 0x04);
-    outb(0xA1, 0x02);
+    asm_outb(0x21, 0x04);
+    asm_outb(0xA1, 0x02);
 
-    outb(0x21, 0x01);
-    outb(0xA1, 0x01);
+    asm_outb(0x21, 0x01);
+    asm_outb(0xA1, 0x01);
 
-    outb(0x21, 0x0);
-    outb(0xA1, 0x0);
+    asm_outb(0x21, 0x0);
+    asm_outb(0xA1, 0x0);
     log(INFO, "PIC remapped");
 }
 
@@ -73,11 +73,11 @@ void idt_initialize()
 
     log(INFO, "Initializing ISRs...");
     install_isr();
-    
+
     log(INFO, "Loading IDT...");
     idt_load();
 
-    sti();
+    asm_sti();
 
     log(INFO, "IDT initialized");
 }
