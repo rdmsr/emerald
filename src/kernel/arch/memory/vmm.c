@@ -16,7 +16,7 @@ static uint64_t *get_next_level(uint64_t *table, size_t index)
         table[index] = (uint64_t)pmm_allocate_zero(1);
         table[index] |= 0b11;
     }
-    
+
     return (uint64_t *)((table[index] & ~(0x1ff)) + MEM_PHYS_OFFSET);
 }
 
@@ -48,6 +48,16 @@ void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address)
     pml1[level1] = 0;
 }
 
+void vmm_map_range(uint64_t *pagemap, uint64_t start, uint64_t end, uint64_t offset, uint64_t flags)
+{
+    uintptr_t i;
+
+    for (i = start; i < end; i += PAGE_SIZE)
+    {
+        vmm_map_page(pagemap, i, i + offset, flags);
+    }
+}
+
 void load_pagemap(uint64_t *pagemap)
 {
     __asm__ volatile("mov %0, %%cr3"
@@ -59,16 +69,8 @@ void vmm_initialize()
 {
     kernel_pagemap = (uint64_t *)pmm_allocate_zero(1);
 
-    uintptr_t i, j;
-    for (i = 0; i < 0x80000000; i += PAGE_SIZE)
-    {
-        vmm_map_page(kernel_pagemap, i, i + KERNEL_BASE, 0b11);
-    }
-
-    for (j = 0; j < 0x100000000; j += PAGE_SIZE)
-    {
-        vmm_map_page(kernel_pagemap, j, j + MEM_PHYS_OFFSET, 0b11);
-    }
+    vmm_map_range(kernel_pagemap, 0, 0x8000000, KERNEL_BASE, 0b11);
+    vmm_map_range(kernel_pagemap, 0, 0x10000000, MEM_PHYS_OFFSET, 0b11);
 
     load_pagemap(kernel_pagemap);
 
