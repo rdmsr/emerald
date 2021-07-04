@@ -23,8 +23,6 @@ void kernel_splash()
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {
-    UNUSED(stivale2_struct);
-
     com_initialize(COM1);
 
     arch_initialize_descriptors();
