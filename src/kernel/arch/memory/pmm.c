@@ -43,7 +43,7 @@ void set_pages(void *addr, size_t page_count)
 void *pmm_allocate(size_t pages)
 {
     kassert(pages > 0);
-    kassert(pages < ALIGN_UP(ALIGN_DOWN(highest_page, PAGE_SIZE) / PAGE_SIZE / 8, PAGE_SIZE));
+    kassert(pages < bitmap.size);
 
     size_t i, j;
     for (i = 0; i < highest_page / PAGE_SIZE; i++)

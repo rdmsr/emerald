@@ -26,6 +26,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
     com_initialize(COM1);
 
     arch_initialize_descriptors();
+    
     pmm_initialize(stivale2_struct);
     vmm_initialize();
     
