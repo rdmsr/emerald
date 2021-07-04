@@ -11,5 +11,12 @@
 
 void *memset(void *s, int c, unsigned int len);
 
+typedef struct
+{
+    uintptr_t base;
+    size_t length;
+} Range;
+
+Range range_align(Range range, size_t alignment);
 
 #endif

@@ -1,10 +1,11 @@
 #include <arch/arch.h>
 #include <arch/memory/pmm.h>
+#include <arch/memory/vmm.h>
 #include <devices/com.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
-#include <arch/memory/pmm.h>
 #include <main.h>
+#include <emerald/debug.h>
 
 void kernel_splash()
 {
@@ -28,11 +29,9 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     arch_initialize_descriptors();
     pmm_initialize(stivale2_struct);
-
+    vmm_initialize();
     
     kernel_splash();
-
-    log(INFO, "{s} {i}", make_str("Hello"), 10);
 
     for (;;)
     {

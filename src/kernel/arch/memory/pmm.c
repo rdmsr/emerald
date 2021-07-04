@@ -6,79 +6,96 @@
 
 #include <arch/memory/pmm.h>
 #include <boot/boot.h>
-#include <emerald/mem.h>
-
-static uintptr_t highest_page = 0;
-static uintptr_t last_used_index = 0;
+#include <emerald/debug.h>
 
 /* TODO: implement a bitmap data structure in libemerald */
-static uint8_t *bitmap;
+static uint8_t *bitmap = 0;
+static uintptr_t highest_page = 0;
 
-/* part of the function is taken from https://github.com/lyre-os/lyre */
-static void *inner_alloc(size_t count, size_t limit)
+static void bit_clear(size_t index)
 {
-    size_t p = 0;
+    uint64_t bit = index % 8;
+    uint64_t byte = index / 8;
 
+    bitmap[byte] &= ~(1 << bit);
+}
+
+static void bit_set(size_t index)
+{
+    uint64_t bit = index % 8;
+    uint64_t byte = index / 8;
+
+    bitmap[byte] |= (1 << bit);
+}
+
+static bool bit_is_set(size_t index)
+{
+    uint64_t bit = index % 8;
+    uint64_t byte = index / 8;
+
+    return bitmap[byte] & (1 << bit);
+}
+
+void clear_page(void *addr)
+{
+    bit_clear((size_t)addr / PAGE_SIZE);
+}
+
+void set_page(void *addr)
+{
+    bit_set((size_t)addr / PAGE_SIZE);
+}
+
+void pmm_free(void *addr, size_t pages)
+{
     size_t i;
-    while (last_used_index < limit)
+    for (i = 0; i < pages; i++)
     {
-        last_used_index++;
-        if (!BIT_TEST(last_used_index))
+        clear_page((void *)(addr + (i * PAGE_SIZE)));
+    }
+}
+
+void set_pages(void *addr, size_t page_count)
+{
+    size_t i;
+    for (i = 0; i < page_count; i++)
+    {
+        set_page((void *)(addr + (i * PAGE_SIZE)));
+    }
+}
+
+void *pmm_allocate(size_t pages)
+{
+    kassert(pages > 0);
+
+    size_t i, j;
+    for (i = 0; i < highest_page / PAGE_SIZE; i++)
+    {
+        for (j = 0; j < pages; j++)
         {
-            if (++p == count)
+            if (bit_is_set(i))
             {
-                size_t page = last_used_index - count;
-
-                if (last_used_index == count)
-                {
-                    page = last_used_index / count;
-                }
-
-                for (i = page - 1; i < last_used_index; i++)
-                {
-                    BIT_SET(i);
-                }
-
-                return (void *)(page * PAGE_SIZE);
+                break;
             }
-        }
-        else
-        {
-            p = 0;
+
+            else if (j == pages - 1)
+            {
+                set_pages((void *)(i * PAGE_SIZE), pages);
+                return (void *)(i * PAGE_SIZE);
+            }
         }
     }
 
     return NULL;
 }
 
-void *pmm_allocate(size_t pages)
-{
-    size_t l = last_used_index;
-    void *ret = inner_alloc(pages, highest_page / PAGE_SIZE);
-
-    if (ret == NULL)
-    {
-        last_used_index = 0;
-        ret = inner_alloc(pages, l);
-    }
-
-    return ret;
-}
-
 void *pmm_allocate_zero(size_t pages)
 {
-    char *ret = (char *)pmm_allocate(pages);
+    void *ret = pmm_allocate(pages);
 
-    if (ret == NULL)
-        return NULL;
+    kassert(ret != NULL);
 
-    uint64_t *ptr = (uint64_t *)(ret + MEM_PHYS_OFFSET);
-
-    size_t i;
-    for (i = 0; i < pages * (PAGE_SIZE / sizeof(uint64_t)); i++)
-    {
-        ptr[i] = 0;
-    }
+    memset(ret, 0, pages * PAGE_SIZE);
 
     return ret;
 }
@@ -87,10 +104,14 @@ void print_bitmap(int n)
 {
     size_t i;
 
+    print(arch_debug_writer(), "Bitmap: ");
+
     for (i = 0; i < (size_t)n; i++)
     {
-        log(INFO, "{i}", BIT_TEST(i));
+        print(arch_debug_writer(), "{i}", bit_is_set(i));
     }
+
+    print(arch_debug_writer(), "\n");
 }
 
 static const char *get_memmap_entry_type(int type)
@@ -122,7 +143,6 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 {
     uintptr_t top;
     size_t i, j, k;
-    uint64_t addr;
 
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(boot_info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
@@ -133,7 +153,9 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
         log(INFO, "Entry {i}: base={x} length={x} type={a}", i, entry->base, entry->length, get_memmap_entry_type(entry->type));
 
-        if (entry->type != STIVALE2_MMAP_USABLE)
+        if (entry->type != STIVALE2_MMAP_USABLE &&
+            entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
+            entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
         {
             continue;
         }
@@ -148,49 +170,31 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
     size_t bitmap_size = ALIGN_UP(ALIGN_DOWN(highest_page, PAGE_SIZE) / PAGE_SIZE / 8, PAGE_SIZE);
 
+    kassert(bitmap_size > 0);
+
     log(INFO, "The bitmap needs to be {i} kb long", bitmap_size / 1024);
 
     for (j = 0; j < memory_map->entries; j++)
     {
-
         struct stivale2_mmap_entry *entry = &memory_map->memmap[j];
 
-        if (entry->type != STIVALE2_MMAP_USABLE)
-        {
-            continue;
-        }
-
-        if (entry->length >= bitmap_size)
+        if (entry->type == STIVALE2_MMAP_USABLE && entry->length >= bitmap_size)
         {
             bitmap = (uint8_t *)(entry->base + MEM_PHYS_OFFSET);
-
             entry->base += bitmap_size;
             entry->length -= bitmap_size;
-
-            memset(bitmap, 0xff, bitmap_size);
-
-            for (k = 0; k < memory_map->entries; k++)
-            {
-                if (memory_map->memmap[k].type != STIVALE2_MMAP_USABLE)
-                {
-                    continue;
-                }
-
-                if (!(memory_map->memmap[k].length))
-                {
-                    continue;
-                }
-
-                for (
-                    addr = memory_map->memmap[k].base;
-                    addr < memory_map->memmap[k].base + memory_map->memmap[k].length;
-                    addr += PAGE_SIZE)
-                {
-                    BIT_CLEAR(addr / PAGE_SIZE);
-                }
-            }
-
             break;
+        }
+    }
+
+    memset(bitmap, 0xff, bitmap_size);
+
+    for (k = 0; k < memory_map->entries; k++)
+    {
+        /* If the current entry is usable, set it free in the bitmap */
+        if (memory_map->memmap[k].type == STIVALE2_MMAP_USABLE)
+        {
+            pmm_free((void *)memory_map->memmap[k].base, memory_map->memmap[k].length / PAGE_SIZE);
         }
     }
 }

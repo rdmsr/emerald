@@ -16,3 +16,11 @@ void *memset(void *s, int c, unsigned int len)
     }
     return s;
 }
+
+Range range_align(Range range, size_t alignment)
+{
+    range.base &= ~(alignment - 1);
+    range.length = (range.length + (alignment - 1)) & ~(alignment - 1);
+
+    return range;
+}
