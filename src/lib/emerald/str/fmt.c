@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include <emerald/ds/bitmap.h>
 #include <emerald/str/fmt.h>
 
 #define make_integer(base, type)                      \

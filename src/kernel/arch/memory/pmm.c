@@ -7,43 +7,19 @@
 #include <arch/memory/pmm.h>
 #include <boot/boot.h>
 #include <emerald/debug.h>
+#include <emerald/ds/bitmap.h>
 
-/* TODO: implement a bitmap data structure in libemerald */
-static uint8_t *bitmap = 0;
+static Bitmap bitmap;
 static uintptr_t highest_page = 0;
-
-static void bit_clear(size_t index)
-{
-    uint64_t bit = index % 8;
-    uint64_t byte = index / 8;
-
-    bitmap[byte] &= ~(1 << bit);
-}
-
-static void bit_set(size_t index)
-{
-    uint64_t bit = index % 8;
-    uint64_t byte = index / 8;
-
-    bitmap[byte] |= (1 << bit);
-}
-
-static bool bit_is_set(size_t index)
-{
-    uint64_t bit = index % 8;
-    uint64_t byte = index / 8;
-
-    return bitmap[byte] & (1 << bit);
-}
 
 void clear_page(void *addr)
 {
-    bit_clear((size_t)addr / PAGE_SIZE);
+    bitmap_clear(&bitmap, (size_t)addr / PAGE_SIZE);
 }
 
 void set_page(void *addr)
 {
-    bit_set((size_t)addr / PAGE_SIZE);
+    bitmap_set(&bitmap, (size_t)addr / PAGE_SIZE);
 }
 
 void pmm_free(void *addr, size_t pages)
@@ -74,7 +50,7 @@ void *pmm_allocate(size_t pages)
     {
         for (j = 0; j < pages; j++)
         {
-            if (bit_is_set(i))
+            if (bitmap_get(&bitmap, i))
             {
                 break;
             }
@@ -110,7 +86,7 @@ void print_bitmap(int n)
 
     for (i = 0; i < (size_t)n; i++)
     {
-        print(arch_debug_writer(), "{i}", bit_is_set(i));
+      print(arch_debug_writer(), "{i}", bitmap_get(&bitmap, i));
     }
 
     print(arch_debug_writer(), "\n");
@@ -172,9 +148,11 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
     size_t bitmap_size = ALIGN_UP(ALIGN_DOWN(highest_page, PAGE_SIZE) / PAGE_SIZE / 8, PAGE_SIZE);
 
-    kassert(bitmap_size > 0);
+    bitmap.size = bitmap_size;
+    
+    kassert(bitmap.size > 0);
 
-    log(INFO, "The bitmap needs to be {i} kb long", bitmap_size / 1024);
+    log(INFO, "The bitmap needs to be {i} kb long", bitmap.size / 1024);
 
     for (j = 0; j < memory_map->entries; j++)
     {
@@ -182,14 +160,14 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
         if (entry->type == STIVALE2_MMAP_USABLE && entry->length >= bitmap_size)
         {
-            bitmap = (uint8_t *)(entry->base + MEM_PHYS_OFFSET);
+            bitmap.data = (uint8_t *)(entry->base + MEM_PHYS_OFFSET);
             entry->base += bitmap_size;
             entry->length -= bitmap_size;
             break;
         }
     }
 
-    memset(bitmap, 0xff, bitmap_size);
+    bitmap_fill(&bitmap, 0xff);
 
     for (k = 0; k < memory_map->entries; k++)
     {
