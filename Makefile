@@ -1,11 +1,12 @@
 ASMFILES  := $(shell find src -type f -name '*.asm')
 CFILES    := $(shell find src -type f -name '*.c')
-export PATH := $(shell toolchain/use.sh):$(PATH)
 CC         = x86_64-elf-gcc
 OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
 KERNEL_HDD = build/disk.hdd
 KERNEL_ELF = kernel.elf
 NASMFLAGS := -felf64
+
+export PATH := $(shell toolchain/use.sh):$(PATH)
 
 TARGET = x86_64-unknown-none
 

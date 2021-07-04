@@ -69,6 +69,15 @@ void fmt_buffer(char *buffer, char *string, va_list args)
                 break;
             }
 
+            case 'm':
+            {
+                uintptr_t i = va_arg(args, uintptr_t);
+                String s = str_convert(i / 1024 / 1024, 10);
+                str_concat(s, make_str(buffer));
+                position += s.size;
+                break;
+            }
+
             case 'x':
             {
 

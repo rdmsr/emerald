@@ -1,10 +1,10 @@
 #include <arch/arch.h>
+#include <arch/memory/pmm.h>
 #include <devices/com.h>
+#include <emerald/debug.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
-#include <emerald/debug.h>
-#include <arch/memory/pmm.h>
 
 void kernel_splash()
 {
@@ -28,12 +28,11 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     arch_initialize_memory(stivale2_struct);
 
-    log(INFO, "Usable pages: {i}\t Usable memory: {i}mb", get_usable_pages(), get_usable_pages() * 4096 / 1024 / 1024);
     kernel_splash();
+    log(INFO, "Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
 
     for (;;)
     {
         __asm__("hlt");
     }
-
 }
