@@ -32,7 +32,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     log(INFO, "Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
 
-    __asm__("int $0xe");
     for (;;)
     {
         __asm__("hlt");
