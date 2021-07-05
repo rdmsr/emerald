@@ -63,7 +63,7 @@ void load_pagemap(uint64_t *pagemap)
     asm_write_cr3((uint64_t)pagemap);
 }
 
-void vmm_initialize()
+void vmm_initialize(void)
 {
     kernel_pagemap = (uint64_t *)pmm_allocate_zero(1);
 

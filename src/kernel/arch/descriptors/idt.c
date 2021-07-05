@@ -7,11 +7,11 @@
 #include <arch/asm.h>
 #include <arch/descriptors/idt.h>
 
-extern void isr_irq_slave(void);
-extern void isr_irq_master(void);
+extern void idt_flush(uintptr_t idt_ptr);
 
 static IDTDescriptor idt[256];
 static IDTPointer idtr;
+extern uintptr_t __interrupt_vector[];
 
 void pic_remap(void)
 {
@@ -44,26 +44,16 @@ static IDTDescriptor idt_make_entry(uint64_t offset)
         .type_attr = 0x8e};
 }
 
+
 void install_isr(void)
 {
     pic_remap();
 
-    int i, j;
-    for (i = 0x20; i < 0x28; i++)
+    int j;
+    for (j = 0; j < 48; j++)
     {
-        idt[i] = idt_make_entry((uint64_t)&isr_irq_master);
+        idt[j] = idt_make_entry(__interrupt_vector[j]);
     }
-    for (j = 0x28; j < 0x2F; j++)
-    {
-        idt[j] = idt_make_entry((uint64_t)&isr_irq_slave);
-    }
-}
-
-void idt_load(void)
-{
-    __asm__ volatile("lidt %0"
-                     :
-                     : "m"(idtr));
 }
 
 void idt_initialize()
@@ -75,7 +65,8 @@ void idt_initialize()
     install_isr();
 
     log(INFO, "Loading IDT...");
-    idt_load();
+
+    idt_flush((uintptr_t)&idtr);
 
     asm_sti();
 

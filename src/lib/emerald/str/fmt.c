@@ -81,7 +81,7 @@ void fmt_buffer(char *buffer, char *string, va_list args)
             case 'x':
             {
 
-                make_integer(16, unsigned int);
+                make_integer(16, uintptr_t);
                 break;
             }
 

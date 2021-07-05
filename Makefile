@@ -54,15 +54,17 @@ endif
 
 .DEFAULT_GOAL = $(TARGET)
 
-run: $(TARGET)
-	@echo [ QEMU ] $<
+emerald.iso: $(TARGET)
 	meta/scripts/make-image.sh > /dev/null 2>&1
+
+run: emerald.iso
+	@echo [ QEMU ] $<
 	@qemu-system-x86_64 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m 256
 
 
-debug: $(TARGET)
+debug: emerald.iso
 	@echo [ QEMU ] $<
-	@qemu-system-x86_64 -cdrom emerald.iso -s -S -serial stdio -rtc base=localtime -m 256
+	@qemu-system-x86_64 -cdrom emerald.iso -d int -serial stdio -rtc base=localtime -m 256
 
 $(BUILD_DIRECTORY)/%.c.o: %.c
 	$(DIRECTORY_GUARD)
