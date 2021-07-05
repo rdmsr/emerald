@@ -1,16 +1,16 @@
+CC         = x86_64-elf-gcc
+AS  	   = nasm
+
 ASMFILES  := $(shell find src -type f -name '*.asm')
 CFILES    := $(shell find src -type f -name '*.c')
-CC         = x86_64-elf-gcc
-OBJ       := ${CFILES:.c=.o} ${ASMFILES:.asm=.o}
-KERNEL_HDD = build/disk.hdd
-KERNEL_ELF = kernel.elf
-NASMFLAGS := -felf64
 
-export PATH := $(shell toolchain/use.sh):$(PATH)
+OBJ = $(patsubst %.c, $(BUILD_DIRECTORY)/%.c.o, $(CFILES)) \
+        $(patsubst %.asm, $(BUILD_DIRECTORY)/%.asm.o, $(ASMFILES))
 
-TARGET = x86_64-unknown-none
+TARGET = $(BUILD_DIRECTORY)/kernel.elf
+ISO = emerald.iso
 
-
+export PATH := $(shell meta/toolchain/use.sh):$(PATH)
 
 
 CHARDFLAGS := -Wno-sequence-point \
@@ -39,6 +39,10 @@ LDHARDFLAGS := \
 	-z max-page-size=0x1000  \
 	-T src/link.ld
 
+NASMFLAGS := -felf64
+
+BUILD_DIRECTORY := build
+DIRECTORY_GUARD = @mkdir -p $(@D)
 
 ifndef ECHO
 HIT_TOTAL != ${MAKE} ${MAKECMDGOALS} --dry-run ECHO="HIT_MARK" | grep -c "HIT_MARK"
@@ -48,53 +52,31 @@ endif
 
 .PHONY: clean
 
-.DEFAULT_GOAL = $(KERNEL_HDD)
+.DEFAULT_GOAL = $(TARGET)
 
-disk: $(KERNEL_HDD)
-
-run: $(KERNEL_HDD)
+run: $(TARGET)
 	@echo [ QEMU ] $<
-	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -enable-kvm -serial stdio -rtc base=localtime -m 256 -soundhw pcspk
+	meta/scripts/make-image.sh > /dev/null 2>&1
+	@qemu-system-x86_64 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m 256
 
-documentation/:
 
-	@echo -e "Generating documentation to\033[1;32m" $@ "\033[0m"
-	@doxygen > /dev/null 2>&1
-	@echo -e "\033[1;36mDone!\033[0m"
-
-docs: documentation/
-debug: $(KERNEL_HDD)
+debug: $(TARGET)
 	@echo [ QEMU ] $<
-	@qemu-system-x86_64 -vga std -drive file=$(KERNEL_HDD),format=raw -d int -serial stdio -rtc base=localtime -m 256
+	@qemu-system-x86_64 -cdrom emerald.iso -s -S -serial stdio -rtc base=localtime -m 256
 
-%.o: %.c
+$(BUILD_DIRECTORY)/%.c.o: %.c
+	$(DIRECTORY_GUARD)
 	@echo -e CC $(ECHO) $<
 	@$(CC) $(CHARDFLAGS) -c $< -o $@
-%.o: %.asm
+
+$(BUILD_DIRECTORY)/%.asm.o: %.asm
+	$(DIRECTORY_GUARD)
 	@echo -e AS  $(ECHO) $<
 	@nasm $(NASMFLAGS) $< -o $@
 
 
-$(KERNEL_ELF): $(OBJ)
-
+$(TARGET): $(OBJ)
 	@echo -e LD $(ECHO) $@
 	@$(CC) $(LDHARDFLAGS) $(OBJ) -o $@
-
-limine/limine-install:
-	@$(MAKE) -C thirdparty/limine/ limine-install
-
-$(KERNEL_HDD): limine/limine-install $(KERNEL_ELF)
-	@echo -e LIMINE $(KERNEL_HDD)
-	@-mkdir build > /dev/null 2>&1
-	@rm -f $(KERNEL_HDD)
-	@dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD) status=none
-	@parted -s $(KERNEL_HDD) mklabel msdos
-	@parted -s $(KERNEL_HDD) mkpart primary 1 100%
-	@echfs-utils -m -p0 $(KERNEL_HDD) quick-format 32768
-	@echfs-utils -m -p0 $(KERNEL_HDD) import $(KERNEL_ELF) build/$(KERNEL_ELF)
-	@echfs-utils -m -p0 $(KERNEL_HDD) import src/root/limine.cfg limine.cfg
-	@echfs-utils -m -p0 $(KERNEL_HDD) import thirdparty/limine/limine.sys limine.sys
-	@thirdparty/limine/limine-install-linux-x86_64 $(KERNEL_HDD)
-
 clean:
-	rm -rf build $(KERNEL_HDD) $(KERNEL_ELF) $(OBJ)
+	rm -rf $(BUILD_DIRECTORY) $(TARGET) $(ISO)

@@ -6,6 +6,8 @@
 *.ko
 *.obj
 *.elf
+*.iso
+*.hdd
 
 # Linker output
 *.ilk
@@ -45,7 +47,7 @@
 
 build/
 
-toolchain/local
-toolchain/tarballs
-toolchain/build
+meta/toolchain/local
+meta/toolchain/tarballs
+meta/toolchain/build
 
