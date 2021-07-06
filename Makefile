@@ -35,7 +35,7 @@ LDHARDFLAGS := \
 	-O2 \
 	-nostdlib                 \
 	-static                   \
-	-fno-pic -fno-pie                   \
+	-fno-pic -fpie                   \
 	-z max-page-size=0x1000  \
 	-T src/link.ld
 
