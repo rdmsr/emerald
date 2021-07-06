@@ -32,7 +32,7 @@ void pic_remap(void)
     log(INFO, "PIC remapped");
 }
 
-static IDTDescriptor idt_make_entry(uint64_t offset)
+static IDTDescriptor idt_make_entry(uint64_t offset, uint8_t type)
 {
     return (IDTDescriptor){
         .selector = 0x08,
@@ -41,19 +41,28 @@ static IDTDescriptor idt_make_entry(uint64_t offset)
         .offset_hi = (offset >> 32) & 0xFFFFFFFF,
         .ist = 0,
         .zero = 0,
-        .type_attr = 0x8e};
+        .type_attr = type};
 }
-
 
 void install_isr(void)
 {
     pic_remap();
 
-    int j;
-    for (j = 0; j < 48; j++)
+    size_t i;
+    for (i = 0; i < 3; i++)
     {
-        idt[j] = idt_make_entry(__interrupt_vector[j]);
+        idt[i] = idt_make_entry(__interrupt_vector[i], INTGATE);
     }
+
+    idt[3] = idt_make_entry(__interrupt_vector[3], TRAPGATE);
+    idt[4] = idt_make_entry(__interrupt_vector[4], TRAPGATE);
+
+    size_t j;
+    for (j = 5; j < 48; j++)
+    {
+        idt[j] = idt_make_entry(__interrupt_vector[j], INTGATE);
+    }
+    
 }
 
 void idt_initialize()

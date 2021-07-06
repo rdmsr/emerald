@@ -10,6 +10,9 @@
 #include <emerald/log.h>
 #include <emerald/std.h>
 
+#define INTGATE 0x8e
+#define TRAPGATE 0xef
+
 typedef struct __attribute__((packed))
 {
     uint16_t size;

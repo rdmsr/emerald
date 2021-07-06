@@ -3,6 +3,7 @@
 #include <arch/memory/pmm.h>
 #include <cpuid.h>
 #include <devices/com.h>
+#include <devices/pit.h>
 #include <emerald/debug.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
@@ -30,6 +31,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     arch_initialize_memory(stivale2_struct);
 
+    pit_initialize(1000);
+
     kernel_splash();
 
     log(INFO, "Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
@@ -38,7 +41,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     log(INFO, "{i}", cpuid_has_lapic());
 
-    for (;;)
+    while (true)
     {
         asm_hlt();
     }

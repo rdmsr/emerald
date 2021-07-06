@@ -31,5 +31,6 @@ size_t cstrlen(char *str);
 String str_concat(String str, String str2);
 String make_str(char *str);
 String str_convert(unsigned int num, int base);
-bool str_cmp(String str, String str2);
+bool str_ncmp(String str, String str2, int n);
+
 #endif
