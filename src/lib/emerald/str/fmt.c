@@ -86,6 +86,14 @@ void fmt_buffer(char *buffer, char *string, va_list args)
                 break;
             }
 
+            case 'b':
+            {
+                bool b = va_arg(args, int);
+                str_concat(make_str(b ? "true" : "false"), make_str(buffer));
+                position += b ? 4 : 5;
+                break;
+            }
+
             default:
                 buffer[position] = '{';
                 position++;
