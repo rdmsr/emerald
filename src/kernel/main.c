@@ -1,5 +1,7 @@
 #include <arch/arch.h>
+#include <arch/cpuid.h>
 #include <arch/memory/pmm.h>
+#include <cpuid.h>
 #include <devices/com.h>
 #include <emerald/debug.h>
 #include <emerald/log.h>
@@ -32,8 +34,12 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     log(INFO, "Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
 
+    log(INFO, "CPU vendor: {a}", cpuid_get_vendor());
+
+    log(INFO, "{i}", cpuid_has_lapic());
+
     for (;;)
     {
-        __asm__("hlt");
+        asm_hlt();
     }
 }

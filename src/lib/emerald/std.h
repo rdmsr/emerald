@@ -14,4 +14,6 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+#define auto __auto_type
+
 #endif

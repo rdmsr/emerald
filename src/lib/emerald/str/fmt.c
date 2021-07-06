@@ -64,7 +64,8 @@ void fmt_buffer(char *buffer, char *string, va_list args)
 
             case 'c':
             {
-                buffer[position] = scan_current(&scan);
+                char c = va_arg(args, int);
+                buffer[position] = c;
                 position++;
                 break;
             }
