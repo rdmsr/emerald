@@ -39,8 +39,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     log(INFO, "CPU vendor: {a}", cpuid_get_vendor());
 
-    log(INFO, "{b}", false);
-    
     while (true)
     {
         asm_hlt();

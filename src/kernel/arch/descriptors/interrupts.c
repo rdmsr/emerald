@@ -49,8 +49,8 @@ uint64_t interrupts_handler(uint64_t rsp)
     if (stackframe->intno < 32)
     {
         uint64_t cr0 = asm_read_cr0();
-	uint64_t cr2 = asm_read_cr2();
-	uint64_t cr3 = asm_read_cr2();
+        uint64_t cr2 = asm_read_cr2();
+        uint64_t cr3 = asm_read_cr2();
         log(ERROR, "");
         log(ERROR, " _________        .---\"\"\"      \"\"\"---.");
         log(ERROR, ":______.-':      :  .--------------.  :");
@@ -70,9 +70,13 @@ uint64_t interrupts_handler(uint64_t rsp)
         log(ERROR, "           .'.eeeeeeeeeeeeeeeeeeeeee.'.");
         log(ERROR, "          :____________________________:");
 
-        log(ERROR, "*** Backtrace ***");
+        log(ERROR, "*** Stacktrace ***");
         log(ERROR, "Exception number: {x}", stackframe->intno);
-        log(ERROR, "CR0={x} CR2={x} CR3={x}", cr0, cr2, cr3);
+        log(ERROR, "RAX={p} RBX={p} RCX={p} RDX={p}", stackframe->rax, stackframe->rbx, stackframe->rcx, stackframe->rdx);
+        log(ERROR, "RSI={p} RDI={p} RBP={p} RSP={p}", stackframe->rsi, stackframe->rdi, stackframe->rbp, stackframe->rsp);
+        log(ERROR, "R8= {p} R9= {p} R10={p} R11={p}", stackframe->r8, stackframe->r9, stackframe->r10, stackframe->r11);
+        log(ERROR, "R12={p} R13={p} R14={p} R15={p}", stackframe->r12, stackframe->r13, stackframe->r14, stackframe->r15);
+        log(ERROR, "CR0={p} CR2={p} CR3={p} RIP={p}", cr0, cr2, cr3, stackframe->rip);
 
         while (1)
         {

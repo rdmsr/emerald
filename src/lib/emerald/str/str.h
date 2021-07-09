@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2021, Abb1x
- *
- * SPDX-License-Identifier: MIT
- */
-
 #ifndef LIBEMERALD_STR_H
 #define LIBEMERALD_STR_H
 #include <emerald/std.h>
@@ -30,7 +24,8 @@ typedef string_fixed(128) StringFixed128;
 size_t cstrlen(char *str);
 String str_concat(String str, String str2);
 String make_str(char *str);
-String str_convert(unsigned int num, int base);
+String str_convert(int64_t num, int base);
 bool str_ncmp(String str, String str2, int n);
 
+char *itoa(int64_t value, char *str, uint16_t base);
 #endif

@@ -7,21 +7,17 @@
 #include <emerald/ds/bitmap.h>
 #include <emerald/str/fmt.h>
 
-#define make_integer(base, type)                      \
-    type i = va_arg(args, type);                      \
-    if (i < (type)ZERO)                               \
-    {                                                 \
-        i = -i;                                       \
-        buffer[position] = '-';                       \
-        position++;                                   \
-    }                                                 \
-    String s = str_convert(i, base);                  \
-    if (base == 16)                                   \
-    {                                                 \
-        str_concat(make_str("0x"), make_str(buffer)); \
-        position += 2;                                \
-    }                                                 \
-    str_concat(s, make_str(buffer));                  \
+#define make_integer(base, type) \
+    type i = va_arg(args, type); \
+    if (i < (type)ZERO)          \
+    {                            \
+        i = -i;                  \
+        buffer[position] = '-';  \
+        position++;              \
+    }                            \
+    char ibuf[32] = {0};         \
+    itoa(i, ibuf, base);         \
+    String s = make_str(ibuf);   \
     position += s.size;
 
 void fmt_buffer(char *buffer, char *string, va_list args)
@@ -30,6 +26,10 @@ void fmt_buffer(char *buffer, char *string, va_list args)
 
     unsigned int ZERO = 0;
     int position = 0;
+
+    char pad_buffer[32] = {0};
+
+    size_t pad;
 
     while (!scan_ended(&scan))
     {
@@ -59,6 +59,7 @@ void fmt_buffer(char *buffer, char *string, va_list args)
             case 'i':
             {
                 make_integer(10, int);
+                str_concat(s, make_str(buffer));
                 break;
             }
 
@@ -73,7 +74,9 @@ void fmt_buffer(char *buffer, char *string, va_list args)
             case 'm':
             {
                 uintptr_t i = va_arg(args, uintptr_t);
-                String s = str_convert(i / 1024 / 1024, 10);
+                char ibuf[32] = {0};
+                itoa(i / 1024 / 1024, ibuf, 10);
+                String s = make_str(ibuf);
                 str_concat(s, make_str(buffer));
                 position += s.size;
                 break;
@@ -83,6 +86,9 @@ void fmt_buffer(char *buffer, char *string, va_list args)
             {
 
                 make_integer(16, uintptr_t);
+                str_concat(make_str("0x"), make_str(buffer));
+                position += 2;
+                str_concat(s, make_str(buffer));
                 break;
             }
 
@@ -91,6 +97,22 @@ void fmt_buffer(char *buffer, char *string, va_list args)
                 bool b = va_arg(args, int);
                 str_concat(make_str(b ? "true" : "false"), make_str(buffer));
                 position += b ? 4 : 5;
+                break;
+            }
+
+            case 'p':
+            {
+                make_integer(16, uintptr_t);
+                pad = 16;
+                if (s.size < pad)
+                {
+                    memset(pad_buffer, '0', pad - s.size);
+                    str_concat(make_str(pad_buffer), make_str(buffer));
+                }
+
+                str_concat(s, make_str(buffer));
+                position += pad - s.size;
+
                 break;
             }
 
