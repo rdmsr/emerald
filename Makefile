@@ -1,4 +1,5 @@
 CC         = x86_64-elf-gcc
+LD = x86_64-elf-ld
 AS  	   = nasm
 
 ASMFILES  := $(shell find src -type f -name '*.asm')
@@ -26,6 +27,7 @@ CHARDFLAGS := -Wno-sequence-point \
 			-mcmodel=kernel					\
 			-Isrc/kernel					\
 			-Isrc/lib					\
+			-fsanitize=undefined \
 			-fno-pic						\
 			-mno-red-zone					\
 			-mno-sse						\
@@ -35,7 +37,6 @@ LDHARDFLAGS := \
 	-O2 \
 	-nostdlib                 \
 	-static                   \
-	-fno-pic -fpie                   \
 	-z max-page-size=0x1000  \
 	-T src/link.ld
 
@@ -79,6 +80,6 @@ $(BUILD_DIRECTORY)/%.asm.o: %.asm
 
 $(TARGET): $(OBJ)
 	@echo -e LD $(ECHO) $@
-	@$(CC) $(LDHARDFLAGS) $(OBJ) -o $@
+	@$(LD) $(LDHARDFLAGS) $(OBJ) -o $@
 clean:
 	rm -rf $(BUILD_DIRECTORY) $(TARGET) $(ISO)
