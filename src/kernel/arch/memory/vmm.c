@@ -50,6 +50,7 @@ void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address)
 
 void vmm_map_range(uint64_t *pagemap, uint64_t start, uint64_t end, uint64_t offset, uint64_t flags)
 {
+
     uintptr_t i;
 
     for (i = start; i < end; i += PAGE_SIZE)

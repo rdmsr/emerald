@@ -1,5 +1,5 @@
 CC         = x86_64-elf-gcc
-LD = x86_64-elf-ld
+LD 	   = x86_64-elf-ld
 AS  	   = nasm
 
 ASMFILES  := $(shell find src -type f -name '*.asm')
