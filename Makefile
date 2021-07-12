@@ -21,7 +21,7 @@ CHARDFLAGS := -Wno-sequence-point \
 			-fno-stack-protector			\
 			-Wall							\
 			-Wextra							\
-			-Werror							\
+			-Werror						\
 			-ffreestanding					\
 			-ansi						\
 			-mcmodel=kernel					\
