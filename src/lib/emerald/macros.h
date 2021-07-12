@@ -10,7 +10,7 @@
 #define UNUSED(x) (void)x
 #define ARRLEN(arr) sizeof(arr) / sizeof(arr[0])
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
+#define MAYBE_UNUSED  __attribute__((unused))
 #define ALIGN_DOWN(__addr, __align) ((__addr) & ~((__align)-1))
 #define ALIGN_UP(__addr, __align) (((__addr) + (__align)-1) & ~((__align)-1))
 

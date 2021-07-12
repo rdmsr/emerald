@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include <arch/arch.h>
-#include <arch/descriptors/gdt.h>
-#include <arch/descriptors/idt.h>
-#include <arch/memory/pmm.h>
-#include <arch/memory/vmm.h>
 
 static void serial_writer(char *string)
 {
@@ -31,5 +27,5 @@ void arch_initialize_descriptors(void)
 void arch_initialize_memory(struct stivale2_struct *bootinfo)
 {
     pmm_initialize(bootinfo);
-    vmm_initialize();
+    vmm_initialize(bootinfo);
 }

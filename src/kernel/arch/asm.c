@@ -14,7 +14,6 @@ void asm_hlt(void)
 {
     __asm__ volatile("hlt");
 }
-
 uint8_t asm_inb(uint16_t port)
 {
     uint8_t data;

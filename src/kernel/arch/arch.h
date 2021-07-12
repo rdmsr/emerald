@@ -9,6 +9,10 @@
 #include <devices/com.h>
 #include <emerald/io/rw.h>
 #include <boot/boot.h>
+#include <arch/descriptors/gdt.h>
+#include <arch/descriptors/idt.h>
+#include <arch/memory/pmm.h>
+#include <arch/memory/vmm.h>
 
 Writer *arch_debug_writer();
 void arch_initialize_descriptors(void);

@@ -64,12 +64,32 @@ void load_pagemap(uint64_t *pagemap)
     asm_write_cr3((uint64_t)pagemap);
 }
 
-void vmm_initialize(void)
+void vmm_initialize(struct stivale2_struct *stivale2_struct)
 {
+
+    struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+    kassert(memory_map != NULL);
+
+    size_t i;
+    uintptr_t p;
+
     kernel_pagemap = (uint64_t *)pmm_allocate_zero(1);
 
     vmm_map_range(kernel_pagemap, 0, 0x8000000, KERNEL_BASE, 0b11);
-    vmm_map_range(kernel_pagemap, 0, 0x10000000, MEM_PHYS_OFFSET, 0b11);
+    vmm_map_range(kernel_pagemap, 0, 0x100000000, MEM_PHYS_OFFSET, 0b11);
+
+    for (i = 0; i < memory_map->entries; i++)
+    {
+        if (memory_map->memmap[i].type == STIVALE2_MMAP_USABLE)
+        {
+            for (p = 0; p < memory_map->memmap[i].length; p += PAGE_SIZE)
+            {
+                vmm_map_page(kernel_pagemap, p, p + MEM_PHYS_OFFSET, 0b11);
+            }
+        }
+
+        log(INFO, "Mapped {i} / {i} of the memory map", i + 1, memory_map->entries);
+    }
 
     load_pagemap(kernel_pagemap);
 
