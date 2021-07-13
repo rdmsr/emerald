@@ -88,8 +88,9 @@ void vmm_initialize(struct stivale2_struct *stivale2_struct)
             }
         }
 
-        log(INFO, "Mapped {i} / {i} of the memory map", i + 1, memory_map->entries);
+        log(INFO, "Mapped {i}/{i} of the memory map", i + 1, memory_map->entries);
     }
+    log(INFO, "Mapped memory map");
 
     load_pagemap(kernel_pagemap);
 
