@@ -51,14 +51,14 @@ String get_prefix(LogLevel level)
 void __log(LogLevel level, int line, char *file, char *format, ...)
 {
     print(arch_debug_writer(), "{s}{s} \033[0m", get_color(level), get_prefix(level));
-    print(arch_debug_writer(), "\033[30;2m{a}:{i} \033[0m\033[0m", file, line);
+    print(arch_debug_writer(), "\033[30m{a}:{i} \033[0m\033[0m", file, line);
 
     va_list args;
     char buf[1024] = {0};
     va_start(args, format);
 
     fmt_buffer(buf, format, args);
-    arch_debug_writer()->write(buf);
+    io_write(arch_debug_writer(), buf);
 
     va_end(args);
 

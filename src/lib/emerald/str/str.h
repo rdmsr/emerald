@@ -28,4 +28,6 @@ String str_convert(int64_t num, int base);
 bool str_ncmp(String str, String str2, int n);
 
 char *itoa(int64_t value, char *str, uint16_t base);
+int atoi(char *str);
+
 #endif
