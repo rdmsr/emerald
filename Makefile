@@ -10,6 +10,7 @@ OBJ = $(patsubst %.c, $(BUILD_DIRECTORY)/%.c.o, $(CFILES)) \
 
 TARGET = $(BUILD_DIRECTORY)/kernel.elf
 ISO = emerald.iso
+MEMORY = 256
 
 export PATH := $(shell meta/toolchain/use.sh):$(PATH)
 
@@ -53,19 +54,19 @@ endif
 
 .PHONY: clean
 
-.DEFAULT_GOAL = $(TARGET)
+.DEFAULT_GOAL = $(ISO)
 
 emerald.iso: $(TARGET)
 	meta/scripts/make-image.sh > /dev/null 2>&1
 
 run: emerald.iso
 	@echo [ QEMU ] $<
-	@qemu-system-x86_64 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m 256
+	@qemu-system-x86_64 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m $(MEMORY)
 
 
 debug: emerald.iso
 	@echo [ QEMU ] $<
-	@qemu-system-x86_64 -cdrom emerald.iso -d int -serial stdio -rtc base=localtime -m 256
+	@qemu-system-x86_64 -cdrom emerald.iso -d int -serial stdio -rtc base=localtime -m $(MEMORY)
 
 $(BUILD_DIRECTORY)/%.c.o: %.c
 	$(DIRECTORY_GUARD)

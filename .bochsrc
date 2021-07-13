@@ -2,7 +2,7 @@
 plugin_ctrl: unmapped=true, biosdev=true, speaker=false, extfpuirq=true, parallel=true, serial=true, iodebug=true
 config_interface: textconfig
 display_library: x
-memory: host=2024, guest=2024
+memory: host=256, guest=256
 boot: cdrom
 magic_break: enabled=1
 floppy_bootsig_check: disabled=0
