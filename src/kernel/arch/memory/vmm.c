@@ -68,6 +68,7 @@ void vmm_initialize(struct stivale2_struct *stivale2_struct)
 {
 
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
     kassert(memory_map != NULL);
 
     size_t i;

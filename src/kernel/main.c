@@ -5,6 +5,7 @@
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
+#include <devices/apic.h>
 
 void kernel_splash()
 {
@@ -24,7 +25,7 @@ void kernel_splash()
 void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 {
     com_initialize(COM1);
-    
+
     arch_initialize_descriptors();
 
     arch_initialize_memory(stivale2_struct);
@@ -36,6 +37,9 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     log(INFO, "Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
 
     log(INFO, "CPU vendor: {a}", cpuid_get_vendor());
+    
+    acpi_initialize(stivale2_struct);
+    apic_timer_initialize();
 
     while (true)
     {
