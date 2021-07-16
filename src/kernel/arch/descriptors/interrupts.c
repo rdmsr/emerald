@@ -51,32 +51,32 @@ uint64_t interrupts_handler(uint64_t rsp)
         uint64_t cr0 = asm_read_cr0();
         uint64_t cr2 = asm_read_cr2();
         uint64_t cr3 = asm_read_cr2();
-        log(ERROR, "");
-        log(ERROR, " _________        .---\"\"\"      \"\"\"---.");
-        log(ERROR, ":______.-':      :  .--------------.  :");
-        log(ERROR, "| ______  |      | :                : |");
-        log(ERROR, "|:______B:|      | | Kernel Panic!  | |");
-        log(ERROR, "|:______B:|      | |                | |");
-        log(ERROR, "|:______B:|      | | {a}     | |", exceptions[stackframe->intno]);
-        log(ERROR, "|         |      | | int {x}        | |", stackframe->intno);
-        log(ERROR, "|:_____:  |      | |                | |");
-        log(ERROR, "|    ==   |      | :                : |");
-        log(ERROR, "|       O |      :  '--------------'  :");
-        log(ERROR, "|       o |      :'---...______...---'");
-        log(ERROR, "|       o |-._.-i___/'             \\._");
-        log(ERROR, "|'-.____o_|   '-.   '-...______...-'  `-._");
-        log(ERROR, ":_________:   .____________________   `-.___.-.");
-        log(ERROR, "             .'.eeeeeeeeeeeeeeeeee.'.      :___:");
-        log(ERROR, "           .'.eeeeeeeeeeeeeeeeeeeeee.'.");
-        log(ERROR, "          :____________________________:");
+        log_error("");
+        log_error(" _________        .---\"\"\"      \"\"\"---.");
+        log_error(":______.-':      :  .--------------.  :");
+        log_error("| ______  |      | :                : |");
+        log_error("|:______B:|      | | Kernel Panic!  | |");
+        log_error("|:______B:|      | |                | |");
+        log_error("|:______B:|      | | {a}     | |", exceptions[stackframe->intno]);
+        log_error("|         |      | | int {x}        | |", stackframe->intno);
+        log_error("|:_____:  |      | |                | |");
+        log_error("|    ==   |      | :                : |");
+        log_error("|       O |      :  '--------------'  :");
+        log_error("|       o |      :'---...______...---'");
+        log_error("|       o |-._.-i___/'             \\._");
+        log_error("|'-.____o_|   '-.   '-...______...-'  `-._");
+        log_error(":_________:   .____________________   `-.___.-.");
+        log_error("             .'.eeeeeeeeeeeeeeeeee.'.      :___:");
+        log_error("           .'.eeeeeeeeeeeeeeeeeeeeee.'.");
+        log_error("          :____________________________:");
 
-        log(ERROR, "*** Stacktrace ***");
-        log(ERROR, "Exception number: {x}", stackframe->intno);
-        log(ERROR, "RAX={p} RBX={p} RCX={p} RDX={p}", stackframe->rax, stackframe->rbx, stackframe->rcx, stackframe->rdx);
-        log(ERROR, "RSI={p} RDI={p} RBP={p} RSP={p}", stackframe->rsi, stackframe->rdi, stackframe->rbp, stackframe->rsp);
-        log(ERROR, "R8= {p} R9= {p} R10={p} R11={p}", stackframe->r8, stackframe->r9, stackframe->r10, stackframe->r11);
-        log(ERROR, "R12={p} R13={p} R14={p} R15={p}", stackframe->r12, stackframe->r13, stackframe->r14, stackframe->r15);
-        log(ERROR, "CR0={p} CR2={p} CR3={p} RIP={p}", cr0, cr2, cr3, stackframe->rip);
+        log_error("*** Stacktrace ***");
+        log_error("Exception number: {x}", stackframe->intno);
+        log_error("RAX={p} RBX={p} RCX={p} RDX={p}", stackframe->rax, stackframe->rbx, stackframe->rcx, stackframe->rdx);
+        log_error("RSI={p} RDI={p} RBP={p} RSP={p}", stackframe->rsi, stackframe->rdi, stackframe->rbp, stackframe->rsp);
+        log_error("R8= {p} R9= {p} R10={p} R11={p}", stackframe->r8, stackframe->r9, stackframe->r10, stackframe->r11);
+        log_error("R12={p} R13={p} R14={p} R15={p}", stackframe->r12, stackframe->r13, stackframe->r14, stackframe->r15);
+        log_error("CR0={p} CR2={p} CR3={p} RIP={p}", cr0, cr2, cr3, stackframe->rip);
 
         while (1)
         {

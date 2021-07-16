@@ -40,7 +40,7 @@ void gdt_initialize()
     gdt[1] = (GDTDescriptor){.access = 0b10011010, .granularity = 0b00100000};
     gdt[2] = (GDTDescriptor){.access = 0b10010010, .granularity = 0};
 
-    log(INFO, "Loading GDT...");
+    log("Loading GDT...");
     gdt_load();
-    log(INFO, "GDT loaded");
+    log("GDT loaded");
 }

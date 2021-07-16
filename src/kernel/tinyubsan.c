@@ -78,7 +78,7 @@ struct tu_invalid_builtin_data
 
 static void tu_print_location(char *message, struct tu_source_location loc)
 {
-    log(ERROR, "tinyubsan: {a} at file {a}, line {i}, column {i}", message, loc.file, loc.line, loc.column);
+    log_error("tinyubsan: {a} at file {a}, line {i}, column {i}", message, loc.file, loc.line, loc.column);
 }
 
 void __ubsan_handle_add_overflow(struct tu_overflow_data *data)
@@ -135,7 +135,7 @@ void __ubsan_handle_type_mismatch_v1(struct tu_type_mismatch_v1_data *data, uint
 
     else if (ptr & ((1 << data->log_alignment) - 1))
     {
-      /*tu_print_location("use of misaligned pointer", data->location);*/
+        /*tu_print_location("use of misaligned pointer", data->location);*/
     }
     else
     {

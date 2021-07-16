@@ -18,7 +18,7 @@ void pit_initialize(int hz)
     asm_outb(0x40, divisor & 0xff);
     asm_outb(0x40, (divisor >> 8) & 0xFF);
 
-    log(INFO, "initialized PIT");
+    log("initialized PIT");
 }
 
 void pit_usleep(uint16_t ms)

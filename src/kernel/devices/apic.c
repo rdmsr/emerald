@@ -37,6 +37,6 @@ void apic_timer_initialize(void)
     lapic_write(APIC_TIMER_DIVIDER, 0x3);
     lapic_write(APIC_TIMER_INITIAL_COUNT, tickIn10ms);
 
-    log(INFO, "Initialized apic timer");
+    log("Initialized apic timer");
     
 }

@@ -67,7 +67,8 @@ void *pmm_allocate(size_t pages)
         }
     }
 
-    log(ERROR, "Couldn't find a free page");
+    log_error("Couldn't find a free page");
+
     return NULL;
 }
 
@@ -133,12 +134,12 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(boot_info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-    log(INFO, "Getting memory map...");
+    log("Getting memory map...");
     for (i = 0; i < memory_map->entries; i++)
     {
         struct stivale2_mmap_entry *entry = &memory_map->memmap[i];
 
-        log(INFO, "Entry {i}: base={x} length={x} type={a}", i, entry->base, entry->length, get_memmap_entry_type(entry->type));
+        log("Entry {i}: base={x} length={x} type={a}", i, entry->base, entry->length, get_memmap_entry_type(entry->type));
 
         if (entry->type != STIVALE2_MMAP_USABLE &&
             entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
@@ -161,7 +162,7 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
     kassert(bitmap.size > 0);
 
-    log(INFO, "The bitmap needs to be {i} kb long", bitmap.size / 1024);
+    log("The bitmap needs to be {i} kb long", bitmap.size / 1024);
 
     for (j = 0; j < memory_map->entries; j++)
     {

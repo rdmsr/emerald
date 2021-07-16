@@ -37,12 +37,12 @@ void acpi_initialize(struct stivale2_struct *boot_info)
 
             if (lapic_addr == 0)
             {
-                log(INFO, "Found lapic: {p}", madt->lapic);
+                log("Found lapic: {p}", madt->lapic);
 
                 lapic_addr = madt->lapic;
             }
         }
     }
 
-    log(INFO, "ACPI initialized");
+    log("ACPI initialized");
 }
