@@ -15,8 +15,8 @@ void asm_cli(void);
 void asm_sti(void);
 void asm_hlt(void);
 
-uint8_t asm_inb(uint16_t port);
-void asm_outb(uint16_t port, uint8_t data);
+u8 asm_inb(u16 port);
+void asm_outb(u16 port, u8 data);
 
 void asm_xsave(void *region);
 void asm_xrstor(void *region);
@@ -24,12 +24,13 @@ void asm_fninit(void);
 void asm_fxsave(void *region);
 void asm_fxrstor(void *region);
 
-uint64_t asm_read_cr0(void);
-uint64_t asm_read_cr1(void);
-uint64_t asm_read_cr2(void);
-uint64_t asm_read_cr3(void);
-void asm_write_cr0(uint64_t value);
-void asm_write_cr1(uint64_t value);
-void asm_write_cr2(uint64_t value);
-void asm_write_cr3(uint64_t value);
+u64 asm_read_cr0(void);
+u64 asm_read_cr1(void);
+u64 asm_read_cr2(void);
+u64 asm_read_cr3(void);
+void asm_write_cr0(u64 value);
+void asm_write_cr1(u64 value);
+void asm_write_cr2(u64 value);
+void asm_write_cr3(u64 value);
+u64 asm_read_msr(u32 msr);
 #endif

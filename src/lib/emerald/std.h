@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include "types.h"
 
 #define auto __auto_type
 

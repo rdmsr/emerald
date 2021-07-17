@@ -5,6 +5,7 @@
  */
 
 #include "acpi.h"
+#include <arch/cpuid.h>
 #include <emerald/log.h>
 #include <emerald/str.h>
 
@@ -18,30 +19,39 @@ uintptr_t acpi_get_lapic()
 void acpi_initialize(struct stivale2_struct *boot_info)
 {
 
-    struct stivale2_struct_tag_rsdp *rsdp_info = stivale2_get_tag(boot_info, STIVALE2_STRUCT_TAG_RSDP_ID);
-
-    RSDP *rsdp = (RSDP *)rsdp_info->rsdp;
-    RSDT *rsdt = (RSDT *)((uintptr_t)rsdp->rsdt + MEM_PHYS_OFFSET);
-
-    size_t entries = (rsdt->descriptor.length - sizeof(rsdt->descriptor)) / 4;
-
-    size_t i;
-
-    for (i = 0; i < entries; i++)
+    if (!cpuid_has_msr())
     {
-        SDT *h = (SDT *)(rsdt->sptr[i] + MEM_PHYS_OFFSET);
+        struct stivale2_struct_tag_rsdp *rsdp_info = stivale2_get_tag(boot_info, STIVALE2_STRUCT_TAG_RSDP_ID);
 
-        if (str_ncmp(make_str(h->signature), make_str("APIC"), 4) == 0)
+        RSDP *rsdp = (RSDP *)rsdp_info->rsdp;
+        RSDT *rsdt = (RSDT *)((uintptr_t)rsdp->rsdt + MEM_PHYS_OFFSET);
+
+        size_t entries = (rsdt->descriptor.length - sizeof(rsdt->descriptor)) / 4;
+
+        size_t i;
+
+        for (i = 0; i < entries; i++)
         {
-            MADT *madt = (MADT *)h;
+            SDT *h = (SDT *)(rsdt->sptr[i] + MEM_PHYS_OFFSET);
 
-            if (lapic_addr == 0)
+            if (str_ncmp(make_str(h->signature), make_str("APIC"), 4) == 0)
             {
-                log("Found lapic: {p}", madt->lapic);
+                MADT *madt = (MADT *)h;
 
-                lapic_addr = madt->lapic;
+                if (lapic_addr == 0)
+                {
+                    log("Found lapic: {p}", madt->lapic);
+
+                    lapic_addr = madt->lapic;
+                }
             }
         }
+    }
+
+    else
+    {
+        lapic_addr = asm_read_msr(0x1b) & 0xfffff000;
+        log("Found lapic: {p}", lapic_addr);
     }
 
     log("ACPI initialized");

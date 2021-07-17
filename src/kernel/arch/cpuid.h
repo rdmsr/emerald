@@ -23,5 +23,6 @@ CPUID cpuid(uint32_t leaf, uint32_t subleaf, bool offset);
 char* cpuid_get_vendor();
 
 bool cpuid_has_lapic(void);
+bool cpuid_has_msr(void);
 
 #endif

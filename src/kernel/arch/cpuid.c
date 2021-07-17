@@ -58,3 +58,10 @@ bool cpuid_has_lapic(void)
 {
     return (cpuid(1, 0, false).edx >> 9) & 1;
 }
+
+bool cpuid_has_msr(void)
+{
+  uint32_t CPUID_FLAG_MSR = 1 << 5;
+  
+  return (cpuid(1, 0, false).edx) & CPUID_FLAG_MSR;
+}
