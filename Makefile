@@ -24,7 +24,7 @@ CHARDFLAGS := -Wno-sequence-point \
 			-Wextra							\
 			-Werror						\
 			-ffreestanding					\
-			-ansi						\
+			-std=gnu99						\
 			-mcmodel=kernel					\
 			-Isrc/kernel					\
 			-Isrc/lib					\
