@@ -18,7 +18,7 @@ export PATH := $(shell meta/toolchain/use.sh):$(PATH)
 CHARDFLAGS := -Wno-sequence-point \
 			-nostdlib \
 			-g 	\
-			-O2                                                     \
+			-O0                                                     \
 			-fno-stack-protector			\
 			-Wall							\
 			-Wextra							\
