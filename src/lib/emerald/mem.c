@@ -8,12 +8,15 @@
 
 void *memset(void *s, int c, unsigned int len)
 {
-    uint8_t *s_uint8 = (uint8_t *)s;
+    uint8_t *p = (uint8_t *)s;
+
     size_t i;
+    
     for (i = 0; i < len; i++)
     {
-        s_uint8[i] = (uint8_t)c;
+        p[i] = (uint8_t)c;
     }
+
     return s;
 }
 
@@ -25,3 +28,36 @@ Range range_align(Range range, size_t alignment)
     return range;
 }
 
+void memcpy(void *dest, void *src, size_t n)
+{
+    uint8_t *pdest = (uint8_t *)dest;
+    const uint8_t *psrc = (const uint8_t *)src;
+
+    size_t i;
+    for (i = 0; i < n; i++)
+    {
+        pdest[i] = psrc[i];
+    }
+}
+
+void memmove(void *dest, void *src, size_t n)
+{
+    uint8_t *pdest = (uint8_t *)dest;
+    const uint8_t *psrc = (const uint8_t *)src;
+
+    size_t i;
+    if (src > dest)
+    {
+        for (i = 0; i < n; i++)
+        {
+            pdest[i] = psrc[i];
+        }
+    }
+    else if (src < dest)
+    {
+        for (i = n; i > 0; i--)
+        {
+            pdest[i - 1] = psrc[i - 1];
+        }
+    }
+}

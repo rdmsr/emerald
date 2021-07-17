@@ -10,6 +10,8 @@
 #include <emerald/std.h>
 
 void *memset(void *s, int c, unsigned int len);
+void memcpy(void *dest, void *src, size_t n);
+void memmove(void *dest, void *src, size_t n);
 
 typedef struct
 {
