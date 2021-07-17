@@ -1,7 +1,7 @@
 
 #ifndef KERNEL_ASM_H
 #define KERNEL_ASM_H
-#include <stdint.h>
+#include <emerald/std.h>
 
 #define ASM_CR0_MONITOR_CO_PROCESSOR (1 << 1)
 #define ASM_CR0_EMULATION (1 << 2)

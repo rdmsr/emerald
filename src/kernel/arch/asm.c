@@ -18,8 +18,8 @@ uint8_t asm_inb(uint16_t port)
 {
     uint8_t data;
     __asm__ volatile("inb %1, %0"
-                 : "=a"(data)
-                 : "d"(port));
+                     : "=a"(data)
+                     : "d"(port));
     return data;
 }
 
@@ -30,20 +30,19 @@ void asm_outb(uint16_t port, uint8_t data)
                      : "a"(data), "Nd"(port));
 }
 
-#define ASM_MAKE_CRN(N)                                \
-    uint64_t asm_read_cr##N(void)        \
-    {                                                  \
-        uint64_t value = 0;                            \
-        __asm__ volatile("mov %%cr" #N ", %0"              \
-                     : "=r"(value));                   \
-        return value;                                  \
-    }                                                  \
-                                                       \
-    void asm_write_cr##N(uint64_t value) \
-    {                                                  \
-        __asm__ volatile("mov %0, %%cr" #N ::"a"(value));  \
+#define ASM_MAKE_CRN(N)                                   \
+    uint64_t asm_read_cr##N(void)                         \
+    {                                                     \
+        uint64_t value = 0;                               \
+        __asm__ volatile("mov %%cr" #N ", %0"             \
+                         : "=r"(value));                  \
+        return value;                                     \
+    }                                                     \
+                                                          \
+    void asm_write_cr##N(uint64_t value)                  \
+    {                                                     \
+        __asm__ volatile("mov %0, %%cr" #N ::"a"(value)); \
     }
-
 
 ASM_MAKE_CRN(0);
 ASM_MAKE_CRN(1);
@@ -75,3 +74,14 @@ void asm_fxrstor(void *region)
     __asm__ volatile("fxrstor (%0)" ::"a"(region));
 }
 
+uint64_t asm_read_msr(uint32_t msr)
+{
+    uint32_t eax;
+    uint32_t edx;
+    
+    __asm__ volatile("rdmsr"
+                 : "=a"(eax), "=d"(edx)
+                 : "c"(msr));
+    
+    return ((uint64_t)edx << 32) | eax;
+}
