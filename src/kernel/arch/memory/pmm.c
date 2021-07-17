@@ -78,7 +78,7 @@ void *pmm_allocate_zero(size_t pages)
 
     kassert(ret != NULL);
 
-    memset(ret, 0, pages * PAGE_SIZE);
+    memset(ret + MEM_PHYS_OFFSET, 0, pages * PAGE_SIZE);
 
     return ret;
 }
