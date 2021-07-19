@@ -1,5 +1,6 @@
 #include <arch/asm.h>
 #include <devices/pit.h>
+#include <devices/apic.h>
 
 uint32_t pit_read_count(void)
 {
@@ -18,6 +19,8 @@ void pit_initialize(int hz)
     asm_outb(0x40, divisor & 0xff);
     asm_outb(0x40, (divisor >> 8) & 0xFF);
 
+    ioapic_redirect_irq(0, 2, 32, 1);
+    
     log("initialized PIT");
 }
 

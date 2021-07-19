@@ -6,6 +6,7 @@
 
 #include <arch/asm.h>
 #include <arch/descriptors/idt.h>
+#include <devices/pic.h>
 
 extern void idt_flush(uintptr_t idt_ptr);
 
@@ -13,24 +14,6 @@ static IDTDescriptor idt[256];
 static IDTPointer idtr;
 extern uintptr_t __interrupt_vector[];
 
-void pic_remap(void)
-{
-    asm_outb(0x20, 0x11);
-    asm_outb(0xA0, 0x11);
-
-    asm_outb(0x21, 0x20);
-    asm_outb(0xA1, 0x28);
-
-    asm_outb(0x21, 0x04);
-    asm_outb(0xA1, 0x02);
-
-    asm_outb(0x21, 0x01);
-    asm_outb(0xA1, 0x01);
-
-    asm_outb(0x21, 0x0);
-    asm_outb(0xA1, 0x0);
-    log("PIC remapped");
-}
 
 static IDTDescriptor idt_make_entry(uint64_t offset, uint8_t type)
 {
@@ -46,7 +29,7 @@ static IDTDescriptor idt_make_entry(uint64_t offset, uint8_t type)
 
 void install_isr(void)
 {
-    pic_remap();
+  //pic_remap();
 
     size_t i;
     for (i = 0; i < 3; i++)
@@ -62,7 +45,6 @@ void install_isr(void)
     {
         idt[j] = idt_make_entry(__interrupt_vector[j], INTGATE);
     }
-    
 }
 
 void idt_initialize()

@@ -34,7 +34,7 @@ typedef struct
     uint64_t rflags;
     uint64_t rsp;
     uint64_t ss;
-} InterruptStackframe;
+} Stack;
 
 typedef struct stackframe
 {
@@ -43,6 +43,5 @@ typedef struct stackframe
 } Stackframe;
 
 uint64_t interrupts_handler(uint64_t rsp);
-
-
+u64 get_ticks();
 #endif

@@ -1,5 +1,6 @@
 #include <arch/arch.h>
 #include <arch/cpuid.h>
+#include <arch/tasking.h>
 #include <devices/apic.h>
 #include <devices/pit.h>
 #include <emerald/debug.h>
@@ -7,6 +8,7 @@
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
+#include <devices/pic.h>
 
 void kernel_splash()
 {
@@ -30,17 +32,22 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     arch_initialize_memory(stivale2_struct);
 
+    pic_initialize();
+        acpi_initialize(stivale2_struct);
+    apic_initialize();
+    apic_timer_initialize();
     pit_initialize(1000);
 
-    acpi_initialize(stivale2_struct);
-    apic_timer_initialize();
+
 
     kernel_splash();
 
     log("Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
 
-    log("CPU vendor: {a}", cpuid_get_vendor());
+    log("CPU model: {a}, CPU vendor: {a}", cpuid_get_model(), cpuid_get_vendor());
 
+    log("{i}", get_ticks());
+    
     while (true)
     {
         asm_hlt();
