@@ -21,7 +21,7 @@ typedef struct
 CPUID cpuid(uint32_t leaf, uint32_t subleaf, bool offset);
 
 char* cpuid_get_vendor();
-
+char* cpuid_get_model();
 bool cpuid_has_lapic(void);
 bool cpuid_has_msr(void);
 

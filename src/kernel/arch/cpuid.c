@@ -5,7 +5,7 @@
  */
 #include <arch/cpuid.h>
 #include <emerald/debug.h>
-
+#include <emerald/log.h>
 CPUID cpuid(uint32_t leaf, uint32_t subleaf, bool offset)
 {
     uint32_t cpuid_max;
@@ -30,9 +30,9 @@ CPUID cpuid(uint32_t leaf, uint32_t subleaf, bool offset)
 
     CPUID result = {};
 
-    __asm__ volatile("cpuid"
-                     : "=a"(result.eax), "=b"(result.ebx), "=c"(result.ecx), "=d"(result.edx)
-                     : "a"(leaf), "c"(subleaf));
+        __asm__ volatile("cpuid"
+                         : "=a"(result.eax), "=b"(result.ebx), "=c"(result.ecx), "=d"(result.edx)
+                         : "a"(leaf), "c"(subleaf));
 
     return result;
 }
@@ -53,6 +53,20 @@ char *cpuid_get_vendor()
 
     return (char *)a;
 }
+char *cpuid_get_model()
+{
+
+    static uint32_t a[5];
+
+    CPUID result = cpuid(0x80000002, 0, true);
+
+    a[0] = result.eax;
+    a[1] = result.ebx;
+    a[2] = result.ecx;
+    a[3] = result.edx;
+
+    return (char *)a;
+}
 
 bool cpuid_has_lapic(void)
 {
@@ -61,7 +75,7 @@ bool cpuid_has_lapic(void)
 
 bool cpuid_has_msr(void)
 {
-  uint32_t CPUID_FLAG_MSR = 1 << 5;
-  
-  return (cpuid(1, 0, false).edx) & CPUID_FLAG_MSR;
+    uint32_t CPUID_FLAG_MSR = 1 << 5;
+
+    return (cpuid(1, 0, false).edx) & CPUID_FLAG_MSR;
 }
