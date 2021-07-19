@@ -9,11 +9,12 @@
 #ifndef LIBEMERALD_STD_H
 #define LIBEMERALD_STD_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "macros.h"
+#include "types.h"
 #include <stdarg.h>
 #include <stdbool.h>
-#include "types.h"
+#include <stddef.h>
+#include <stdint.h>
 
 #define auto __auto_type
 

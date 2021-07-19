@@ -35,12 +35,14 @@ vec_ioapic_t ioapics;
 
 static uint32_t ioapic_read(uintptr_t ioapic_address, size_t reg)
 {
+    kassert(ioapic_address != 0);
     *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_REG_OFFSET)) = reg;
     return *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_VALUE_OFFSET));
 }
 
 static void ioapic_write(uintptr_t ioapic_address, size_t reg, uint32_t data)
 {
+    kassert(ioapic_address != 0);
     *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_REG_OFFSET)) = reg;
     *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_VALUE_OFFSET)) = data;
 }
@@ -70,7 +72,7 @@ void ioapic_initialize(void)
 }
 
 void ioapic_redirect_gsi(uint8_t lapic_id, uint32_t gsi, uint8_t vec, uint16_t flags, bool status)
-{    
+{
     size_t io_apic = get_ioapic_by_gsi(gsi)->apic_id;
 
     uint64_t redirect = vec;
@@ -108,13 +110,12 @@ void ioapic_redirect_irq(uint8_t lapic_id, uint8_t irq, uint8_t vect, bool statu
     {
         if (isos.data[i]->irq_source == irq)
         {
-	  log("yay");
             ioapic_redirect_gsi(lapic_id, vect, isos.data[i]->gsi,
                                 isos.data[i]->flags, status);
             return;
         }
     }
-    
+
     ioapic_redirect_gsi(lapic_id, vect, irq, 0, status);
 }
 

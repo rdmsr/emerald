@@ -10,7 +10,8 @@
 #include <emerald/ds/vec.h>
 #include <emerald/std.h>
 
-typedef struct
+
+typedef struct PACKED
 {
     char signature[4];
     uint32_t length;
@@ -23,37 +24,48 @@ typedef struct
     uint32_t creator_revision;
 } SDT;
 
-typedef struct
+typedef struct PACKED
 {
     SDT descriptor;
     uint32_t sptr[];
 } RSDT;
 
-typedef struct
+typedef struct PACKED
+{
+    SDT descriptor;
+    uint64_t sptr[];
+} XSDT;
+
+typedef struct PACKED
 {
     char sign[8];
     uint8_t checksum;
     char oemid[6];
     uint8_t rev;
     uint32_t rsdt;
+
+    /* 2.0 */
+    uint32_t length;
+    uint64_t xsdt;
+    uint8_t echecksum;
+    uint8_t reserved[3];
 } RSDP;
 
-typedef struct
+typedef struct PACKED
 {
     uint8_t type;
     uint8_t length;
 } MADTRecord;
 
-typedef struct
+typedef struct PACKED
 {
-
     SDT base;
     uint32_t lapic;
     uint32_t flags;
-    MADTRecord records[];
+    uint8_t records[];
 } MADT;
 
-struct madt_ioapic_record
+struct PACKED madt_ioapic_record
 {
     MADTRecord base;
     uint8_t apic_id;
@@ -62,7 +74,7 @@ struct madt_ioapic_record
     uint32_t gsi;
 };
 
-struct madt_iso_record
+struct PACKED madt_iso_record
 {
     MADTRecord base;
     uint8_t bus_source;
@@ -71,7 +83,7 @@ struct madt_iso_record
     uint32_t gsi;
 };
 
-struct madt_lapic_record
+struct PACKED madt_lapic_record
 {
     SDT base;
     uint8_t processor_id;
@@ -90,5 +102,5 @@ vec_iso_t acpi_get_isos(void);
 vec_lapic_t acpi_get_lapics(void);
 
 void acpi_initialize(struct stivale2_struct *boot_info);
-
+    
 #endif

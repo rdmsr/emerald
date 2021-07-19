@@ -56,4 +56,6 @@ void apic_timer_initialize(void);
 void ioapic_initialize(void);
 void apic_initialize(void);
 void ioapic_redirect_irq(uint8_t lapic_id, uint8_t irq, uint8_t vect, bool status);
+
+void apic_eoi(void);
 #endif

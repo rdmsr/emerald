@@ -43,36 +43,7 @@ void pic_remap(void)
 
 void pic_initialize(void)
 {
-    /* Cascade initialization */
-    asm_outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4);
-    pic_wait();
-    asm_outb(PIC2_COMMAND, ICW1_INIT | ICW1_ICW4);
-    pic_wait();
-
-    /* Remap */
-    asm_outb(PIC1_DATA, PIC1_OFFSET);
-    pic_wait();
-    asm_outb(PIC2_DATA, PIC2_OFFSET);
-    pic_wait();
-
-    /* Cascade identity with slave PIC at IRQ2 */
-    asm_outb(PIC1_DATA, 0x04);
-    pic_wait();
-    asm_outb(PIC2_DATA, 0x02);
-    pic_wait();
-
-    /* Request 8086 mode on each PIC */
-    asm_outb(PIC1_DATA, 0x01);
-    pic_wait();
-    asm_outb(PIC2_DATA, 0x01);
-    pic_wait();
-
-    asm_outb(PIC1_DATA, 0x00);
-    pic_wait();
-    asm_outb(PIC2_DATA, 0x00);
-    pic_wait();
-
-    pic_disable();
+  pic_remap();
 }
 
 void pic_eoi(int intno)

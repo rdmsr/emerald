@@ -10,6 +10,8 @@
 #include <emerald/log.h>
 #include <emerald/str.h>
 
+/* NOTE
+   This file is most likely broken (F in the chat)*/
 static uintptr_t lapic_addr = 0;
 static vec_ioapic_t ioapics;
 static vec_iso_t isos;
@@ -35,23 +37,41 @@ vec_iso_t acpi_get_isos()
     return isos;
 }
 
-void *get_table(String signature, RSDT *rsdt)
+bool do_acpi_checksum(SDT *th)
 {
-    size_t entries = (rsdt->descriptor.length - sizeof(rsdt->descriptor)) / 4;
+    uint8_t sum = 0;
 
-    size_t i;
+    for (uint32_t i = 0; i < th->length; i++)
+        sum += ((char *)th)[i];
 
-    MADT *madt;
+    return sum == 0;
+}
 
-    for (i = 0; i < entries; i++)
+void *get_table(String signature, RSDP *rsdp, RSDT *rsdt, XSDT *xsdt, int index)
+{
+    size_t entries;
+
+    if (rsdp->rev <= 2)
+        entries = (rsdt->descriptor.length - sizeof(rsdt->descriptor)) / 4;
+    else
+        entries = (xsdt->descriptor.length - sizeof(xsdt->descriptor)) / 8;
+
+    int i = 0;
+    SDT *h;
+
+    for (size_t t = 0; t < entries; t++)
     {
-        SDT *h = (SDT *)(rsdt->sptr[i] + MEM_PHYS_OFFSET);
+        if (rsdp->rev <= 2)
+            h = (SDT *)(uint64_t)(rsdt->sptr[t] + MEM_PHYS_OFFSET);
+        else
+            h = (SDT *)(uint64_t)(xsdt->sptr[t] + MEM_PHYS_OFFSET);
 
-        if (str_ncmp(make_str(h->signature), signature, signature.size) == 0 )
+        if (str_ncmp(signature, make_str(h->signature), 4) == 0)
         {
-            madt = (MADT *)h;
+            if (do_acpi_checksum(h) && i == index)
+                return (void *)h;
 
-            return madt;
+            i++;
         }
     }
 
@@ -65,7 +85,11 @@ void acpi_initialize(struct stivale2_struct *boot_info)
     RSDP *rsdp = (RSDP *)rsdp_info->rsdp;
     RSDT *rsdt = (RSDT *)((uintptr_t)rsdp->rsdt + MEM_PHYS_OFFSET);
 
-    MADT *madt = get_table(make_str("APIC"), rsdt);
+    XSDT *xsdt;
+    if (rsdp->rev >= 2)
+        xsdt = (XSDT *)(rsdp->xsdt + MEM_PHYS_OFFSET);
+
+    MADT *madt = get_table(make_str("APIC"), rsdp, rsdt, xsdt, 0);
 
     kassert(madt != NULL);
 
@@ -97,32 +121,28 @@ void acpi_initialize(struct stivale2_struct *boot_info)
         {
 
         case 0:
-	    vec_push(&lapics, (struct madt_lapic_record *)record);
-	    break;
+            vec_push(&lapics, (struct madt_lapic_record *)record);
+            break;
         case 1:
-	    vec_push(&ioapics, (struct madt_ioapic_record *)record);
+            vec_push(&ioapics, (struct madt_ioapic_record *)record);
             break;
 
         case 3:
         {
-	    vec_push(&isos, (struct madt_iso_record *)record);
+            vec_push(&isos, (struct madt_iso_record *)record);
             break;
         }
-	
+
         default:
             break;
         }
-	
+
         if (record->length == 0)
         {
-	  log("f");
-	  i++;
+            i++;
         }
 
-        else
-        {
-            i += record->length;
-        }
+        i += record->length;
     }
 
     log("ACPI initialized");

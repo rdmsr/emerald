@@ -6,6 +6,7 @@
 
 #include <arch/asm.h>
 #include <arch/descriptors/interrupts.h>
+#include <devices/apic.h>
 #include <devices/pic.h>
 #include <emerald/log.h>
 
@@ -98,12 +99,12 @@ uint64_t interrupts_handler(uint64_t rsp)
         ticks++;
     }
 
-    pic_eoi(stackframe->intno);
+    apic_eoi();
 
     return rsp;
 }
 
 u64 get_ticks()
- {
-   return ticks;
- }
+{
+    return ticks;
+}
