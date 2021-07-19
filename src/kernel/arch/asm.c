@@ -78,10 +78,17 @@ uint64_t asm_read_msr(uint32_t msr)
 {
     uint32_t eax;
     uint32_t edx;
-    
+
     __asm__ volatile("rdmsr"
-                 : "=a"(eax), "=d"(edx)
-                 : "c"(msr));
-    
+                     : "=a"(eax), "=d"(edx)
+                     : "c"(msr));
+
     return ((uint64_t)edx << 32) | eax;
+}
+
+void asm_write_msr(u32 msr, u64 value)
+{
+    uint32_t eax = (uint32_t)value;
+    uint32_t edx = (uint32_t)(value >> 32);
+    __asm__ volatile("wrmsr" ::"a"(eax), "c"(msr), "d"(edx));
 }
