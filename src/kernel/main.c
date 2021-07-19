@@ -2,13 +2,13 @@
 #include <arch/cpuid.h>
 #include <arch/tasking.h>
 #include <devices/apic.h>
+#include <devices/pic.h>
 #include <devices/pit.h>
 #include <emerald/debug.h>
 #include <emerald/ds/vec.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
-#include <devices/pic.h>
 
 void kernel_splash()
 {
@@ -33,12 +33,10 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     arch_initialize_memory(stivale2_struct);
 
     pic_initialize();
-        acpi_initialize(stivale2_struct);
+    acpi_initialize(stivale2_struct);
     apic_initialize();
     apic_timer_initialize();
     pit_initialize(1000);
-
-
 
     kernel_splash();
 
@@ -47,7 +45,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     log("CPU model: {a}, CPU vendor: {a}", cpuid_get_model(), cpuid_get_vendor());
 
     log("{i}", get_ticks());
-    
+
     while (true)
     {
         asm_hlt();
