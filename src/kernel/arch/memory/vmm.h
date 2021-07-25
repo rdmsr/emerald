@@ -11,5 +11,5 @@
 #define PML_ENTRY(addr, offset) (size_t)(addr & ((uintptr_t)0x1ff << offset)) >> offset;
 
 void vmm_initialize(struct stivale2_struct *stivale2_struct);
-
+void vmm_load_pagemap(uint64_t* pagemap);
 #endif

@@ -59,7 +59,7 @@ void vmm_map_range(uint64_t *pagemap, uint64_t start, uint64_t end, uint64_t off
     }
 }
 
-void load_pagemap(uint64_t *pagemap)
+void vmm_load_pagemap(uint64_t *pagemap)
 {
     asm_write_cr3((uint64_t)pagemap);
 }
@@ -94,7 +94,7 @@ void vmm_initialize(struct stivale2_struct *stivale2_struct)
     
     log("Mapped memory map");
 
-    load_pagemap(kernel_pagemap);
+    vmm_load_pagemap(kernel_pagemap);
 
     log("initialized vmm");
 }

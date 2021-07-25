@@ -5,9 +5,10 @@
  */
 
 #include "alloc.h"
+#include "liballoc/liballoc.h"
 #include <emerald/debug.h>
 
-void *liballoc_alloc(size_t size)
+void *liballoc_alloc(int size)
 {
     size_t page_count = DIV_ROUNDUP(size, PAGE_SIZE);
 
@@ -26,7 +27,28 @@ void *liballoc_alloc(size_t size)
 int liballoc_lock(void) { return 0; }
 int liballoc_unlock(void) { return 0; }
 
-void liballoc_free_(void *ptr, int pages)
+int liballoc_free_(void *ptr, int pages)
 {
     pmm_free((void *)ptr - MEM_PHYS_OFFSET, pages + 1);
+    return 0;
+}
+
+void *alloc_malloc(size_t size)
+{
+    return liballoc_alloc(size);
+}
+
+void alloc_free(void *ptr)
+{
+    return liballoc_free(ptr);
+}
+
+void *alloc_realloc(void *p, size_t size)
+{
+    return liballoc_realloc(p, size);
+}
+
+void *alloc_malloc_end(size_t size)
+{
+    return alloc_malloc(size) + size;
 }

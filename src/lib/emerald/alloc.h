@@ -15,8 +15,9 @@
         __typeof__(B) _b_ = B;   \
         (_a_ + (_b_ - 1)) / _b_; \
     })
+
 void *alloc_malloc(size_t size);
 void alloc_free(void *ptr);
-void *alloc_realloc(void *ptr, size_t size);
-
+void *alloc_realloc(void *p, size_t size);
+void *alloc_malloc_end(size_t size);
 #endif

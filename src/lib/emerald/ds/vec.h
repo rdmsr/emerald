@@ -8,7 +8,7 @@
 #ifndef VEC_H
 #define VEC_H
 
-#include <emerald/liballoc/liballoc.h>
+#include <emerald/alloc.h>
 #include <emerald/mem.h>
 
 #define VEC_VERSION "0.2.1"
@@ -27,7 +27,7 @@
     memset((v), 0, sizeof(*(v)))
 
 #define vec_deinit(v) \
-    (liballoc_free((v)->data), \
+    (alloc_free((v)->data), \
      vec_init(v))
 
 #define vec_push(v, val) \
