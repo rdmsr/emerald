@@ -18,6 +18,8 @@ Writer *arch_debug_writer()
     return &serial;
 }
 
+
+
 void arch_initialize_descriptors(void)
 {
     gdt_initialize();

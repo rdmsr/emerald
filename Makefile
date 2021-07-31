@@ -3,7 +3,7 @@ LD 	   = x86_64-elf-ld
 AS  	   = nasm
 
 ASMFILES  := $(shell find src -type f -name '*.asm')
-CFILES    := $(shell find src -type f -name '*.c')
+CFILES    := $(shell find src -path src/lib -prune -false -o -type f -name '*.c')
 
 OBJ = $(patsubst %.c, $(BUILD_DIRECTORY)/%.c.o, $(CFILES)) \
         $(patsubst %.asm, $(BUILD_DIRECTORY)/%.asm.o, $(ASMFILES))
@@ -15,10 +15,10 @@ MEMORY = 256
 export PATH := $(shell meta/toolchain/use.sh):$(PATH)
 
 
-CHARDFLAGS := -Wno-sequence-point \
+CHARDFLAGS := -Wno-sequence-point\
 			-nostdlib \
 			-g 	\
-			-O0                                                     \
+			-O2                                                    \
 			-fno-stack-protector			\
 			-Wall							\
 			-Wextra							\
@@ -52,6 +52,8 @@ HIT_COUNT = $(eval HIT_N != expr ${HIT_N} + 1)${HIT_N}
 ECHO = "[\033[1;32m`expr ${HIT_COUNT} '*' 100 / ${HIT_TOTAL}`%\033[1;0m]"
 endif
 
+include src/lib/.build.mk
+
 .PHONY: clean
 
 .DEFAULT_GOAL = $(ISO)
@@ -60,13 +62,14 @@ emerald.iso: $(TARGET)
 	meta/scripts/make-image.sh > /dev/null 2>&1
 
 run: emerald.iso
-	@echo [ QEMU ] $<
+	@echo QEMU $<
 	@qemu-system-x86_64 -M q35 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m $(MEMORY)
 
 
 debug: emerald.iso
-	@echo [ QEMU ] $<
+	@echo QEMU $<
 	@qemu-system-x86_64 -cdrom emerald.iso -d int -serial stdio -rtc base=localtime -m $(MEMORY)
+
 
 $(BUILD_DIRECTORY)/%.c.o: %.c
 	$(DIRECTORY_GUARD)
@@ -78,9 +81,12 @@ $(BUILD_DIRECTORY)/%.asm.o: %.asm
 	@echo -e AS  $(ECHO) $<
 	@nasm $(NASMFLAGS) $< -o $@
 
+test: $(LIB_BIN)
+	@$(MAKE) -C src/tests
 
 $(TARGET): $(OBJ)
 	@echo -e LD $(ECHO) $@
 	@$(LD) $(LDHARDFLAGS) $(OBJ) -o $@
 clean:
-	rm -rf $(BUILD_DIRECTORY) $(TARGET) $(ISO)
+	$(MAKE) -C src/tests clean
+	rm -rf $(BUILD_DIRECTORY) $(TARGET) $(ISO) $(LIB_BIN)
