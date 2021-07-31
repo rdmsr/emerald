@@ -54,6 +54,10 @@ bool str_ncmp(String str, String str2, int n)
     return true;
 }
 
+bool str_cmp(String str, String str2)
+{
+    return str_ncmp(str, str2, str.size);
+}
 /* These two functions were taken from https://github.com/not-microsowoft/experimental, licensed under GPL 3
 
 Copyright (C) 2021 keyboard-slayer
@@ -79,8 +83,7 @@ void strrev(char *s)
     }
 }
 
-
-char *itoa(int64_t value, char *str, uint16_t base)
+char *itocstr(int64_t value, char *str, uint16_t base)
 {
     size_t index = 0;
     int8_t digit;
@@ -97,8 +100,8 @@ char *itoa(int64_t value, char *str, uint16_t base)
         right = value & 0xffffffff;
         left = (value & 0xffffffff00000000) >> 32;
 
-        itoa(left, left_str, base);
-        itoa(right, right_str, base);
+        itocstr(left, left_str, base);
+        itocstr(right, right_str, base);
 
         for (i = 0; i < cstrlen(left_str); i++)
         {
@@ -142,7 +145,7 @@ char *itoa(int64_t value, char *str, uint16_t base)
     return str;
 }
 
-int atoi(char *str)
+int cstrtoi(char *str)
 {
     int res = 0;
 

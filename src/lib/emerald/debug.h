@@ -8,9 +8,9 @@
 #define LIBEMERALD_DEBUG_H
 
 #include <emerald/std.h>
+#include <emerald/debug/assert.h>
+#include <emerald/debug/unit.h>
 
-void __kassert(const char* expr, const char* filename, int line);
 
-#define kassert(__cond) ((__cond) ? (void) 0 : __kassert(#__cond, __FILE__, __LINE__))
 
 #endif

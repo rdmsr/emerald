@@ -26,8 +26,9 @@ String str_concat(String str, String str2);
 String make_str(char *str);
 String str_convert(int64_t num, int base);
 bool str_ncmp(String str, String str2, int n);
+bool str_cmp(String str, String str2);
 
-char *itoa(int64_t value, char *str, uint16_t base);
-int atoi(char *str);
+char *itocstr(int64_t value, char *str, uint16_t base);
+int cstrtoi(char *str);
 
 #endif

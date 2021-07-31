@@ -9,9 +9,9 @@
 
 #include <emerald/std.h>
 
-void *memset(void *s, int c, unsigned int len);
-void memcpy(void *dest, void *src, size_t n);
-void memmove(void *dest, void *src, size_t n);
+void *mem_set(void *s, int c, size_t len);
+void mem_cpy(void *dest, const void *src, size_t n);
+void mem_move(void *dest, const void *src, size_t n);
 
 typedef struct
 {

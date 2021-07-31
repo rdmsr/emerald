@@ -34,10 +34,10 @@ void bitmap_fill(Bitmap *self, bool value)
 {
     if (value)
     {
-        memset(self->data, 0xff, self->size);
+        mem_set(self->data, 0xff, self->size);
     }
     else
     {
-        memset(self->data, 0, self->size);
+        mem_set(self->data, 0, self->size);
     }
 }

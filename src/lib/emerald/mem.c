@@ -6,7 +6,7 @@
 
 #include <emerald/mem.h>
 
-void *memset(void *s, int c, unsigned int len)
+void *mem_set(void *s, int c, size_t len)
 {
     uint8_t *p = (uint8_t *)s;
 
@@ -28,7 +28,7 @@ Range range_align(Range range, size_t alignment)
     return range;
 }
 
-void memcpy(void *dest, void *src, size_t n)
+void mem_cpy(void *dest, const void *src, size_t n)
 {
     uint8_t *pdest = (uint8_t *)dest;
     const uint8_t *psrc = (const uint8_t *)src;
@@ -40,7 +40,7 @@ void memcpy(void *dest, void *src, size_t n)
     }
 }
 
-void memmove(void *dest, void *src, size_t n)
+void mem_move(void *dest, const void *src, size_t n)
 {
     uint8_t *pdest = (uint8_t *)dest;
     const uint8_t *psrc = (const uint8_t *)src;

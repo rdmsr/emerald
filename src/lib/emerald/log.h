@@ -12,23 +12,25 @@
 #include <emerald/str.h>
 
 #ifndef HOST
-#include <arch/arch.h>
+#    include <arch/arch.h>
 #else
-#include <stdio.h>
-static inline void host_writer(char* string)
+#    include <stdio.h>
+static inline void host_writer(char *string)
 {
-  printf("%s", string);
+    printf("%s", string);
 }
-static inline Writer* arch_debug_writer()
+static inline Writer *arch_debug_writer()
 {
-  static Writer stdio;
-  stdio.write = host_writer;
-  return &stdio;
+    static Writer stdio;
+    stdio.write = host_writer;
+    return &stdio;
 }
 #endif
 typedef enum
 {
     INFO,
+    SUCCESS,
+    FAIL,
     PANIC,
     ERROR,
     WARNING,
@@ -38,11 +40,13 @@ typedef enum
 
 void __log(LogLevel level, int line, char *file, char *format, ...);
 
-#define log(format, ...) __log(INFO, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
-#define log_error(format, ...) __log(ERROR, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
-#define log_warning(format, ...) __log(WARNING, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
-#define log_todo(format, ...) __log(TODO, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
-#define log_panic(format, ...) __log(PANIC, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
-#define log_debug(format, ...) __log(DEBUG, __LINE__, __FILENAME__, format __VA_OPT__(,) __VA_ARGS__)
+#define log(format, ...) __log(INFO, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_error(format, ...) __log(ERROR, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_warning(format, ...) __log(WARNING, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_todo(format, ...) __log(TODO, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_panic(format, ...) __log(PANIC, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_debug(format, ...) __log(DEBUG, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_fail(format, ...) __log(FAIL, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_success(format, ...) __log(SUCCESS, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
 
 #endif

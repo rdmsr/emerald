@@ -13,6 +13,6 @@
 
 void fmt_buffer(char* buffer, char* string, va_list args);
 
-
+String fmt_str(char* buf, char* string, ...);
 
 #endif

@@ -24,7 +24,7 @@
     }
 
 #define vec_init(v) \
-    memset((v), 0, sizeof(*(v)))
+    mem_set((v), 0, sizeof(*(v)))
 
 #define vec_deinit(v) \
     (alloc_free((v)->data), \

@@ -81,9 +81,11 @@ $(BUILD_DIRECTORY)/%.asm.o: %.asm
 	@echo -e AS  $(ECHO) $<
 	@nasm $(NASMFLAGS) $< -o $@
 
-test: $(LIB_BIN)
+mtest: $(LIB_BIN)
 	@$(MAKE) -C src/tests
 
+test: mtest
+	@$(MAKE) -C src/tests run
 $(TARGET): $(OBJ)
 	@echo -e LD $(ECHO) $@
 	@$(LD) $(LDHARDFLAGS) $(OBJ) -o $@

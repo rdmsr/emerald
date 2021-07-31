@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include "emerald/mem.h"
 #include <emerald/ds/bitmap.h>
 #include <emerald/str/fmt.h>
 
@@ -16,7 +17,7 @@
         position++;              \
     }                            \
     char ibuf[32] = {0};         \
-    itoa(i, ibuf, base);         \
+    itocstr(i, ibuf, base);         \
     String s = make_str(ibuf);   \
     position += s.size;
 
@@ -75,7 +76,7 @@ void fmt_buffer(char *buffer, char *string, va_list args)
             {
                 uintptr_t i = va_arg(args, uintptr_t);
                 char ibuf[32] = {0};
-                itoa(i / 1024 / 1024, ibuf, 10);
+                itocstr(i / 1024 / 1024, ibuf, 10);
                 String s = make_str(ibuf);
                 str_concat(s, make_str(buffer));
                 position += s.size;
@@ -106,7 +107,7 @@ void fmt_buffer(char *buffer, char *string, va_list args)
                 pad = 16;
                 if (s.size < pad)
                 {
-                    memset(pad_buffer, '0', pad - s.size);
+                    mem_set(pad_buffer, '0', pad - s.size);
                     str_concat(make_str(pad_buffer), make_str(buffer));
                 }
 
@@ -134,4 +135,16 @@ void fmt_buffer(char *buffer, char *string, va_list args)
         scan_forward(&scan);
         scan_skip_c(&scan, '}');
     }
+}
+
+String fmt_str(char* buf, char *string, ...)
+{
+    va_list args;
+    va_start(args, string);
+    
+    fmt_buffer(buf, string, args);
+
+    va_end(args);
+
+    return make_str(buf);
 }
