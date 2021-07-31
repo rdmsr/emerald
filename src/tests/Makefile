@@ -1,9 +1,18 @@
 .DEFAULT_TARGET: test
 
-test: test.c
-	gcc test.c -L../../build -l:libemerald.a -I ../lib -DHOST -o $@
+CFILES := $(wildcard *.c)
+OFILES = $(patsubst %.c, $(BUILD_DIRECTORY)/%.o, $(CFILES))
 
+BUILD_DIRECTORY := build
+DIRECTORY_GUARD = @mkdir -p $(@D)
+
+test: $(OFILES)
+	gcc $^ -L../../build -l:libemerald.a -o $@
+
+$(BUILD_DIRECTORY)/%.o: %.c
+	$(DIRECTORY_GUARD)
+	gcc -I../lib -DHOST -c $< -o $@
 run: 
 	@./test
 clean:
-	rm -rf test
+	rm -rf test build

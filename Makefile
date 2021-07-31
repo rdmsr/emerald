@@ -3,7 +3,7 @@ LD 	   = x86_64-elf-ld
 AS  	   = nasm
 
 ASMFILES  := $(shell find src -type f -name '*.asm')
-CFILES    := $(shell find src -path src/lib -prune -false -o -type f -name '*.c')
+CFILES    := $(shell find src -path src/lib -prune -false -o -path src/tests -prune -false -o -type f -name '*.c')
 
 OBJ = $(patsubst %.c, $(BUILD_DIRECTORY)/%.c.o, $(CFILES)) \
         $(patsubst %.asm, $(BUILD_DIRECTORY)/%.asm.o, $(ASMFILES))
@@ -82,10 +82,14 @@ $(BUILD_DIRECTORY)/%.asm.o: %.asm
 	@nasm $(NASMFLAGS) $< -o $@
 
 mtest: $(LIB_BIN)
+	@$(MAKE) -C src/tests clean
 	@$(MAKE) -C src/tests
 
 test: mtest
 	@$(MAKE) -C src/tests run
+rtest:
+	@$(MAKE) -C src/tests run
+
 $(TARGET): $(OBJ)
 	@echo -e LD $(ECHO) $@
 	@$(LD) $(LDHARDFLAGS) $(OBJ) -o $@

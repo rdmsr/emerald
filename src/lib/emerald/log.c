@@ -13,8 +13,9 @@ String get_color(LogLevel level)
     switch (level)
     {
     case INFO:
-    case SUCCESS:
+    case PASS:
         return make_str("\033[1;32m");
+	
     case PANIC:
     case ERROR:
     case FAIL:
@@ -49,8 +50,8 @@ String get_prefix(LogLevel level)
         return make_str("TODO");
     case FAIL:
         return make_str("FAIL");
-    case SUCCESS:
-        return make_str("SUCCESS");
+    case PASS:
+        return make_str("PASS");
     default:
         return make_str("");
     }

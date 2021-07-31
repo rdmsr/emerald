@@ -38,9 +38,12 @@ void test_add(struct test test);
     }                                                                                   \
     void TEST_FUNCTION_NAME(name)(void)
 
-#define unit_assert(val) __unit_assert(val, #val)
+#define GET_PARAMETER_STRING(val) #val
+#define UNIT_ASSERT(val) __unit_assert(val, __LINE__, __FILENAME__, #val)
+#define UNIT_ASSERT_EQUAL(a, b) __unit_assert(a == b, __LINE__, __FILENAME__, GET_PARAMETER_STRING(a == b))
+#define UNIT_ASSERT_STR_EQUAL(a, b) __unit_assert(str_cmp(a, b) == 1, __LINE__, __FILENAME__, GET_PARAMETER_STRING(a == b))
 
-void __unit_assert(bool val, char *equality);
+void __unit_assert(bool val, int line, char *file, char *equality);
 
 void test_run_all(void);
 

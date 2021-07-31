@@ -11,17 +11,21 @@ static size_t test_count = 0;
 static size_t fail_count = 0;
 static size_t success_count = 0;
 static struct test tests[1024] = {0};
+static int last_fail_line = 0;
+static char *last_fail_file, *last_fail_test;
 
 void test_add(struct test test)
 {
     tests[test_count++] = test;
 }
 
-void __unit_assert(bool val, char *equality)
+void __unit_assert(bool val, int line, char *file, char *equality)
 {
     if (!val)
     {
-        log_fail("assertion failed: {a}", equality);
+        last_fail_line = line;
+        last_fail_file = file;
+        last_fail_test = equality;
         fail_count++;
     }
     else
@@ -57,14 +61,14 @@ void test_run_all(void)
 
         if (result == TEST_PASS)
         {
-            log_success("SUCCESS - {s}", test.name);
+            log_pass("[ ✓ ] {s}", test.name);
         }
 
         if (result == TEST_FAIL)
         {
-            log_fail("FAIL - {s}", test.name);
+            log_fail("[ ✗ ] {s} at {a}:{i}", test.name, last_fail_file, last_fail_line);
         }
     }
 
-    log("====== Statistics: {i} successes | {i} fails ======",success_count, fail_count);
+    log("====== Statistics: {i} successes | {i} fails ======", success_count, fail_count);
 }

@@ -29,7 +29,7 @@ static inline Writer *arch_debug_writer()
 typedef enum
 {
     INFO,
-    SUCCESS,
+    PASS,
     FAIL,
     PANIC,
     ERROR,
@@ -47,6 +47,6 @@ void __log(LogLevel level, int line, char *file, char *format, ...);
 #define log_panic(format, ...) __log(PANIC, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
 #define log_debug(format, ...) __log(DEBUG, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
 #define log_fail(format, ...) __log(FAIL, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_success(format, ...) __log(SUCCESS, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+#define log_pass(format, ...) __log(PASS, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
 
 #endif
