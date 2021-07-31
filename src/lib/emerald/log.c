@@ -6,6 +6,8 @@
 
 #include <emerald/log.h>
 
+MAYBE_UNUSED static uint32_t lock = 0;
+
 String get_color(LogLevel level)
 {
     switch (level)
@@ -50,6 +52,9 @@ String get_prefix(LogLevel level)
 
 void __log(LogLevel level, int line, char *file, char *format, ...)
 {
+  #ifndef HOST
+    lock_acquire(&lock);
+  #endif
     print(arch_debug_writer(), "{s}{s} \033[0m", get_color(level), get_prefix(level));
     print(arch_debug_writer(), "\033[30m{a}:{i} \033[0m\033[0m", file, line);
 
@@ -63,4 +68,8 @@ void __log(LogLevel level, int line, char *file, char *format, ...)
     va_end(args);
 
     print(arch_debug_writer(), "\n", file, line);
+
+    #ifndef HOST
+    lock_release(&lock);
+    #endif
 }

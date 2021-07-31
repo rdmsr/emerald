@@ -18,4 +18,6 @@ Writer *arch_debug_writer();
 void arch_initialize_descriptors(void);
 void arch_initialize_memory(struct stivale2_struct *bootinfo);
 
+extern void lock_acquire(uint32_t *lock);
+extern void lock_release(uint32_t *lock);
 #endif

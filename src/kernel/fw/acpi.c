@@ -85,7 +85,7 @@ void acpi_initialize(struct stivale2_struct *boot_info)
     RSDP *rsdp = (RSDP *)rsdp_info->rsdp;
     RSDT *rsdt = (RSDT *)((uintptr_t)rsdp->rsdt + MEM_PHYS_OFFSET);
 
-    XSDT *xsdt;
+    XSDT *xsdt = NULL;
     if (rsdp->rev >= 2)
         xsdt = (XSDT *)(rsdp->xsdt + MEM_PHYS_OFFSET);
 

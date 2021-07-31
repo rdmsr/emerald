@@ -8,6 +8,7 @@
 #include <emerald/debug.h>
 
 static uint64_t *kernel_pagemap;
+static uint32_t lock = 0;
 
 static uint64_t *get_next_level(uint64_t *table, size_t index)
 {
@@ -22,6 +23,8 @@ static uint64_t *get_next_level(uint64_t *table, size_t index)
 
 void vmm_map_page(uint64_t *pagemap, uintptr_t physical_address, uintptr_t virtual_address, uint64_t flags)
 {
+    lock_acquire(&lock);
+
     size_t level4 = PML_ENTRY(virtual_address, 39);
     size_t level3 = PML_ENTRY(virtual_address, 30);
     size_t level2 = PML_ENTRY(virtual_address, 21);
@@ -32,10 +35,14 @@ void vmm_map_page(uint64_t *pagemap, uintptr_t physical_address, uintptr_t virtu
     uint64_t *pml1 = get_next_level(pml2, level2);
 
     pml1[level1] = physical_address | flags;
+
+    lock_release(&lock);
 }
 
 void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address)
 {
+    lock_acquire(&lock);
+
     size_t level4 = PML_ENTRY(virtual_address, 39);
     size_t level3 = PML_ENTRY(virtual_address, 30);
     size_t level2 = PML_ENTRY(virtual_address, 21);
@@ -46,6 +53,8 @@ void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address)
     uint64_t *pml1 = get_next_level(pml2, level2);
 
     pml1[level1] = 0;
+
+    lock_release(&lock);
 }
 
 void vmm_map_range(uint64_t *pagemap, uint64_t start, uint64_t end, uint64_t offset, uint64_t flags)

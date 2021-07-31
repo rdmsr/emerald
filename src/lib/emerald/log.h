@@ -7,11 +7,25 @@
 #ifndef LIBEMERALD_LOG_H
 #define LIBEMERALD_LOG_H
 
-#include <arch/arch.h>
 #include <emerald/io.h>
 #include <emerald/macros.h>
 #include <emerald/str.h>
 
+#ifndef HOST
+#include <arch/arch.h>
+#else
+#include <stdio.h>
+static inline void host_writer(char* string)
+{
+  printf("%s", string);
+}
+static inline Writer* arch_debug_writer()
+{
+  static Writer stdio;
+  stdio.write = host_writer;
+  return &stdio;
+}
+#endif
 typedef enum
 {
     INFO,

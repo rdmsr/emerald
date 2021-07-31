@@ -54,7 +54,6 @@ bool str_ncmp(String str, String str2, int n)
     return true;
 }
 
-
 /* These two functions were taken from https://github.com/not-microsowoft/experimental, licensed under GPL 3
 
 Copyright (C) 2021 keyboard-slayer
@@ -80,7 +79,8 @@ void strrev(char *s)
     }
 }
 
-char* itoa(int64_t value, char *str, uint16_t base)
+
+char *itoa(int64_t value, char *str, uint16_t base)
 {
     size_t index = 0;
     int8_t digit;

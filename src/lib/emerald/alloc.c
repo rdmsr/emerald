@@ -7,6 +7,8 @@
 #include "alloc.h"
 #include "liballoc/liballoc.h"
 #include <emerald/debug.h>
+#ifndef HOST
+static uint32_t lock = 0;
 
 void *liballoc_alloc(int size)
 {
@@ -24,8 +26,16 @@ void *liballoc_alloc(int size)
     return ptr;
 }
 
-int liballoc_lock(void) { return 0; }
-int liballoc_unlock(void) { return 0; }
+int liballoc_lock(void)
+{
+    lock_acquire(&lock);
+    return 0;
+}
+int liballoc_unlock(void)
+{
+    lock_release(&lock);
+    return 0;
+}
 
 int liballoc_free_(void *ptr, int pages)
 {
@@ -52,3 +62,4 @@ void *alloc_malloc_end(size_t size)
 {
     return alloc_malloc(size) + size;
 }
+#endif

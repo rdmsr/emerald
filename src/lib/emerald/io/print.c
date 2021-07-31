@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include <devices/com.h>
 #include <emerald/io/print.h>
 #include <emerald/str/fmt.h>
 
