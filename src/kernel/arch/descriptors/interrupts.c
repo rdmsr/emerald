@@ -5,6 +5,7 @@
  */
 
 #include <arch/asm.h>
+#include <arch/context.h>
 #include <arch/descriptors/interrupts.h>
 #include <devices/apic.h>
 #include <devices/pic.h>
@@ -79,6 +80,7 @@ void interrupt_error_handler(Stack *stackframe)
     log_error("R12={p} R13={p} R14={p} R15={p}", stackframe->r12, stackframe->r13, stackframe->r14, stackframe->r15);
     log_error("CR0={p} CR2={p} CR3={p} RIP={p}", cr0, cr2, cr3, stackframe->rip);
 }
+
 uint64_t interrupts_handler(uint64_t rsp)
 {
     Stack *stackframe = (Stack *)rsp;

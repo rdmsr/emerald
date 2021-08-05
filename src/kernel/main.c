@@ -8,6 +8,7 @@
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <main.h>
+#include <arch/tasking.h>
 
 void kernel_splash()
 {
@@ -42,6 +43,8 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     log("Usable memory: {m}mb\t Usable pages: {i}", get_usable_pages() * PAGE_SIZE, get_usable_pages());
 
     log("CPU model: {a}, CPU vendor: {a}", cpuid_get_model(), cpuid_get_vendor());
+
+    task_create(make_str("Test task"), 0);
 
     while (true)
     {
