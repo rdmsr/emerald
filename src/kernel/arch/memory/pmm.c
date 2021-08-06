@@ -139,7 +139,7 @@ void pmm_initialize(struct stivale2_struct *boot_info)
     {
         struct stivale2_mmap_entry *entry = &memory_map->memmap[i];
 
-        log("Entry {i}: base={x} length={x} type={a}", i, entry->base, entry->length, get_memmap_entry_type(entry->type));
+        log("Entry {}: base={x} length={x} type={}", i, entry->base, entry->length, get_memmap_entry_type(entry->type));
 
         if (entry->type != STIVALE2_MMAP_USABLE &&
             entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
@@ -162,7 +162,7 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
     kassert(bitmap.size > 0);
 
-    log("The bitmap needs to be {i} kb long", bitmap.size / 1024);
+    log("The bitmap needs to be {} kb long", bitmap.size / 1024);
 
     for (j = 0; j < memory_map->entries; j++)
     {

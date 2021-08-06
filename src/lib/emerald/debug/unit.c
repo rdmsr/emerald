@@ -52,7 +52,7 @@ enum test_result test_run(struct test test)
 
 void test_run_all(void)
 {
-    log("====== Running {i} tests ======", test_count);
+    log("====== Running {} tests ======", test_count);
 
     for (size_t i = 0; i < test_count; i++)
     {
@@ -61,14 +61,14 @@ void test_run_all(void)
 
         if (result == TEST_PASS)
         {
-            log_pass("[ ✓ ] {s}", test.name);
+            log_pass("[ ✓ ] {}", test.name);
         }
 
         if (result == TEST_FAIL)
         {
-            log_fail("[ ✗ ] {s} at {a}:{i}", test.name, last_fail_file, last_fail_line);
+            log_fail("[ ✗ ] {} at {}:{}", test.name, last_fail_file, last_fail_line);
         }
     }
 
-    log("====== Statistics: {i} successes | {i} fails ======", success_count, fail_count);
+    log("====== Statistics: {} successes | {} fails ======", success_count, fail_count);
 }

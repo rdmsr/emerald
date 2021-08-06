@@ -1,4 +1,6 @@
+#include <emerald/mem.h>
 #include <emerald/str/str.h>
+#include <emerald/log.h>
 
 size_t cstrlen(char *str)
 {
@@ -9,9 +11,40 @@ size_t cstrlen(char *str)
     return i;
 }
 
-String make_str(char *str)
+String make_str_cstr(char const* str)
 {
-    return (String){str, cstrlen(str)};
+  return (String){(char*)str, cstrlen((char*)str)};
+}
+
+String make_str_i(int i)
+{
+    return str_convert(10, i);
+}
+
+String make_str_x(unsigned int i)
+{
+    return str_convert(16, i);
+}
+
+String make_str_str(String str)
+{
+    return str;
+}
+
+String make_str_char(char c)
+{
+    return make_str_cstr(&c);
+}
+
+String str_convert(uint16_t base, int64_t num)
+{
+    static char ibuf[128] = {0};
+
+    itocstr(num, ibuf, base);
+
+    String s = make_str_cstr(ibuf);
+
+    return s;
 }
 
 String str_concat(String src, String dest)

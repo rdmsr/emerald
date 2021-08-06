@@ -15,7 +15,7 @@ String get_color(LogLevel level)
     case INFO:
     case PASS:
         return make_str("\033[1;32m");
-	
+
     case PANIC:
     case ERROR:
     case FAIL:
@@ -59,22 +59,16 @@ String get_prefix(LogLevel level)
     return make_str("");
 }
 
-void __log(LogLevel level, int line, char *file, char *format, ...)
+void __log(LogLevel level, int line, char *file, char *format, FormatValues vals)
 {
 #ifndef HOST
     lock_acquire(&lock);
 #endif
-    print(arch_debug_writer(), "{s}{s} \033[0m", get_color(level), get_prefix(level));
-    print(arch_debug_writer(), "\033[30m{a}:{i} \033[0m\033[0m", file, line);
+    print(arch_debug_writer(), "{}{} \033[0m", get_color(level), get_prefix(level));
+    print(arch_debug_writer(), "\033[30m{}:{} \033[0m\033[0m", file, line);
 
-    va_list args;
-    char buf[1024] = {0};
-    va_start(args, format);
 
-    fmt_buffer(buf, format, args);
-    io_write(arch_debug_writer(), buf);
-
-    va_end(args);
+    __fmt_stream(arch_debug_writer(), format, vals);
 
     print(arch_debug_writer(), "\n", file, line);
 

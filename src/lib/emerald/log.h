@@ -38,15 +38,14 @@ typedef enum
     TODO
 } LogLevel;
 
-void __log(LogLevel level, int line, char *file, char *format, ...);
-
-#define log(format, ...) __log(INFO, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_error(format, ...) __log(ERROR, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_warning(format, ...) __log(WARNING, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_todo(format, ...) __log(TODO, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_panic(format, ...) __log(PANIC, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_debug(format, ...) __log(DEBUG, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_fail(format, ...) __log(FAIL, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
-#define log_pass(format, ...) __log(PASS, __LINE__, __FILENAME__, format __VA_OPT__(, ) __VA_ARGS__)
+void __log(LogLevel level, int line, char *file, char *format, FormatValues vals);
+#define log(format, ...) __log(INFO, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_error(format, ...) __log(ERROR, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_warning(format, ...) __log(WARNING, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_todo(format, ...) __log(TODO, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_panic(format, ...) __log(PANIC, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_debug(format, ...) __log(DEBUG, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_fail(format, ...) __log(FAIL, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_pass(format, ...) __log(PASS, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
 
 #endif

@@ -9,7 +9,6 @@
 
 #include <emerald/io/rw.h>
 
-
-void print(Writer *writer, char* str, ...);
+#define print(stream, fmt, ...) fmt_stream(stream, fmt, __VA_ARGS__)
 
 #endif

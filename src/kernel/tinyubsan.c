@@ -3,7 +3,7 @@
 
 struct tu_source_location
 {
-    const char *file;
+    char const *file;
     uint32_t line;
     uint32_t column;
 };

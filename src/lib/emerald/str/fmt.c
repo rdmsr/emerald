@@ -4,147 +4,186 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include "emerald/io/scan.h"
 #include "emerald/mem.h"
 #include <emerald/ds/bitmap.h>
+#include <emerald/log.h>
 #include <emerald/str/fmt.h>
 
-#define make_integer(base, type) \
-    type i = va_arg(args, type); \
-    if (i < (type)ZERO)          \
-    {                            \
-        i = -i;                  \
-        buffer[position] = '-';  \
-        position++;              \
-    }                            \
-    char ibuf[32] = {0};         \
-    itocstr(i, ibuf, base);         \
-    String s = make_str(ibuf);   \
-    position += s.size;
-
-void fmt_buffer(char *buffer, char *string, va_list args)
+int check_digit(char c)
 {
-    Scanner scan = {.buffer = string, .size = cstrlen(string), .head = 0};
+    if ((c >= '0') && (c <= '9'))
+        return 1;
+    return 0;
+}
 
-    unsigned int ZERO = 0;
-    int position = 0;
+String __fmt_buffer(char *buffer, char *format, FormatValues values)
+{
+    Scanner scan = {.buffer = format, .size = cstrlen(format), .head = 0};
 
-    char pad_buffer[32] = {0};
+    size_t current_value = 0;
 
-    size_t pad;
+    char char_buf[2] = {0};
+
+    bool is_digit = false;
+
+    size_t prev_value = 0;
 
     while (!scan_ended(&scan))
     {
+        char specifier = 0;
 
         if (scan_current(&scan) == '{')
         {
-            scan_forward(&scan);
-
-            switch (scan_current(&scan))
+            while (scan_current(&scan) != '}')
             {
-            case 'a':
-            {
-                char *s = va_arg(args, char *);
-                str_concat(make_str(s), make_str(buffer));
-                position += cstrlen(s);
-                break;
-            }
+                scan_forward(&scan);
 
-            case 's':
-            {
-                String s = va_arg(args, String);
-                str_concat(s, make_str(buffer));
-                position += cstrlen(s.buffer);
-                break;
-            }
-
-            case 'i':
-            {
-                make_integer(10, int);
-                str_concat(s, make_str(buffer));
-                break;
-            }
-
-            case 'c':
-            {
-                char c = va_arg(args, int);
-                buffer[position] = c;
-                position++;
-                break;
-            }
-
-            case 'm':
-            {
-                uintptr_t i = va_arg(args, uintptr_t);
-                char ibuf[32] = {0};
-                itocstr(i / 1024 / 1024, ibuf, 10);
-                String s = make_str(ibuf);
-                str_concat(s, make_str(buffer));
-                position += s.size;
-                break;
-            }
-
-            case 'x':
-            {
-
-                make_integer(16, uintptr_t);
-                str_concat(make_str("0x"), make_str(buffer));
-                position += 2;
-                str_concat(s, make_str(buffer));
-                break;
-            }
-
-            case 'b':
-            {
-                bool b = va_arg(args, int);
-                str_concat(make_str(b ? "true" : "false"), make_str(buffer));
-                position += b ? 4 : 5;
-                break;
-            }
-
-            case 'p':
-            {
-                make_integer(16, uintptr_t);
-                pad = 16;
-                if (s.size < pad)
+                if (scan_current(&scan) != '}')
                 {
-                    mem_set(pad_buffer, '0', pad - s.size);
-                    str_concat(make_str(pad_buffer), make_str(buffer));
+                    specifier = scan_current(&scan);
+                }
+            }
+
+            is_digit = check_digit(specifier);
+
+            if (is_digit)
+            {
+                prev_value = current_value;
+                current_value = specifier - '0';
+            }
+
+            if (current_value < values.count)
+            {
+                switch (values.values[current_value].type)
+                {
+
+                case FORMAT_DECIMAL:
+                {
+
+                    char ibuffer[256] = {0};
+                    char pad_buffer[32] = {0};
+
+                    int base = 10;
+                    size_t pad = 0;
+
+                    bool is_bool = false;
+                    bool is_char = false;
+
+                    int64_t nbr = values.values[current_value].decimal;
+
+                    switch (specifier)
+                    {
+
+                    case 'p':
+                    {
+                        base = 16;
+                        pad = 16;
+                        break;
+                    }
+
+                    case 'x':
+                    {
+                        base = 16;
+                        pad = 0;
+                        break;
+                    }
+
+                    case 'b':
+                    {
+                        is_bool = true;
+
+                        break;
+                    }
+
+                    case 'c':
+                    {
+                        is_char = true;
+                        break;
+                    }
+
+                    default:
+                    {
+                        base = 10;
+                        pad = 0;
+                        break;
+                    }
+                    }
+
+                    if (!is_bool && !is_char)
+                    {
+                        itocstr(nbr, ibuffer, base);
+
+                        if (base == 16)
+                        {
+                            str_concat(make_str("0x"), make_str(buffer));
+                        }
+
+                        if (cstrlen(ibuffer) < pad)
+                        {
+                            mem_set(pad_buffer, '0', pad - cstrlen(ibuffer));
+                            str_concat(make_str(pad_buffer), make_str(ibuffer));
+                        }
+
+                        str_concat(make_str(ibuffer), make_str(buffer));
+                    }
+
+                    else if (is_bool)
+                    {
+                        str_concat(make_str(nbr ? "true" : "false"), make_str(buffer));
+                    }
+
+                    else
+                    {
+                        char_buf[0] = (char)values.values[current_value].decimal;
+                        str_concat(make_str(char_buf), make_str(buffer));
+                    }
+
+                    break;
                 }
 
-                str_concat(s, make_str(buffer));
-                position += pad - s.size;
+                case FORMAT_STRING:
+                {
+                    str_concat(make_str(values.values[current_value]._string), make_str(buffer));
+                    break;
+                }
 
-                break;
+                default:
+                    break;
+                }
             }
 
-            default:
-                buffer[position] = '{';
-                position++;
-                break;
+            if (!is_digit)
+            {
+                current_value++;
             }
 
-            scan_forward(&scan);
+            else
+            {
+                current_value = prev_value + 1;
+            }
         }
 
         else
         {
-            buffer[position] = scan_current(&scan);
-            position++;
+            char_buf[0] = scan_current(&scan);
+            str_concat(make_str(char_buf), make_str(buffer));
         }
 
         scan_forward(&scan);
-        scan_skip_c(&scan, '}');
     }
+    str_concat(make_str("\0"), make_str(buffer));
+
+    return make_str(buffer);
 }
 
-String fmt_str(char* buf, char *string, ...)
+void __fmt_stream(Writer *stream, char *format, FormatValues values)
 {
-    va_list args;
-    va_start(args, string);
-    
-    fmt_buffer(buf, string, args);
+    char buf[1024] = {0};
 
-    va_end(args);
+    __fmt_buffer(buf, format, values);
 
-    return make_str(buf);
+    io_write(stream, buf);
+
+    mem_set(buf, 0, cstrlen(buf));
 }

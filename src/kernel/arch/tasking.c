@@ -30,7 +30,7 @@ Task *task_create(String name, uintptr_t ip)
 
     vec_push(&tasks, task);
 
-    log("Created task {s} with pid {i} stack {p}", task->name, task->pid, task->sp);
+    log("Created task {} with pid {} stack {p}", task->name, task->pid, task->sp);
 
     return task;
 }

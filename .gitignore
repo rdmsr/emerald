@@ -46,7 +46,8 @@
 
 
 build/
-
+src/tests/test
+src/tests/build
 meta/toolchain/local
 meta/toolchain/tarballs
 meta/toolchain/build
