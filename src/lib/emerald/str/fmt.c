@@ -61,7 +61,7 @@ String __fmt_buffer(char *buffer, char *format, FormatValues values)
                 case FORMAT_DECIMAL:
                 {
 
-                    char ibuffer[256] = {0};
+                    char ibuffer[64] = {0};
                     char pad_buffer[32] = {0};
 
                     int base = 10;
@@ -122,7 +122,7 @@ String __fmt_buffer(char *buffer, char *format, FormatValues values)
                         if (cstrlen(ibuffer) < pad)
                         {
                             mem_set(pad_buffer, '0', pad - cstrlen(ibuffer));
-                            str_concat(make_str(pad_buffer), make_str(ibuffer));
+                            str_concat(make_str(pad_buffer), make_str(buffer));
                         }
 
                         str_concat(make_str(ibuffer), make_str(buffer));

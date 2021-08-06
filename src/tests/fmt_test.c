@@ -39,8 +39,6 @@ TEST(fmt_char)
     mem_set(buf, 0, sizeof(buf));
 }
 
-
-
 TEST(fmt_str)
 {
     UNIT_ASSERT_STR_EQUAL(fmt_buffer(buf, "{}", make_str("hello")), make_str("hello"));

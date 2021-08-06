@@ -52,14 +52,15 @@ void interrupt_error_handler(Stack *stackframe)
 
     uint64_t cr0 = asm_read_cr0();
     uint64_t cr2 = asm_read_cr2();
-    uint64_t cr3 = asm_read_cr2();
+    uint64_t cr3 = asm_read_cr3();
+    
     log_error("");
     log_error(" _________        .---\"\"\"      \"\"\"---.");
     log_error(":______.-':      :  .--------------.  :");
     log_error("| ______  |      | :                : |");
     log_error("|:______B:|      | | Kernel Panic!  | |");
     log_error("|:______B:|      | |                | |");
-    log_error("|:______B:|      | | {a}     | |", exceptions[stackframe->intno]);
+    log_error("|:______B:|      | | {}     | |", exceptions[stackframe->intno]);
     log_error("|         |      | | int {x}        | |", stackframe->intno);
     log_error("|:_____:  |      | |                | |");
     log_error("|    ==   |      | :                : |");
