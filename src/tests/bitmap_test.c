@@ -1,7 +1,7 @@
 #include <emerald/debug.h>
 #include <emerald/ds/bitmap.h>
 
-uint8_t buf[20];
+static uint8_t buf[20];
 
 static Bitmap bitmap = {.size = 20, .data = buf};
 
