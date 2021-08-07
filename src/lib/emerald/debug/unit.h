@@ -45,6 +45,6 @@ void test_add(struct test test);
 
 void __unit_assert(bool val, int line, char *file, char *equality);
 
-void test_run_all(void);
+int test_run_all(void);
 
 #endif

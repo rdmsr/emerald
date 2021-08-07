@@ -2,6 +2,5 @@
 
 int main()
 {
-    test_run_all();
-    return 0;
+    return test_run_all();
 }

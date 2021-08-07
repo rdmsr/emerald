@@ -50,7 +50,7 @@ enum test_result test_run(struct test test)
     return TEST_PASS;
 }
 
-void test_run_all(void)
+int test_run_all(void)
 {
     log("====== Running {} tests ======", test_count);
 
@@ -71,4 +71,6 @@ void test_run_all(void)
     }
 
     log("====== Statistics: {} successes | {} fails ======", success_count, fail_count);
+
+    return fail_count > 0 ? -1 : 0;
 }
