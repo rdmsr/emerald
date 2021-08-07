@@ -1,0 +1,17 @@
+name: Unit testing
+
+on:
+  push:
+    branches: [ rewrite ]
+  pull_request:
+    branches: [ rewrite ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
+      run: make test
