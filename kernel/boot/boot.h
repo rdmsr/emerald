@@ -28,7 +28,7 @@
 #include <stdint.h>
 
 #ifndef BOOT_H
-#    define BOOT_H
+#define BOOT_H
 
 /** Gets information from the bootloader in a more readable way. */
 typedef struct
