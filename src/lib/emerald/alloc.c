@@ -16,7 +16,7 @@ void *liballoc_alloc(int size)
 
     void *ptr = (char *)pmm_allocate_zero(page_count + 1);
 
-    kassert(ptr != NULL);
+    assert_not_null(ptr);
 
     if (!ptr)
         return NULL;

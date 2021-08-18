@@ -16,7 +16,7 @@ static uintptr_t lapic_addr = 0;
 
 static uint32_t lapic_read(uint32_t reg)
 {
-    kassert(lapic_addr != 0);
+    assert_truth(lapic_addr != 0);
     return *((volatile uint32_t *)(lapic_addr + MEM_PHYS_OFFSET + reg));
 }
 
@@ -35,14 +35,14 @@ vec_ioapic_t ioapics;
 
 static uint32_t ioapic_read(uintptr_t ioapic_address, size_t reg)
 {
-    kassert(ioapic_address != 0);
+    assert_truth(ioapic_address != 0);
     *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_REG_OFFSET)) = reg;
     return *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_VALUE_OFFSET));
 }
 
 static void ioapic_write(uintptr_t ioapic_address, size_t reg, uint32_t data)
 {
-    kassert(ioapic_address != 0);
+    assert_truth(ioapic_address != 0);
     *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_REG_OFFSET)) = reg;
     *((volatile uint32_t *)(ioapic_address + MEM_PHYS_OFFSET + IOAPIC_VALUE_OFFSET)) = data;
 }

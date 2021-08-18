@@ -20,8 +20,8 @@ void kernel_splash()
     log(" |  _  |  -__|   _|  |  |  |  |  |  |  |        |  ");
     log(" |_____|_____|__| |___  |__|__|__|_____|__|__|__|  ");
     log("                |_____|");
-    log("Compiled on {a} {a}", __DATE__, __TIME__);
-    log("Using x86_64-elf-gcc ({a})", __VERSION__);
+    log("Compiled on {} {}", __DATE__, __TIME__);
+    log("Using x86_64-elf-gcc ({})", __VERSION__);
     log("------------------------------------------------");
 }
 

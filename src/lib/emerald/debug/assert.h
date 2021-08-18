@@ -9,8 +9,19 @@
 
 #include <emerald/std.h>
 
-void __kassert(const char* expr, const char* filename, int line);
+#define assert_not_null(expr) (             \
+    {                                       \
+        if (expr == NULL)                   \
+        {                                   \
+            log_panic("{} is NULL", #expr); \
+        }                                   \
+    })
 
-#define kassert(__cond) ((__cond) ? (void) 0 : __kassert(#__cond, __FILE__, __LINE__))
-
+#define assert_truth(expr) (                 \
+    {                                        \
+        if ((expr) != true)                  \
+        {                                    \
+            log_panic("{} is false", #expr); \
+        }                                    \
+    })
 #endif

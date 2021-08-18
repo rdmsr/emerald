@@ -91,7 +91,7 @@ void acpi_initialize(struct stivale2_struct *boot_info)
 
     MADT *madt = get_table(make_str("APIC"), rsdp, rsdt, xsdt, 0);
 
-    kassert(madt != NULL);
+    assert_not_null(madt);
 
     vec_init(&ioapics);
     vec_init(&isos);

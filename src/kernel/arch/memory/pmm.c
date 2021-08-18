@@ -45,9 +45,9 @@ void set_pages(void *addr, size_t page_count)
 
 void *pmm_allocate(size_t pages)
 {
-    kassert(pages > 0);
-    kassert(usable_pages > 0);
-    kassert(pages < bitmap.size);
+    assert_truth(pages > 0);
+    assert_truth(usable_pages > 0);
+    assert_truth(pages < bitmap.size);
 
     size_t i, j;
     for (i = 0; i < highest_page / PAGE_SIZE; i++)
@@ -76,7 +76,7 @@ void *pmm_allocate_zero(size_t pages)
 {
     void *ret = pmm_allocate(pages);
 
-    kassert(ret != NULL);
+    assert_not_null(ret);
 
     mem_set(ret + MEM_PHYS_OFFSET, 0, pages * PAGE_SIZE);
 
@@ -160,7 +160,7 @@ void pmm_initialize(struct stivale2_struct *boot_info)
 
     bitmap.size = bitmap_size;
 
-    kassert(bitmap.size > 0);
+    assert_truth(bitmap.size > 0);
 
     log("The bitmap needs to be {} kb long", bitmap.size / 1024);
 

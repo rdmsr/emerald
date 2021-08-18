@@ -26,7 +26,7 @@ CPUID cpuid(uint32_t leaf, uint32_t subleaf, bool offset)
                          : "rbx", "rcx", "rdx");
     }
 
-    kassert(leaf < cpuid_max);
+    assert_truth(leaf < cpuid_max);
 
     CPUID result = {};
 
