@@ -44,7 +44,7 @@ Contributions, issues and feature requests are welcome!
 
 ## :question: Questions?
 
-Please join the [discord server](https://discord.gg/VMGVJcgVcR) or contact me at abb1x@protonmail.com
+Please join the [discord server](https://discord.gg/VMGVJcgVcR) or contact me at abbix@riseup.net
 ### Screenshots
 
 <img src="screenshots/main-new.png">
