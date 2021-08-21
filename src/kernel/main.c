@@ -49,7 +49,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
     task_create(make_str("Test task"), 0);
-    
+
     while (true)
     {
         asm_hlt();

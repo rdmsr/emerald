@@ -8,6 +8,7 @@
 #define KERNEL_PMM_H
 
 #include <boot/stivale2.h>
+#include <emerald/functional.h>
 #include <emerald/log.h>
 #include <emerald/macros.h>
 #include <emerald/mem.h>
@@ -20,7 +21,7 @@
 
 void pmm_initialize(struct stivale2_struct *boot_info);
 
-void *pmm_allocate(size_t pages);
+Maybe(voidp) pmm_allocate(size_t pages);
 
 void *pmm_allocate_zero(size_t pages);
 

@@ -43,7 +43,7 @@ void set_pages(void *addr, size_t page_count)
     }
 }
 
-void *pmm_allocate(size_t pages)
+Maybe(voidp) pmm_allocate(size_t pages)
 {
     assert_truth(pages > 0);
     assert_truth(usable_pages > 0);
@@ -61,22 +61,21 @@ void *pmm_allocate(size_t pages)
 
             else if (j == pages - 1)
             {
-                set_pages((void *)(i * PAGE_SIZE), pages);
-                return (void *)(i * PAGE_SIZE);
+                void *ret = (void *)(i * PAGE_SIZE);
+                set_pages(ret, pages);
+                return Just(voidp, ret);
             }
         }
     }
 
     log_error("Couldn't find a free page");
 
-    return NULL;
+    return Nothing(voidp);
 }
 
 void *pmm_allocate_zero(size_t pages)
 {
-    void *ret = pmm_allocate(pages);
-
-    assert_not_null(ret);
+    void *ret = Maybe$(pmm_allocate(pages));
 
     mem_set(ret + MEM_PHYS_OFFSET, 0, pages * PAGE_SIZE);
 

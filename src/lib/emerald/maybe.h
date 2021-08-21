@@ -23,6 +23,13 @@ new_maybe(String);
 new_maybe(u64);
 new_maybe(u16);
 new_maybe(u32);
+new_maybe(u8);
+
+new_maybe(voidp);
+new_maybe(u8p);
+new_maybe(u64p);
+new_maybe(u16p);
+new_maybe(u32p);
 
 #define Just(T, val)   \
     (__maybe_##T)      \
