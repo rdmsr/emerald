@@ -78,7 +78,7 @@ struct tu_invalid_builtin_data
 
 static void tu_print_location(char *message, struct tu_source_location loc)
 {
-    log_error("tinyubsan: {a} at file {a}, line {i}, column {i}", message, loc.file, loc.line, loc.column);
+    log_error("tinyubsan: {} at file {}, line {}, column {}", message, loc.file, loc.line, loc.column);
 }
 
 void __ubsan_handle_add_overflow(struct tu_overflow_data *data)

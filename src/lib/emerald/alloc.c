@@ -7,6 +7,7 @@
 #include "alloc.h"
 #include "liballoc/liballoc.h"
 #include <emerald/debug.h>
+
 #ifndef HOST
 static uint32_t lock = 0;
 

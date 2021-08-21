@@ -7,8 +7,8 @@
 #include <devices/pit.h>
 #include <emerald/debug.h>
 #include <emerald/ds/vec.h>
+#include <emerald/functional.h>
 #include <emerald/log.h>
-#include <emerald/macros.h>
 #include <main.h>
 
 void kernel_splash()
@@ -28,8 +28,11 @@ void kernel_splash()
 void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 {
     com_initialize(COM1);
+
     arch_initialize_descriptors();
+
     arch_initialize_memory(stivale2_struct);
+
     pic_initialize();
 
     pit_initialize(1000);
@@ -46,7 +49,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
     task_create(make_str("Test task"), 0);
-
+    
     while (true)
     {
         asm_hlt();

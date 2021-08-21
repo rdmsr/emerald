@@ -4,7 +4,6 @@
 #include <emerald/mem.h>
 #include <emerald/str.h>
 #include <emerald/log.h>
-#include <stdio.h>
 
 static char buf[1024] = {0};
 
