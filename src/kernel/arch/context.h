@@ -17,5 +17,5 @@ typedef struct
 
 void context_load(Context *ctx, Stack *rsp);
 void context_init(Context *ctx, uintptr_t ip, uintptr_t sp);
-
+void context_save(Context *ctx, Stack *stack);
 #endif

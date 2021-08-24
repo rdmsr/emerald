@@ -14,7 +14,6 @@ static IDTDescriptor idt[256];
 static IDTPointer idtr;
 extern uintptr_t __interrupt_vector[];
 
-
 static IDTDescriptor idt_make_entry(uint64_t offset, uint8_t type)
 {
     return (IDTDescriptor){
@@ -29,7 +28,7 @@ static IDTDescriptor idt_make_entry(uint64_t offset, uint8_t type)
 
 void install_isr(void)
 {
-  //pic_remap();
+    //pic_remap();
 
     size_t i;
     for (i = 0; i < 3; i++)
@@ -49,7 +48,8 @@ void install_isr(void)
 
 void idt_initialize()
 {
-    idtr.size = 256 * sizeof(IDTDescriptor);
+    idtr.size = (256 * sizeof(IDTDescriptor)) - 1;
+
     idtr.addr = (uint64_t)idt;
 
     log("Initializing ISRs...");

@@ -7,11 +7,13 @@
 #include <arch/asm.h>
 #include <arch/context.h>
 #include <arch/descriptors/interrupts.h>
+#include <arch/proc/sched.h>
 #include <devices/apic.h>
 #include <devices/pic.h>
 #include <emerald/log.h>
 
 volatile u64 ticks = 0;
+volatile bool sched_init = false;
 
 static const char *exceptions[32] = {
     "Division by zero",
@@ -47,13 +49,18 @@ static const char *exceptions[32] = {
     "Security Exception",
     "Reserved"};
 
+void toggle_sched_init()
+{
+    sched_init = !sched_init;
+}
+
 void interrupt_error_handler(Stack *stackframe)
 {
 
     uint64_t cr0 = asm_read_cr0();
     uint64_t cr2 = asm_read_cr2();
     uint64_t cr3 = asm_read_cr3();
-    
+
     log_error("");
     log_error(" _________        .---\"\"\"      \"\"\"---.");
     log_error(":______.-':      :  .--------------.  :");
@@ -100,6 +107,11 @@ uint64_t interrupts_handler(uint64_t rsp)
     if (stackframe->intno == 32)
     {
         ticks++;
+
+        if (sched_init)
+        {
+            sched_schedule(stackframe);
+        }
     }
 
     apic_eoi();

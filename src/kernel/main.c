@@ -1,6 +1,10 @@
+#include "arch/context.h"
+#include "arch/descriptors/interrupts.h"
 #include "emerald/str/fmt.h"
+#include "emerald/str/str.h"
 #include <arch/arch.h>
 #include <arch/cpuid.h>
+#include <arch/proc/sched.h>
 #include <arch/tasking.h>
 #include <devices/apic.h>
 #include <devices/pic.h>
@@ -25,6 +29,11 @@ void kernel_splash()
     log("------------------------------------------------");
 }
 
+void test()
+{
+    log("hello I am a task");
+}
+
 void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 {
     com_initialize(COM1);
@@ -36,6 +45,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     pic_initialize();
 
     pit_initialize(1000);
+
     acpi_initialize(stivale2_struct);
 
     /* apic_initialize();*/
@@ -48,10 +58,14 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
-    task_create(make_str("Test task"), 0);
+    auto init = task_create(make_str("init"), -1, (uintptr_t)test);
+    
+    sched_initialize();
+    
+    sched_start(init);
+    
+    toggle_sched_init();
 
     while (true)
-    {
-        asm_hlt();
-    }
+      ;
 }

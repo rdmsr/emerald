@@ -44,4 +44,7 @@ typedef struct stackframe
 
 uint64_t interrupts_handler(uint64_t rsp);
 u64 get_ticks();
+
+void toggle_sched_init();
+
 #endif

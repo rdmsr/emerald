@@ -8,29 +8,36 @@
 #define KERNEL_TASKING_H
 #include <arch/context.h>
 #include <arch/descriptors/interrupts.h>
-#include <emerald/ds/vec.h>
 #include <emerald/alloc.h>
-#include <emerald/std.h>
-#include <emerald/str/str.h>
+#include <emerald/ds/vec.h>
+#include <emerald/str.h>
+
+typedef enum
+{
+    RUNNABLE,
+    DEAD,
+    BLOCKING
+} TaskState;
 
 typedef struct
 {
     String name;
     uintptr_t sp;
     u32 pid;
-    Context ctx;
+    Context *ctx;
+    int burst_time, time_ran, time_start;
+    TaskState state;
 } Task;
-
 
 struct schedule
 {
-    Task *idle;
-    Task *current;
-    Task *next;
+    Task *data;
+    struct schedule *next;
+    uint16_t time;
 };
 
-void scheduler_schedule_and_switch(void);
+Task *task_create(String name, int burst_time, uintptr_t ip);
 
-Task *task_create(String name, uintptr_t ip);
+void task_set_state(Task *task, TaskState state);
 
 #endif

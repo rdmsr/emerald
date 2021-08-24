@@ -35,5 +35,4 @@ void asm_write_cr3(u64 value);
 u64 asm_read_msr(u32 msr);
 void asm_write_msr(u32 msr, u64 value);
 
-
 #endif
