@@ -63,7 +63,7 @@ emerald.iso: $(TARGET)
 
 run: emerald.iso
 	@echo QEMU $<
-	@qemu-system-x86_64 -M q35 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m $(MEMORY)
+	@qemu-system-x86_64 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m $(MEMORY)
 
 
 debug: emerald.iso

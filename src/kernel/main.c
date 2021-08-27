@@ -40,11 +40,11 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     arch_initialize_descriptors();
 
-    arch_initialize_memory(stivale2_struct);
-
     pic_initialize();
 
     pit_initialize(1000);
+
+    arch_initialize_memory(stivale2_struct);
 
     acpi_initialize(stivale2_struct);
 
@@ -66,7 +66,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     sched_start(init);
 
-    //toggle_sched_init();
+    toggle_sched_init();
 
     while (true)
         ;

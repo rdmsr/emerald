@@ -33,7 +33,7 @@ Task *task_create(String name, int burst_time, uintptr_t ip)
 
     assert_not_null(task && stack_alloc);
 
-    task->sp = (uintptr_t)stack_alloc + MEM_PHYS_OFFSET;
+    task->sp = (uintptr_t)stack_alloc;
 
     log("Created task {} with pid {} stack {p}", task->name, task->pid, task->sp);
 
