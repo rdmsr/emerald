@@ -7,10 +7,10 @@
 #include <arch/proc/sched.h>
 #include <arch/tasking.h>
 #include <devices/apic.h>
+#include <devices/pci.h>
 #include <devices/pic.h>
 #include <devices/pit.h>
 #include <emerald/debug.h>
-#include <emerald/ds/vec.h>
 #include <emerald/functional.h>
 #include <emerald/log.h>
 #include <main.h>
@@ -52,20 +52,22 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     apic_timer_initialize();
 
+    pci_init();
+
     kernel_splash();
 
     log("Usable memory: {}mb\t Usable pages: {}", get_usable_pages() * PAGE_SIZE / 1024 / 1024, get_usable_pages());
 
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
-    /*auto init = task_create(make_str("init"), -1, (uintptr_t)test);
-    
+    auto init = task_create(make_str("init"), -1, (uintptr_t)test);
+
     sched_initialize();
-    
+
     sched_start(init);
-    
-    toggle_sched_init();*/
+
+    //toggle_sched_init();
 
     while (true)
-      ;
+        ;
 }

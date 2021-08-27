@@ -34,5 +34,7 @@ void asm_write_cr2(u64 value);
 void asm_write_cr3(u64 value);
 u64 asm_read_msr(u32 msr);
 void asm_write_msr(u32 msr, u64 value);
+void asm_outd(uint16_t port, uint32_t value);
 
+uint32_t asm_ind(uint16_t port);
 #endif

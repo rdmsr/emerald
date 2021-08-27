@@ -92,3 +92,17 @@ void asm_write_msr(u32 msr, u64 value)
     uint32_t edx = (uint32_t)(value >> 32);
     __asm__ volatile("wrmsr" ::"a"(eax), "c"(msr), "d"(edx));
 }
+
+void asm_outd(uint16_t port, uint32_t value)
+{
+    __asm__ volatile("out %%eax,%%dx" ::"a"(value), "d"(port));
+}
+
+uint32_t asm_ind(uint16_t port)
+{
+    uint32_t ret;
+    __asm__ volatile("in %%dx,%%eax"
+                     : "=a"(ret)
+                     : "d"(port));
+    return ret;
+}
