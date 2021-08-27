@@ -6,6 +6,7 @@
 
 #include "tasking.h"
 #include "arch/memory/pmm.h"
+#include "arch/memory/vmm.h"
 #include "emerald/alloc.h"
 #include <emerald/debug.h>
 #include <emerald/log.h>
@@ -23,7 +24,8 @@ Task *task_create(String name, int burst_time, uintptr_t ip)
     task->state = DEAD;
 
     task->ctx = alloc_malloc(sizeof(Context));
-    
+    //task->ctx->pagemap = vmm_create_space();
+
     task->ctx->regs.rip = ip;
 
     // We're using this so we can check if it's NULL later on

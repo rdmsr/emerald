@@ -58,13 +58,13 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
-    auto init = task_create(make_str("init"), -1, (uintptr_t)test);
+    /*auto init = task_create(make_str("init"), -1, (uintptr_t)test);
     
     sched_initialize();
     
     sched_start(init);
     
-    toggle_sched_init();
+    toggle_sched_init();*/
 
     while (true)
       ;

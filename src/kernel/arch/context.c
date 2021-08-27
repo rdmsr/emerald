@@ -19,8 +19,7 @@ void context_load(Context *ctx, Stack *stack)
 
     *stack = ctx->regs;
 
-
-    //vmm_load_pagemap(ctx->pagemap);
+    // vmm_load_pagemap(ctx->pagemap);
 }
 
 void context_save(Context *ctx, Stack *stack)

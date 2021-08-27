@@ -5,6 +5,9 @@
  */
 
 #include "vmm.h"
+#include "arch/arch.h"
+#include "arch/memory/pmm.h"
+#include <emerald/alloc.h>
 #include <emerald/debug.h>
 
 static uint64_t *kernel_pagemap;
@@ -15,7 +18,7 @@ static uint64_t *get_next_level(uint64_t *table, size_t index)
     if (!(table[index] & 1))
     {
         table[index] = (uint64_t)pmm_allocate_zero(1);
-        table[index] |= 0b11;
+        table[index] |= 0b111;
     }
 
     return (uint64_t *)((table[index] & ~(0x1ff)) + MEM_PHYS_OFFSET);
@@ -66,6 +69,17 @@ void vmm_map_range(uint64_t *pagemap, uint64_t start, uint64_t end, uint64_t off
     {
         vmm_map_page(pagemap, i, i + offset, flags);
     }
+}
+
+void *vmm_create_space(void)
+{
+    lock_acquire(&lock);
+
+    u64 *addr = pmm_allocate_zero(1);
+
+    lock_release(&lock);
+
+    return addr;
 }
 
 void vmm_load_pagemap(uint64_t *pagemap)
