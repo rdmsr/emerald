@@ -100,7 +100,7 @@ uint64_t interrupts_handler(uint64_t rsp)
         while (1)
         {
             __asm__("cli");
-            __asm__("hlt");
+            asm_hlt();
         }
     }
 

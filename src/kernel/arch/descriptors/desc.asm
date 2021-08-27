@@ -12,8 +12,8 @@ __interrupt%1:
 
 %macro INTERRUPT_NOERR 1
 __interrupt%1:
-    push  0
-    push  %1
+    push 0    ; no error
+    push %1
     jmp __interrupt_common
 %endmacro
 
@@ -61,8 +61,9 @@ __interrupt_common:
     
     mov rdi, rsp
     call interrupts_handler
+	
     mov rsp, rax
-    
+	
     popaq
     add rsp, 16 ; pop errcode and int number
 
@@ -176,3 +177,23 @@ global idt_flush
 idt_flush:
     lidt [rdi]
     ret
+
+global gdt_update
+gdt_update:
+  lgdt [rdi]
+  mov ax, 0x10
+  mov ss, ax
+  mov ds, ax
+  mov es, ax
+  mov rax, qword .trampoline
+  push qword 0x8
+  push rax
+  o64 retf
+.trampoline:
+	ret
+	
+global tss_update
+tss_update:
+  mov ax, 0x28
+  ltr ax
+  ret
