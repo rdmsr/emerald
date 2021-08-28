@@ -24,6 +24,7 @@ String get_color(LogLevel level)
     case TODO:
         return make_str("\033[1;35m");
 
+    case SYSCALL:
     case DEBUG:
         return make_str("\033[1;36m");
     case WARNING:
@@ -52,6 +53,8 @@ String get_prefix(LogLevel level)
         return make_str("FAIL");
     case PASS:
         return make_str("PASS");
+    case SYSCALL:
+        return make_str("SYSCALL");
     default:
         return make_str("");
     }
@@ -66,7 +69,6 @@ void __log(LogLevel level, int line, char *file, char *format, FormatValues vals
 #endif
     print(arch_debug_writer(), "{}{} \033[0m", get_color(level), get_prefix(level));
     print(arch_debug_writer(), "\033[30m{}:{} \033[0m\033[0m", file, line);
-
 
     __fmt_stream(arch_debug_writer(), format, vals);
 

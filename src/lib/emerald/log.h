@@ -35,7 +35,8 @@ typedef enum
     ERROR,
     WARNING,
     DEBUG,
-    TODO
+    TODO,
+    SYSCALL
 } LogLevel;
 
 void __log(LogLevel level, int line, char *file, char *format, FormatValues vals);
@@ -47,5 +48,6 @@ void __log(LogLevel level, int line, char *file, char *format, FormatValues vals
 #define log_debug(format, ...) __log(DEBUG, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
 #define log_fail(format, ...) __log(FAIL, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
 #define log_pass(format, ...) __log(PASS, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__))
+#define log_syscall(format, ...) __log(SYSCALL, __LINE__, __FILENAME__, format, FORMAT_ARGS(__VA_ARGS__));
 
 #endif

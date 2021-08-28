@@ -81,6 +81,7 @@ $(BUILD_DIRECTORY)/%.asm.o: %.asm
 	@echo -e AS  $(ECHO) $<
 	@nasm $(NASMFLAGS) $< -o $@
 
+
 mtest: $(LIB_BIN)
 	@$(MAKE) -C src/tests clean
 	@$(MAKE) -C src/tests

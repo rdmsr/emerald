@@ -20,9 +20,9 @@ Writer *arch_debug_writer()
 
 
 
-void arch_initialize_descriptors(void)
+void arch_initialize_descriptors(void* stack)
 {
-    gdt_initialize();
+    gdt_initialize(stack);
     idt_initialize();
 }
 

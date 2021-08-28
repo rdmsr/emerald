@@ -116,10 +116,7 @@ void sched_next()
 }
 
 void sched_schedule(MAYBE_UNUSED Stack *stack)
-{
-    // Save current context in the `kernel` task
-    context_save(kernel.data->ctx, stack);
-    
+{    
     tick++;
 
     lock_acquire(&lock);
@@ -135,7 +132,7 @@ void sched_schedule(MAYBE_UNUSED Stack *stack)
         // load the task's context
 
         context_load(current->data->ctx, stack);
-	
+
         while (sched_tick() - prev_ticks < time_slice)
         {
             tick++;
@@ -145,8 +142,6 @@ void sched_schedule(MAYBE_UNUSED Stack *stack)
 
         log("ran task {} for {} ticks, rip = {p}, rsp = {p}", current->data->name, sched_tick() - prev_ticks, current->data->ctx->regs.rip, current->data->ctx->regs.rsp);
 
-        //context_load(kernel.data->ctx, stack);
-	
         if (current_index == tasks.length)
         {
             current_index = 1;
@@ -164,5 +159,4 @@ void sched_schedule(MAYBE_UNUSED Stack *stack)
     }
 
     lock_release(&lock);
-
 }

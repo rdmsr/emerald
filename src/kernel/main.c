@@ -14,6 +14,7 @@
 #include <emerald/functional.h>
 #include <emerald/log.h>
 #include <main.h>
+#include <user.h>
 
 void kernel_splash()
 {
@@ -28,6 +29,7 @@ void kernel_splash()
     log("Using x86_64-elf-gcc ({})", __VERSION__);
     log("------------------------------------------------");
 }
+static uint32_t stack[0x1000];
 
 void test()
 {
@@ -38,7 +40,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 {
     com_initialize(COM1);
 
-    arch_initialize_descriptors();
+    arch_initialize_descriptors(stack);
 
     pic_initialize();
 
@@ -60,14 +62,16 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
-    auto init = task_create(make_str("init"), -1, (uintptr_t)test);
+    /* auto init = task_create(make_str("init"), -1, (uintptr_t)test);
 
     sched_initialize();
 
     sched_start(init);
 
-    toggle_sched_init();
+    toggle_sched_init();*/
 
+    _user_jump();
+    
     while (true)
         ;
 }

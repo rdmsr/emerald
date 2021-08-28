@@ -81,7 +81,7 @@ void interrupt_error_handler(Stack *stackframe)
     log_error("          :____________________________:");
 
     log_error("*** Stacktrace ***");
-    log_error("Exception number: {x}", stackframe->intno);
+    log_error("Exception number: {x}, error: {x}", stackframe->intno, stackframe->err);
     log_error("RAX={p} RBX={p} RCX={p} RDX={p}", stackframe->rax, stackframe->rbx, stackframe->rcx, stackframe->rdx);
     log_error("RSI={p} RDI={p} RBP={p} RSP={p}", stackframe->rsi, stackframe->rdi, stackframe->rbp, stackframe->rsp);
     log_error("R8= {p} R9= {p} R10={p} R11={p}", stackframe->r8, stackframe->r9, stackframe->r10, stackframe->r11);
@@ -110,7 +110,35 @@ uint64_t interrupts_handler(uint64_t rsp)
 
         if (sched_init)
         {
+            log("stack before: {p}", (u64)stackframe->rsp);
             sched_schedule(stackframe);
+
+            log("stack after: {p}", (u64)stackframe->rsp);
+        }
+    }
+
+    /* Syscalls:
+        * rax: number
+        * rbx Arg1
+	* rcx Arg2
+	* rdx Arg3
+	* rsi Arg4
+	*/
+    
+    if (stackframe->intno == 0x80)
+    {
+        if ((int)stackframe->rax == 1)
+        {
+            log("This is ground control to major Tom");
+            log("You've really made the grade");
+            log("And the papers want to know whose shirts you wear");
+            log("Now it's time to leave the capsule if you dare");
+        }
+	
+        else
+        {
+
+            log_syscall("{}", (char *)stackframe->rbx);
         }
     }
 

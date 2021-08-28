@@ -44,6 +44,8 @@ void install_isr(void)
     {
         idt[j] = idt_make_entry(__interrupt_vector[j], INTGATE);
     }
+
+    idt[128] = idt_make_entry(__interrupt_vector[j], 0xee);
 }
 
 void idt_initialize()

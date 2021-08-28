@@ -52,35 +52,40 @@ GDTDescriptor gdt_entry_simple(uint8_t flags, uint8_t granularity)
     return gdt_entry(0, 0, granularity, flags);
 }
 
-void gdt_initialize()
+void gdt_initialize(void* kernel_stack)
 {
     gdtr.base = (uint64_t)&gdt;
     gdtr.limit = sizeof(GDT) - 1;
 
     gdt.entries[0] = gdt_entry(0, 0, 0, 0);
-    gdt.entries[GDT_KERNEL_CODE] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE | GDT_EXECUTABLE, GDT_LONG_MODE_GRANULARITY);
-    gdt.entries[GDT_KERNEL_DATA] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE, 0);
+    gdt.entries[1] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE | GDT_EXECUTABLE, GDT_LONG_MODE_GRANULARITY);
+    gdt.entries[2] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE, 0);
 
-    gdt.entries[3] = gdt_entry(0, 0, 0, 0);
-    
-    gdt.entries[GDT_USER_DATA] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE | GDT_USER, 0);
-    gdt.entries[GDT_USER_CODE] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE | GDT_EXECUTABLE | GDT_USER, GDT_LONG_MODE_GRANULARITY);
+    gdt.entries[3] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE | GDT_EXECUTABLE | GDT_USER, GDT_LONG_MODE_GRANULARITY);
+    gdt.entries[4] = gdt_entry_simple(GDT_PRESENT | GDT_SEGMENT | GDT_READWRITE | GDT_USER, 0);
 
     gdt.tss = make_tss_entry((uintptr_t)&tss);
-
+    mem_set(&tss, 0, sizeof(tss));
+    
+    tss.rsp[0] = (uintptr_t)kernel_stack;
+    tss.ist[1] = 0;
+    
+    tss.iopb_offset = sizeof(tss);
     log("Loading GDT...");
 
     gdt_update((u64)&gdtr);
 
-    log("GDT loaded");
+    tss_update();
+
+    log("Loaded gdt with tss.rsp0 = {p}", tss.rsp[0]);
 }
 
 void gdt_load_tss(TSS *tss)
 {
     lock_acquire(&lock);
-    
+
     gdt.tss = make_tss_entry((uintptr_t)tss);
-    
+
     tss_update();
 
     lock_release(&lock);

@@ -78,7 +78,7 @@ typedef struct PACKED
     TSSEntry tss;
 } GDT;
 
-void gdt_initialize();
+void gdt_initialize(void*);
 
 extern void tss_update(void);
 extern void gdt_update(u64);

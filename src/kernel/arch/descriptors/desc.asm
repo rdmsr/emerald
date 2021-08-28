@@ -119,6 +119,7 @@ INTERRUPT_NOERR 45
 INTERRUPT_NOERR 46
 INTERRUPT_NOERR 47
 
+INTERRUPT_NOERR 128
 
 global __interrupt_vector
 
@@ -172,6 +173,7 @@ __interrupt_vector:
     INTERRUPT_NAME 45
     INTERRUPT_NAME 46
     INTERRUPT_NAME 47
+    INTERRUPT_NAME 128
 
 global idt_flush
 idt_flush:
@@ -185,13 +187,12 @@ gdt_update:
   mov ss, ax
   mov ds, ax
   mov es, ax
-  mov rax, qword .trampoline
-  push qword 0x8
+  pop rdi
+  mov rax, 0x8
   push rax
-  o64 retf
-.trampoline:
-	ret
-	
+  push rdi
+  retfq
+
 global tss_update
 tss_update:
   mov ax, 0x28
