@@ -58,15 +58,15 @@ include src/lib/.build.mk
 
 .DEFAULT_GOAL = $(ISO)
 
-emerald.iso: $(TARGET)
+$(ISO): $(TARGET)
 	meta/scripts/make-image.sh > /dev/null 2>&1
 
-run: emerald.iso
+run: $(ISO)
 	@echo QEMU $<
 	@qemu-system-x86_64 -cdrom emerald.iso -enable-kvm -serial stdio -rtc base=localtime -m $(MEMORY)
 
 
-debug: emerald.iso
+debug: $(ISO)
 	@echo QEMU $<
 	@qemu-system-x86_64 -cdrom emerald.iso -d int -serial stdio -rtc base=localtime -m $(MEMORY)
 
