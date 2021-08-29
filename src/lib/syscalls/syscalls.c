@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "syscall.h"
+#include "syscalls.h"
 #include <emerald/log.h>
 
 BeSysRet be_log(char *args)
