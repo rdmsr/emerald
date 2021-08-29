@@ -13,12 +13,12 @@
 static uint64_t *kernel_pagemap;
 static uint32_t lock = 0;
 
-static uint64_t *get_next_level(uint64_t *table, size_t index)
+static uint64_t *get_next_level(uint64_t *table, size_t index, uint64_t flags)
 {
     if (!(table[index] & 1))
     {
         table[index] = (uint64_t)pmm_allocate_zero(1);
-        table[index] |= 0b111;
+        table[index] |= flags;
     }
 
     return (uint64_t *)((table[index] & ~(0x1ff)) + MEM_PHYS_OFFSET);
@@ -38,9 +38,9 @@ void vmm_map_page(uint64_t *pagemap, uintptr_t physical_address, uintptr_t virtu
     size_t level2 = PML_ENTRY(virtual_address, 21);
     size_t level1 = PML_ENTRY(virtual_address, 12);
 
-    uint64_t *pml3 = get_next_level(pagemap, level4);
-    uint64_t *pml2 = get_next_level(pml3, level3);
-    uint64_t *pml1 = get_next_level(pml2, level2);
+    uint64_t *pml3 = get_next_level(pagemap, level4, flags);
+    uint64_t *pml2 = get_next_level(pml3, level3, flags);
+    uint64_t *pml1 = get_next_level(pml2, level2, flags);
 
     pml1[level1] = physical_address | flags;
 
@@ -49,7 +49,7 @@ void vmm_map_page(uint64_t *pagemap, uintptr_t physical_address, uintptr_t virtu
     lock_release(&lock);
 }
 
-void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address)
+void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address, uint64_t flags)
 {
     lock_acquire(&lock);
 
@@ -58,9 +58,9 @@ void vmm_unmap_page(uint64_t *pagemap, uintptr_t virtual_address)
     size_t level2 = PML_ENTRY(virtual_address, 21);
     size_t level1 = PML_ENTRY(virtual_address, 12);
 
-    uint64_t *pml3 = get_next_level(pagemap, level4);
-    uint64_t *pml2 = get_next_level(pml3, level3);
-    uint64_t *pml1 = get_next_level(pml2, level2);
+    uint64_t *pml3 = get_next_level(pagemap, level4, flags);
+    uint64_t *pml2 = get_next_level(pml3, level3, flags);
+    uint64_t *pml1 = get_next_level(pml2, level2, flags);
 
     pml1[level1] = 0;
 
@@ -107,7 +107,7 @@ void vmm_initialize(struct stivale2_struct *stivale2_struct)
     kernel_pagemap = (uint64_t *)pmm_allocate_zero(1);
 
     vmm_map_range(kernel_pagemap, 0, 0x8000000, KERNEL_BASE, 0b111);
-    vmm_map_range(kernel_pagemap, 0, 0x100000000, MEM_PHYS_OFFSET, 0b111);
+    vmm_map_range(kernel_pagemap, 0, 0x100000000, MEM_PHYS_OFFSET, 0b11);
 
     for (i = 0; i < memory_map->entries; i++)
     {
@@ -115,7 +115,7 @@ void vmm_initialize(struct stivale2_struct *stivale2_struct)
         {
             for (p = 0; p < memory_map->memmap[i].length; p += PAGE_SIZE)
             {
-                vmm_map_page(kernel_pagemap, p, p + MEM_PHYS_OFFSET, 0b111);
+                vmm_map_page(kernel_pagemap, p, p + MEM_PHYS_OFFSET, 0b11);
             }
         }
 

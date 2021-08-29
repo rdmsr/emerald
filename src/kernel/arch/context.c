@@ -14,9 +14,6 @@
 
 void context_load(Context *ctx, Stack *stack)
 {
-    asm_write_msr(0xC0000101, (uintptr_t)ctx);
-    asm_write_msr(0xc0000102, (uintptr_t)ctx);
-
     *stack = ctx->regs;
 
     // vmm_load_pagemap(ctx->pagemap);

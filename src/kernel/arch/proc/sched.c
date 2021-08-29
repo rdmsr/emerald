@@ -115,10 +115,10 @@ void sched_next()
     }
 }
 
-void sched_schedule(MAYBE_UNUSED Stack *stack)
-{    
+uint64_t sched_schedule(MAYBE_UNUSED Stack* stack)
+{
     tick++;
-
+    
     lock_acquire(&lock);
 
     assert_not_null(current);
@@ -157,6 +157,8 @@ void sched_schedule(MAYBE_UNUSED Stack *stack)
             sched_next();
         }
     }
-
+    
     lock_release(&lock);
+
+    return (uint64_t)stack;
 }

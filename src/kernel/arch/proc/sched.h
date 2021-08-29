@@ -11,7 +11,7 @@
 
 void sched_initialize(void);
 void sched_start(Task *task);
-void sched_schedule(Stack *stack);
+uint64_t sched_schedule(Stack* stack);
 
 Task *sched_current(void);
 

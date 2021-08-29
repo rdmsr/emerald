@@ -10,9 +10,10 @@
 #include <arch/proc/sched.h>
 #include <devices/apic.h>
 #include <devices/pic.h>
+#include <emerald/debug.h>
 #include <emerald/log.h>
+#include <syscall.h>
 
-volatile u64 ticks = 0;
 volatile bool sched_init = false;
 
 static const char *exceptions[32] = {
@@ -106,48 +107,22 @@ uint64_t interrupts_handler(uint64_t rsp)
 
     if (stackframe->intno == 32)
     {
-        ticks++;
-
         if (sched_init)
         {
-            log("stack before: {p}", (u64)stackframe->rsp);
-            sched_schedule(stackframe);
+            log("stack before: {p}", rsp);
+            rsp = sched_schedule(stackframe);
 
-            log("stack after: {p}", (u64)stackframe->rsp);
+            log("stack after: {p}", rsp);
         }
     }
 
-    /* Syscalls:
-        * rax: number
-        * rbx Arg1
-	* rcx Arg2
-	* rdx Arg3
-	* rsi Arg4
-	*/
-    
-    if (stackframe->intno == 0x80)
+    // :meme:
+    if (stackframe->intno == 0x42)
     {
-        if ((int)stackframe->rax == 1)
-        {
-            log("This is ground control to major Tom");
-            log("You've really made the grade");
-            log("And the papers want to know whose shirts you wear");
-            log("Now it's time to leave the capsule if you dare");
-        }
-	
-        else
-        {
-
-            log_syscall("{}", (char *)stackframe->rbx);
-        }
+      assert_truth(syscall_handler(stackframe) != -1);
     }
 
     apic_eoi();
 
     return rsp;
-}
-
-u64 get_ticks()
-{
-    return ticks;
 }

@@ -43,6 +43,7 @@ typedef struct stackframe
 } Stackframe;
 
 uint64_t interrupts_handler(uint64_t rsp);
+void interrupt_error_handler(Stack*);
 u64 get_ticks();
 
 void toggle_sched_init();

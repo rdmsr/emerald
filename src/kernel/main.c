@@ -6,6 +6,7 @@
 #include <arch/cpuid.h>
 #include <arch/proc/sched.h>
 #include <arch/tasking.h>
+#include <arch/user.h>
 #include <devices/apic.h>
 #include <devices/pci.h>
 #include <devices/pic.h>
@@ -14,7 +15,6 @@
 #include <emerald/functional.h>
 #include <emerald/log.h>
 #include <main.h>
-#include <user.h>
 
 void kernel_splash()
 {
@@ -62,7 +62,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
 
     log("CPU model: {}, CPU vendor: {}", cpuid_get_model(), cpuid_get_vendor());
 
-    /* auto init = task_create(make_str("init"), -1, (uintptr_t)test);
+    /*auto init = task_create(make_str("init"), 0, (uintptr_t)test);
 
     sched_initialize();
 
@@ -71,7 +71,7 @@ void kmain(MAYBE_UNUSED struct stivale2_struct *stivale2_struct)
     toggle_sched_init();*/
 
     _user_jump();
-    
+
     while (true)
         ;
 }

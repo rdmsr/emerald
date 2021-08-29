@@ -62,8 +62,8 @@ __interrupt_common:
     mov rdi, rsp
     call interrupts_handler
 	
-    mov rsp, rax
-	
+    mov rsp,rax
+
     popaq
     add rsp, 16 ; pop errcode and int number
 
@@ -119,7 +119,7 @@ INTERRUPT_NOERR 45
 INTERRUPT_NOERR 46
 INTERRUPT_NOERR 47
 
-INTERRUPT_NOERR 128
+INTERRUPT_NOERR 66
 
 global __interrupt_vector
 
@@ -173,7 +173,8 @@ __interrupt_vector:
     INTERRUPT_NAME 45
     INTERRUPT_NAME 46
     INTERRUPT_NAME 47
-    INTERRUPT_NAME 128
+	
+    INTERRUPT_NAME 66
 
 global idt_flush
 idt_flush:
