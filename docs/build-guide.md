@@ -39,6 +39,11 @@ $ sudo xbps-install nasm llvm make qemu
 $ sudo emerge --ask llvm nasm make qemu
 ```
 
+```sh
+# on pisi
+$ sudo pisi it llvm nasm make qemu
+```
+
 ## Getting the source code
 
 To get the source code, just clone the repository.
